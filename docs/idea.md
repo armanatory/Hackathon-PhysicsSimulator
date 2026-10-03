@@ -2,11 +2,11 @@
 
 Status: **not decided yet**
 
-## Candidates
+Everyone brainstorms in their own file first, then we pick one here:
 
-| Idea | Example customer | Problem | Physics (thermal / structural / acoustics / RF) | Why an app beats the Allsolve UI |
-|------|------------------|---------|--------------------------------------------------|----------------------------------|
-|      |                  |         |                                                  |                                  |
+- [idea-Arman.md](idea-Arman.md)
+- [idea-Santeri.md](idea-Santeri.md)
+- [idea-Veli.md](idea-Veli.md)
 
 ## Chosen idea
 
