@@ -20,6 +20,7 @@ folders in the repository root are left untouched.
 | [backend/README.md](backend/README.md) | API, physics model, search strategies, current status |
 | [frontend/README.md](frontend/README.md) | UI structure and the two sources of numbers |
 | [docs/deploy.md](docs/deploy.md) | Running it in Docker, locally and on a server |
+| [docs/scan-import.md](docs/scan-import.md) | Scanning a real office with a phone and opening it in the app (planned), with sample files |
 
 UI sketches that led to this look: [docs/ui-exploring/03-quiet-office](../docs/ui-exploring/03-quiet-office/index.html).
 
