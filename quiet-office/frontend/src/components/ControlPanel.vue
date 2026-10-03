@@ -38,6 +38,26 @@ const sizeHint = computed(() => {
     </div>
 
     <div class="field">
+      <h2>Search</h2>
+      <div class="seg stackable" role="group" aria-label="How thorough the search is">
+        <button type="button" :aria-pressed="store.strategy === 'fast'" :disabled="store.isRunning" @click="store.setDetailed(false)">
+          Quick<small>about half a minute</small>
+        </button>
+        <button type="button" :aria-pressed="store.strategy !== 'fast'" :disabled="store.isRunning" @click="store.setDetailed(true)">
+          Detailed<small>several minutes</small>
+        </button>
+      </div>
+      <p v-if="store.strategy === 'fast'" class="hint">
+        One simulation job on a top-down model of the room<template v-if="store.machines">: {{ store.machines.plan_now.layouts }} layouts in about
+        {{ store.machines.plan_now.seconds }} s</template>. Every panel counts as floor-to-ceiling, so panel height and surface are not part of it.
+      </p>
+      <p v-else class="hint">
+        {{ store.model === '3d' ? 'The full room with heights' : 'A top-down model of the room' }}, {{ store.plannedLayouts }} layouts. Each panel is
+        placed in its own round, and every round waits for Allsolve to mesh and then to solve.
+      </p>
+    </div>
+
+    <div v-if="store.model === '3d'" class="field">
       <h2>Panel</h2>
       <div class="seg stackable" role="group" aria-label="Panel type">
         <button
@@ -111,7 +131,7 @@ const sizeHint = computed(() => {
     </div>
 
     <div class="field">
-      <h2>Search</h2>
+      <h2>Search strategy</h2>
       <div class="seg" role="group" aria-label="Search strategy">
         <button type="button" :aria-pressed="store.strategy === 'greedy'" :disabled="store.isRunning" @click="store.setStrategy('greedy')">One at a time</button>
         <button type="button" :aria-pressed="store.strategy === 'exhaustive'" :disabled="store.isRunning" @click="store.setStrategy('exhaustive')">Every combination</button>

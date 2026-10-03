@@ -95,12 +95,13 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const started = ref(!!savedOffice)
   const step = ref<Step>('room')
   const nScreens = ref(3)
-  const strategy = ref<Strategy>('greedy')
+  // The quick search is the default: one mesh, one job, about half a minute.
+  const strategy = ref<Strategy>('fast')
   const frequencies = ref<number[]>([250, 500])
   const screenLength = ref(1.8)
   const panelTypeId = ref('screen')
   const screenAbsorbing = ref(false)
-  const model = ref<SimulationModel>('3d')
+  const model = ref<SimulationModel>('2d')
 
   const capabilities = ref<Capabilities | null>(null)
   const backendOnline = ref(false)
@@ -574,6 +575,13 @@ export const useOptimizationStore = defineStore('optimization', () => {
     screenAbsorbing.value = absorbing
     clearResult()
   }
+  /** Quick: the fast search on the 2D model. Detailed: the 3D room, one panel at a time. */
+  function setDetailed(detailed: boolean): void {
+    strategy.value = detailed ? 'greedy' : 'fast'
+    model.value = detailed ? '3d' : '2d'
+    clearResult()
+    void refreshMachines()
+  }
   function setModel(value: SimulationModel): void {
     model.value = value
     if (value === '3d' && strategy.value === 'fast') strategy.value = 'greedy'
@@ -887,6 +895,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     abort,
     setScreens,
     setStrategy,
+    setDetailed,
     toggleFrequency,
     setPanelType,
     setAbsorbing,
