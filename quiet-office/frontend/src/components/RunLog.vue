@@ -112,13 +112,17 @@ function pressure(values: number[][] | undefined): string {
       <div class="logbar">
         <h3>In plain language</h3>
         <button type="button" class="btn small" :disabled="!store.canExplain || store.explaining" @click="store.explain()">
-          {{ store.explaining ? 'Writing…' : store.explanation ? 'Explain again' : 'Explain this result' }}
+          {{ store.explaining ? 'Writing…' : store.explanation ? 'Explain again' : store.explainsEarlierRun ? 'Explain the last Allsolve run' : 'Explain this run' }}
         </button>
       </div>
       <p v-if="store.explanation" class="explanation">{{ store.explanation }}</p>
       <p v-if="store.explanation" class="cap">Written by an AI model ({{ store.explanationModel }}) from the figures and the record above. It explains; it does not calculate.</p>
       <p v-else-if="store.explainBlockedReason" class="cap">{{ store.explainBlockedReason }}</p>
-      <p v-else class="cap">An AI model reads the result and the record above and explains them without jargon.</p>
+      <p v-else-if="store.explainsEarlierRun" class="cap">
+        The page now shows the quick estimate, which is not explained. This explains the Allsolve run that finished at
+        {{ new Date(store.explainsEarlierRun).toLocaleTimeString() }}; the office or the settings have changed since.
+      </p>
+      <p v-else class="cap">An AI model reads the Allsolve result and the record above and explains them without jargon.</p>
       <p v-if="store.explainError" class="error" role="alert">{{ store.explainError }}</p>
     </div>
   </div>

@@ -27,13 +27,13 @@ def combine_bands(levels_db: Sequence[float]) -> float:
     return 10.0 * math.log10(energy)
 
 
-def raw_score(desk_levels_db: Sequence[float]) -> float:
-    """Average desk exposure plus a penalty for the worst desk.
+def raw_score(levels_db: Sequence[float]) -> float:
+    """Average exposure over the points that should be quiet, plus a penalty for the worst one.
 
-    The penalty stops the search from making most desks quiet while leaving one person
-    in a very bad spot.
+    The penalty stops the search from making most of a zone quiet while leaving one spot
+    very loud. Pass only the points being optimised: see Office.objective_indices().
     """
-    pressures = [10.0 ** (level / 20.0) for level in desk_levels_db]
+    pressures = [10.0 ** (level / 20.0) for level in levels_db]
     return sum(pressures) / len(pressures) + 0.5 * max(pressures)
 
 

@@ -13,6 +13,11 @@ The model is a 2D top-down slice of the office solved with harmonic acoustic wav
 
 Every screen position is a project variable, so one project serves every layout: a sweep
 overrides the variables and Allsolve remeshes per distinct geometry.
+
+With `fixed_mesh` the screens are not cut out. Every candidate position is drawn into the
+geometry once, so the mesh has element edges along each of them, and stays air. A screen is
+switched on by making the air inside its rectangle 10 000 times denser, which reflects sound
+like a hard wall. Density is not geometry, so every layout shares one mesh.
 """
 
 import math
@@ -27,9 +32,11 @@ except ImportError:  # the API can still start and report that the SDK is missin
     allsolve = None
 
 TALKER_RADIUS_M = 0.15
+MAX_SCREENS = 3  # as many as OptimizationParams.n_screens allows
 WALL_THICKNESS_M = 0.2
 ON_BOUNDS_TOLERANCE_M = 1e-6
 ELEMENTS_PER_WAVELENGTH = 6
+SCREEN_DENSITY_RATIO = 1e4  # a 0.1 m slab this heavy passes about 1/2000 of the pressure at 250 Hz
 PRESSURE_MAGNITUDE = "sqrt(pow(harm(2, p), 2) + pow(harm(3, p), 2))"
 
 
@@ -48,6 +55,7 @@ class OfficeProject:
     probe_height_m: float = 0.0
     reference_height_m: float = 0.0
     max_run_time_minutes: int = 30
+    fixed_mesh: bool = False  # screens are heavy air on one mesh, not holes in it
 
 
 @dataclass
@@ -126,10 +134,20 @@ def screen_variables(index: int) -> List[str]:
     return [f"s{index}_on", f"s{index}_x", f"s{index}_y", f"s{index}_w", f"s{index}_h"]
 
 
-def build_office_project(client: Any, params: OptimizationParams, log: Any = None) -> OfficeProject:
+def screen_density() -> str:
+    """Density of the air as an expression in x and y: heavy inside every screen that is on."""
+    inside = [
+        f"{on} * ifpositive({w} / 2 - abs(x - {x}), 1, 0) * ifpositive({h} / 2 - abs(y - {y}), 1, 0)"
+        for on, x, y, w, h in (screen_variables(i) for i in range(MAX_SCREENS))
+    ]
+    return f"{AIR_DENSITY} * (1 + {SCREEN_DENSITY_RATIO - 1:.0f} * ({' + '.join(inside)}))"
+
+
+def build_office_project(client: Any, params: OptimizationParams, log: Any = None, fixed_mesh: bool = False) -> OfficeProject:
     """Create the project: variables, geometry, regions, material and physics.
 
     `log` is an optional RunLog that records every request made to Allsolve.
+    `fixed_mesh` builds the one-mesh model described at the top of this file.
     """
 
     def sent(step: str, message: str, data: Any = None) -> None:
@@ -169,7 +187,9 @@ def build_office_project(client: Any, params: OptimizationParams, log: Any = Non
             (sy, source.y, f"Source {i} y [m]"),
             (amp, 1 if i == 0 else 0, f"Source {i} active (1) or silent (0)"),
         ]
-    for i in range(params.n_screens):
+    # The one-mesh model's density names every screen variable, so all of them must exist.
+    n_screen_variables = MAX_SCREENS if fixed_mesh else params.n_screens
+    for i in range(n_screen_variables):
         on, x, y, w, h = screen_variables(i)
         variables += [
             (on, 0, f"Screen {i} present (1) or not (0)"),
@@ -202,18 +222,32 @@ def build_office_project(client: Any, params: OptimizationParams, log: Any = Non
     for i in range(len(office.sources)):
         sx, sy, _ = source_variables(i)
         builder.add_disk(name=f"source_{i}", position=(sx, sy), radius="src_r")
-    for i in range(params.n_screens):
-        on, x, y, w, h = screen_variables(i)
-        builder.add_rectangle(
-            name=f"screen_{i}",
-            position=(x, y),
-            size=(w, h),
-            enabled=f"eq({on}, 1)",
-        )
+    if fixed_mesh:
+        # Every candidate position, at fixed coordinates: they only shape the mesh.
+        for slot in office.slots:
+            vertical = slot.orientation == "v"
+            builder.add_rectangle(
+                name=f"slot_{slot.id}",
+                position=(slot.x, slot.y),
+                size=(
+                    params.screen_thickness_m if vertical else params.screen_length_m,
+                    params.screen_length_m if vertical else params.screen_thickness_m,
+                ),
+            )
+    else:
+        for i in range(params.n_screens):
+            on, x, y, w, h = screen_variables(i)
+            builder.add_rectangle(
+                name=f"screen_{i}",
+                position=(x, y),
+                size=(w, h),
+                enabled=f"eq({on}, 1)",
+            )
     # The implicit final fragment-all splits the room into air + walls + talker + screens.
+    screens_sent = f"{len(office.slots)} screen positions" if fixed_mesh else f"{params.n_screens} movable screens"
     sent(
         "geometry",
-        f"Sent geometry: room, {len(strips)} wall strips, {len(office.sources)} sources, {params.n_screens} movable screens",
+        f"Sent geometry: room, {len(strips)} wall strips, {len(office.sources)} sources, {screens_sent}",
         {"wall_strips": [strip.name for strip in strips], "sources": len(office.sources), "screens": params.n_screens},
     )
     builder.build(print_logs=False, on_error=allsolve.OnError.RAISE)
@@ -231,9 +265,49 @@ def build_office_project(client: Any, params: OptimizationParams, log: Any = Non
         entity_type=allsolve.Region.SURFACE,
         max_size=(obstacle_size, obstacle_size, 1),
     )
+    if fixed_mesh:
+        # The screen positions stay air. Only the sources are taken out, found by where they are.
+        bodies = [
+            project.create_region_rule(
+                name=f"source_{i}_body",
+                entity_type=allsolve.Region.SURFACE,
+                bounding_box=(
+                    (f"{sx} - 1.1 * src_r", f"{sy} - 1.1 * src_r", -1),
+                    (f"{sx} + 1.1 * src_r", f"{sy} + 1.1 * src_r", 1),
+                ),
+            )
+            for sx, sy, _ in (source_variables(i) for i in range(len(office.sources)))
+        ]
+        obstacles = (
+            bodies[0]
+            if len(bodies) == 1
+            else project.create_region_computed(
+                name="sources",
+                entity_type=allsolve.Region.SURFACE,
+                operation=allsolve.RegionOperation.UNION,
+                source_regions=[body.id for body in bodies],
+            )
+        )
     solid = obstacles  # everything that is not air
     movable = obstacles  # talker and screens: their edges are not walls
-    if strips:
+    if strips and fixed_mesh:
+        # Wall strips are found by name. Nothing else here is small enough to be confused with them.
+        wall_solid = project.create_region_computed(
+            name="wall_solid",
+            entity_type=allsolve.Region.SURFACE,
+            operation=allsolve.RegionOperation.UNION,
+            source_regions=[
+                project.create_region_rule(name=f"{strip.name}_solid", entity_type=allsolve.Region.SURFACE, attribute_path=[("name", strip.name)]).id
+                for strip in strips
+            ],
+        )
+        solid = project.create_region_computed(
+            name="solid",
+            entity_type=allsolve.Region.SURFACE,
+            operation=allsolve.RegionOperation.UNION,
+            source_regions=[obstacles.id, wall_solid.id],
+        )
+    elif strips:
         # Wall strips are found by the name they were built with. Their small corner overlaps
         # also pass the size filter above, so take them back out of the movable set.
         strip_rules = [
@@ -320,7 +394,7 @@ def build_office_project(client: Any, params: OptimizationParams, log: Any = Non
         description="Air, 20 C",
         color="#99D9FF",
         target_region=air,
-        density=AIR_DENSITY,
+        density=screen_density() if fixed_mesh else AIR_DENSITY,
         speed_of_sound=SPEED_OF_SOUND,
     )
 
@@ -346,7 +420,7 @@ def build_office_project(client: Any, params: OptimizationParams, log: Any = Non
         f"Set up acoustic waves in air: {len(office.sources)} pulsating sources, absorbing walls",
         {"physics": "AcousticWaves", "density": AIR_DENSITY, "speed_of_sound": SPEED_OF_SOUND, "mesh_size_m": round(mesh_size, 4)},
     )
-    return OfficeProject(project=project, physics_set=physics_set, air=air, mesh_size_m=mesh_size)
+    return OfficeProject(project=project, physics_set=physics_set, air=air, mesh_size_m=mesh_size, fixed_mesh=fixed_mesh)
 
 
 def receiver_output_name(index: int) -> str:

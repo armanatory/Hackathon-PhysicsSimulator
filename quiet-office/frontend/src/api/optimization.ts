@@ -5,6 +5,7 @@
 import type {
   Capabilities,
   LogEntry,
+  Machines,
   Office,
   OptimizationParams,
   OptimizationResponse,
@@ -69,6 +70,12 @@ class OptimizationAPI {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ optimization_id: optimizationId, context }),
     })
+  }
+
+  /** The machines held ready for the fast search; action 'warm' boots them, 'release' gives them back */
+  machines(sources: number, bands: number, budgetS: number, action?: 'warm' | 'release'): Promise<Machines> {
+    const query = `sources=${sources}&bands=${bands}&budget_s=${budgetS}`
+    return request(`/machines${action ? `/${action}` : ''}?${query}`, action ? { method: 'POST' } : undefined)
   }
 
   abort(id: string): Promise<{ status: string; message: string }> {

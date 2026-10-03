@@ -73,8 +73,13 @@ const sizeHint = computed(() => {
       <div class="seg" role="group" aria-label="Search strategy">
         <button type="button" :aria-pressed="store.strategy === 'greedy'" :disabled="store.isRunning" @click="store.setStrategy('greedy')">One at a time</button>
         <button type="button" :aria-pressed="store.strategy === 'exhaustive'" :disabled="store.isRunning" @click="store.setStrategy('exhaustive')">Every combination</button>
+        <button type="button" :aria-pressed="store.strategy === 'fast'" :disabled="store.isRunning" @click="store.setStrategy('fast')">Fast, 30 s</button>
       </div>
-      <p class="hint">{{ store.plannedLayouts }} layouts to simulate.</p>
+      <p v-if="store.strategy === 'fast'" class="hint">
+        The estimate ranks every combination; Allsolve then simulates the {{ Math.max(0, store.plannedLayouts - 1) }} most promising and the
+        empty office, all at the same time. 2D only.
+      </p>
+      <p v-else class="hint">{{ store.plannedLayouts }} layouts to simulate.</p>
     </div>
 
     <div class="field">
@@ -86,7 +91,41 @@ const sizeHint = computed(() => {
       <p class="hint">{{ sizeHint }}</p>
     </div>
 
-    <div class="field">
+    <div v-if="store.strategy === 'fast'" class="field">
+      <h2>Allsolve machines</h2>
+      <template v-if="store.machines">
+        <p class="hint" style="margin-top: 0">Every layout runs on its own cloud machine. Booting them is the slow part: the solve itself takes seconds.</p>
+        <p v-if="store.machines.state === 'ready'" class="hint">
+          <b>{{ store.machines.machines }} machines are running.</b> A search now simulates {{ store.machines.plan_now.layouts }} layouts in
+          about {{ store.machines.plan_now.seconds }} s. They cost credits while they run, and are given back after
+          {{ Math.round(store.machines.idle_limit_s / 60) }} minutes without a search.
+        </p>
+        <p v-else-if="store.machines.state === 'starting'" class="hint" role="status">
+          Booting {{ store.machines.machines }} machines. This takes about half a minute.
+        </p>
+        <p v-else class="hint">
+          No machines are running. A search started now boots its own and simulates {{ store.machines.plan_cold.layouts }} layouts in about
+          {{ store.machines.plan_cold.seconds }} s, or longer when Allsolve is slow to boot them (14 to 32 s when measured). With {{ store.machines.warm_size }} machines started first it simulates
+          {{ store.machines.plan_warm.layouts }} layouts in about {{ store.machines.plan_warm.seconds }} s.
+        </p>
+        <p v-if="store.machines.state === 'failed'" class="error" role="alert">Allsolve did not give the machines: {{ store.machines.error }}</p>
+        <button
+          v-if="store.machines.state === 'ready' || store.machines.state === 'starting'"
+          class="btn ghost small"
+          type="button"
+          :disabled="store.machinesBusy || store.isRunning"
+          @click="store.refreshMachines('release')"
+        >
+          Give the machines back
+        </button>
+        <button v-else class="btn ghost small" type="button" :disabled="store.machinesBusy || store.isRunning" @click="store.refreshMachines('warm')">
+          Start {{ store.machines.warm_size }} machines
+        </button>
+      </template>
+      <p v-else class="hint" style="margin-top: 0">Start the backend to see the Allsolve machines.</p>
+    </div>
+
+    <div v-else class="field">
       <h2>Parallel jobs</h2>
       <div class="seg" role="group" aria-label="Allsolve jobs run at the same time">
         <button v-for="n in [1, 2, 4, 8]" :key="n" type="button" :aria-pressed="store.parallelJobs === n" :disabled="store.isRunning" @click="store.parallelJobs = n">
@@ -94,8 +133,8 @@ const sizeHint = computed(() => {
         </button>
       </div>
       <p class="hint">
-        Each round of layouts is split into this many Allsolve jobs that mesh and solve at the same time:
-        {{ solves }} solves in total ({{ store.plannedLayouts }} layouts × {{ store.office.sources.length }}
+        Allsolve already runs every solve of a round at the same time, each on its own machine. Splitting a round into more jobs was
+        slower when measured, so leave this at 1: {{ solves }} solves in total ({{ store.plannedLayouts }} layouts × {{ store.office.sources.length }}
         {{ store.office.sources.length === 1 ? 'source' : 'sources' }} × {{ store.frequencies.length }} {{ store.frequencies.length === 1 ? 'band' : 'bands' }}).
       </p>
     </div>

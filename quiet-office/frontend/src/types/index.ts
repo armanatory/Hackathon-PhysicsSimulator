@@ -42,7 +42,7 @@ export interface Office {
   slots: Slot[]
 }
 
-export type Strategy = 'greedy' | 'exhaustive'
+export type Strategy = 'greedy' | 'exhaustive' | 'fast'
 export type SimulationModel = '2d' | '3d'
 
 export interface PanelType {
@@ -70,12 +70,36 @@ export interface OptimizationParams {
   screen_absorbing: boolean
   /** What the backend solves on Allsolve: a full 3D room, or a 2D top-down slice. */
   model: SimulationModel
-  /** How many Allsolve jobs each round of layouts is split into and run at the same time. */
+  /** How many sweeps each round of layouts is split into. 1 is fastest; not used by the fast search. */
   parallel_jobs: number
   source_height_m: number
   ear_height_m: number
   frequencies_hz: number[]
   strategy: Strategy
+  /** Fast search: layouts worth simulating, most promising first. */
+  candidate_layouts?: number[][]
+  /** Fast search: wall time to aim for, seconds. */
+  time_budget_s?: number
+}
+
+/** What a fast search can do in the time budget on a given number of machines. */
+export interface FastPlan {
+  layouts: number
+  machines: number
+  seconds: number
+}
+
+/** Cloud machines held ready on Allsolve for the fast search. */
+export interface Machines {
+  state: 'off' | 'starting' | 'ready' | 'failed'
+  machines: number
+  boot_s: number | null
+  error: string | null
+  idle_limit_s: number
+  warm_size: number
+  plan_cold: FastPlan
+  plan_warm: FastPlan
+  plan_now: FastPlan
 }
 
 export interface LayoutResult {

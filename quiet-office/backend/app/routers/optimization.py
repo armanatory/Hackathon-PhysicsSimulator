@@ -7,7 +7,15 @@ from typing import Dict
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 
-from ..allsolve import ALLSOLVE_AVAILABLE, OptimizationAborted, OptimizationRunner, planned_layout_count
+from ..allsolve import (
+    ALLSOLVE_AVAILABLE,
+    WARM_MACHINES,
+    OptimizationAborted,
+    OptimizationRunner,
+    plan_fast_search,
+    planned_layout_count,
+    pool,
+)
 from .. import explain as explainer
 from ..config import get_settings
 from ..models import (
@@ -49,19 +57,58 @@ async def get_capabilities() -> Capabilities:
     )
 
 
+def _machines(sources: int, bands: int, budget_s: float) -> dict:
+    """The warm machine pool, and what a fast search could do right now with and without it."""
+    status = pool.status()
+    solves_per_layout = max(1, sources) * max(1, bands)
+
+    def plan(machines: int) -> dict:
+        layouts, used, seconds = plan_fast_search(budget_s, solves_per_layout, machines)
+        return {"layouts": layouts, "machines": used, "seconds": round(seconds)}
+
+    return {**status, "warm_size": WARM_MACHINES, "plan_cold": plan(0), "plan_warm": plan(WARM_MACHINES), "plan_now": plan(status["machines"])}
+
+
+@router.get("/machines")
+async def get_machines(sources: int = 1, bands: int = 2, budget_s: float = 30.0) -> dict:
+    """Whether cloud machines are being held ready, and how many layouts fit the time budget."""
+    if not ALLSOLVE_AVAILABLE or not get_settings().has_credentials:
+        raise HTTPException(status_code=503, detail="Allsolve is not available on the backend")
+    return await asyncio.to_thread(_machines, sources, bands, budget_s)
+
+
+@router.post("/machines/warm")
+async def warm_machines(sources: int = 1, bands: int = 2, budget_s: float = 30.0) -> dict:
+    """Boot machines on Allsolve and hold them, so the next fast search does not wait for them.
+
+    They cost credits while held. An unused pool is given back after five minutes.
+    """
+    if not ALLSOLVE_AVAILABLE or not get_settings().has_credentials:
+        raise HTTPException(status_code=503, detail="Allsolve is not available on the backend")
+    pool.warm(WARM_MACHINES)
+    return await asyncio.to_thread(_machines, sources, bands, budget_s)
+
+
+@router.post("/machines/release")
+async def release_machines(sources: int = 1, bands: int = 2, budget_s: float = 30.0) -> dict:
+    """Give the held machines back to Allsolve."""
+    await asyncio.to_thread(pool.release)
+    return await asyncio.to_thread(_machines, sources, bands, budget_s)
+
+
 @router.post("/explain", response_model=ExplainResponse)
 async def explain_result(request: ExplainRequest) -> ExplainResponse:
-    """Explain a result in plain language with an OpenAI model.
+    """Explain an Allsolve run in plain language with an OpenAI model.
 
-    For an Allsolve run, pass its optimization_id so the run log is part of what is explained.
-    The model only narrates the facts it is given; it computes nothing.
+    Only a run that was really sent to Allsolve can be explained: pass its optimization_id so
+    its log is part of the facts. The model only narrates what it is given; it computes nothing.
     """
     if not explainer.is_configured():
         raise HTTPException(status_code=503, detail="No OpenAI key configured. Add OPENAI_API_KEY to .env and restart the backend.")
-    entries = None
-    if request.optimization_id:
-        runner = _get(request.optimization_id).get("runner")
-        entries = runner.log.since(0) if runner else None
+    runner = _optimizations.get(request.optimization_id or "", {}).get("runner")
+    entries = runner.log.since(0) if runner else None
+    if not entries:
+        raise HTTPException(status_code=409, detail="Nothing has been run on Allsolve yet, so there is no run to explain.")
     try:
         return ExplainResponse(**await asyncio.to_thread(explainer.explain, request.context, entries))
     except RuntimeError as e:
@@ -84,6 +131,8 @@ async def start_optimization(
         raise HTTPException(status_code=503, detail="Allsolve API credentials are not configured (.env)")
     if params.n_screens > len(params.office.slots):
         raise HTTPException(status_code=422, detail="More screens than candidate positions")
+    if params.strategy == "fast" and params.model != "2d":
+        raise HTTPException(status_code=422, detail="The fast search runs on the 2D model only")
 
     optimization_id = str(uuid.uuid4())
     _optimizations[optimization_id] = {

@@ -231,7 +231,9 @@ function evaluate(office: Office, slotIds: number[], params: SearchParams) {
     zones.push(energyMean(levels.slice(start, start + count)))
     start += count
   }
-  return { desks: levels.slice(0, office.desks.length), zones, raw: rawScore(levels) }
+  // What the search minimises: the quiet zones when there are any, otherwise the desks.
+  const objective = levels.length > office.desks.length ? levels.slice(office.desks.length) : levels
+  return { desks: levels.slice(0, office.desks.length), zones, raw: rawScore(objective) }
 }
 
 function combinations(ids: number[], k: number): number[][] {
@@ -258,7 +260,7 @@ export function estimateSearch(office: Office, params: SearchParams): LayoutResu
   const ids = office.slots.map((s) => s.id)
   const n = Math.min(params.n_screens, ids.length)
 
-  if (params.strategy === 'exhaustive') {
+  if (params.strategy !== 'greedy') {
     for (const combo of combinations(ids, n)) if (combo.length) results.push(result(combo))
     return results
   }

@@ -4,7 +4,7 @@
 
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef, watch } from 'vue'
-import type { Capabilities, Evidence, LayoutResult, LogEntry, Office, OptimizationParams, Point, ResultSource, SimulationModel, Strategy } from '@/types'
+import type { Capabilities, Evidence, LayoutResult, LogEntry, Machines, Office, OptimizationParams, Point, ResultSource, SimulationModel, Strategy } from '@/types'
 import { EARSHOT_DB, PANEL_TYPES, defaultOffice } from '@/types'
 import { optimizationApi } from '@/api/optimization'
 import { bestOf, estimateLayout, estimateSearch, suggestSlots } from '@/physics/estimate'
@@ -18,6 +18,16 @@ const ELEMENTS_PER_WAVELENGTH = 6
 const SPEED_OF_SOUND = 343
 
 const POLL_INTERVAL_MS = 2000
+const FAST_POLL_INTERVAL_MS = 700
+const FAST_BUDGET_S = 30
+const MAX_CANDIDATES = 300 // more than Allsolve can run at once; the backend takes what fits
+
+/** An Allsolve run that finished, kept so it can still be explained after the page moves on. */
+interface FinishedRun {
+  id: string
+  finishedAt: string
+  context: Record<string, unknown>
+}
 const STORAGE_KEY = 'quietoffice.office.v1'
 
 /** 'zone' moves a quiet zone; 'zonesize' drags its bottom-right corner to resize it. */
@@ -58,7 +68,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const panelTypeId = ref('screen')
   const screenAbsorbing = ref(false)
   const model = ref<SimulationModel>('3d')
-  const parallelJobs = ref(4)
+  const parallelJobs = ref(1)
 
   const capabilities = ref<Capabilities | null>(null)
   const backendOnline = ref(false)
@@ -78,6 +88,11 @@ export const useOptimizationStore = defineStore('optimization', () => {
   // Proof of the Allsolve run: its log and the raw solver output
   const logEntries = ref<LogEntry[]>([])
   const evidence = ref<Evidence | null>(null)
+
+  // Cloud machines held ready for the fast search
+  const machines = ref<Machines | null>(null)
+  const machinesBusy = ref(false)
+  const lastRun = ref<FinishedRun | null>(null)
 
   // Plain-language explanation
   const explanation = ref('')
@@ -136,6 +151,11 @@ export const useOptimizationStore = defineStore('optimization', () => {
   })
   const plannedLayouts = computed(() => {
     const slots = office.value.slots.length, n = placedScreens.value
+    if (strategy.value === 'fast') {
+      // Every combination is ranked by the estimate; Allsolve simulates as many as fit the time.
+      const fit = machines.value?.plan_now.layouts ?? 2
+      return Math.min(layouts.value.length || fit, fit)
+    }
     if (strategy.value === 'greedy') {
       let total = 1
       for (let k = 0; k < n; k++) total += slots - k
@@ -180,12 +200,23 @@ export const useOptimizationStore = defineStore('optimization', () => {
     return rows
   })
 
-  const canExplain = computed(() => backendOnline.value && !!capabilities.value?.ai_configured && (!!best.value || logEntries.value.length > 0))
+  /**
+   * The Allsolve run an explanation would be about. The quick estimate is never explained as
+   * if it were a simulation: with no run on screen, this is the last run that finished.
+   */
+  const explainTarget = computed<{ id: string; earlier: FinishedRun | null } | null>(() => {
+    if (optimizationId.value && logEntries.value.length) return { id: optimizationId.value, earlier: null }
+    return lastRun.value ? { id: lastRun.value.id, earlier: lastRun.value } : null
+  })
+  const canExplain = computed(() => backendOnline.value && !!capabilities.value?.ai_configured && !isRunning.value && !!explainTarget.value)
   const explainBlockedReason = computed(() => {
     if (!backendOnline.value) return 'The backend is not running, so the explanation is not available.'
     if (!capabilities.value?.ai_configured) return 'Add OPENAI_API_KEY to .env and restart the backend to get an explanation in plain language.'
+    if (!explainTarget.value) return 'Nothing has been run on Allsolve yet. The explanation is about a real run, not the quick estimate: press Run on Allsolve first.'
     return null
   })
+  /** When the explanation would be about an earlier run and not what is on screen: when that run finished. */
+  const explainsEarlierRun = computed(() => explainTarget.value?.earlier?.finishedAt ?? null)
 
   function inEarshot(layout: LayoutResult | null): number {
     return layout ? layout.desk_levels_db.filter((l) => l >= EARSHOT_DB).length : 0
@@ -205,6 +236,21 @@ export const useOptimizationStore = defineStore('optimization', () => {
       backendOnline.value = false
     }
     runEstimate()
+    void refreshMachines()
+  }
+
+  /** Ask the backend whether machines are held ready, and what fits the time budget. */
+  async function refreshMachines(action?: 'warm' | 'release'): Promise<void> {
+    if (!backendOnline.value || !capabilities.value?.sdk_installed || !capabilities.value?.credentials_configured) return
+    if (action) machinesBusy.value = true
+    try {
+      machines.value = await optimizationApi.machines(office.value.sources.length, frequencies.value.length, FAST_BUDGET_S, action)
+      if (machines.value.state === 'starting') setTimeout(() => void refreshMachines(), 2000)
+    } catch {
+      machines.value = null
+    } finally {
+      machinesBusy.value = false
+    }
   }
 
   /** Instant answer from the in-browser estimate. */
@@ -235,7 +281,17 @@ export const useOptimizationStore = defineStore('optimization', () => {
     evidence.value = null
     explanation.value = ''
     try {
-      const response = await optimizationApi.start({ ...params.value, n_screens: placedScreens.value })
+      const request: OptimizationParams = { ...params.value, n_screens: placedScreens.value }
+      if (strategy.value === 'fast') {
+        // The estimate has scored every combination: send the most promising ones, best first.
+        request.candidate_layouts = estimateSearch(office.value, request)
+          .filter((l) => l.slot_ids.length === placedScreens.value)
+          .sort((a, b) => a.score - b.score)
+          .slice(0, MAX_CANDIDATES)
+          .map((l) => l.slot_ids)
+        request.time_budget_s = FAST_BUDGET_S
+      }
+      const response = await optimizationApi.start(request)
       optimizationId.value = response.optimization_id
       status.value = 'running'
       await poll(response.optimization_id)
@@ -263,6 +319,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
         source.value = 'allsolve'
         projectUrl.value = results.project_url
         status.value = 'completed'
+        lastRun.value = { id, finishedAt: new Date().toISOString(), context: explainContext() }
+        void refreshMachines()
         return
       }
       if (s.status === 'failed' || s.status === 'aborted') {
@@ -270,7 +328,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
         error.value = s.message ?? 'The run did not finish'
         return
       }
-      await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS))
+      await new Promise((resolve) => setTimeout(resolve, strategy.value === 'fast' ? FAST_POLL_INTERVAL_MS : POLL_INTERVAL_MS))
     }
   }
 
@@ -284,14 +342,11 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
   }
 
-  /** Ask the AI model to explain what is on screen, and the run log if there is one. */
-  async function explain(): Promise<void> {
-    if (!canExplain.value || explaining.value) return
-    explaining.value = true
-    explainError.value = null
+  /** The facts of the run on screen, for the AI model to put into words. */
+  function explainContext(): Record<string, unknown> {
     const o = office.value, b = baseline.value, w = best.value
     const round = (values: number[]) => values.map((v) => Math.round(v * 10) / 10)
-    const context = {
+    return {
       source_of_numbers: source.value,
       run_status: status.value,
       run_error: error.value,
@@ -309,7 +364,13 @@ export const useOptimizationStore = defineStore('optimization', () => {
         panel_height_m: panelType.value.height_m,
         panel_surface: screenAbsorbing.value ? 'absorbing' : 'hard',
         speech_bands_hz: frequencies.value,
-        search: strategy.value === 'greedy' ? 'one screen at a time' : 'every combination',
+        search:
+          strategy.value === 'greedy'
+            ? 'one screen at a time'
+            : strategy.value === 'fast'
+              ? `as many of the most promising layouts as fit ${FAST_BUDGET_S} seconds, all at once`
+              : 'every combination',
+        noise_minimised_at: o.quiet_zones.length ? 'the quiet zones' : 'the desks',
         allsolve_model: model.value,
       },
       result:
@@ -332,8 +393,19 @@ export const useOptimizationStore = defineStore('optimization', () => {
         : null,
       quick_estimate_score_for_same_layout: estimateScoreForBest.value === null ? null : Math.round(estimateScoreForBest.value * 10) / 10,
     }
+  }
+
+  /** Ask the AI model to explain an Allsolve run: the one on screen, or else the last one that finished. */
+  async function explain(): Promise<void> {
+    const target = explainTarget.value
+    if (!canExplain.value || explaining.value || !target) return
+    explaining.value = true
+    explainError.value = null
+    const context = target.earlier
+      ? { ...target.earlier.context, run_finished_at: target.earlier.finishedAt, page_changed_since_run: true }
+      : { ...explainContext(), page_changed_since_run: false }
     try {
-      const answer = await optimizationApi.explain(context, logEntries.value.length ? optimizationId.value : null)
+      const answer = await optimizationApi.explain(context, target.id)
       explanation.value = answer.text
       explanationModel.value = answer.model
     } catch (e) {
@@ -350,6 +422,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
   }
   function setStrategy(s: Strategy): void {
     strategy.value = s
+    if (s === 'fast') model.value = '2d' // one 3D layout takes minutes to mesh
     runEstimate()
   }
   function setPanelType(id: string): void {
@@ -362,6 +435,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
   }
   function setModel(value: SimulationModel): void {
     model.value = value
+    if (value === '3d' && strategy.value === 'fast') strategy.value = 'greedy'
     runEstimate()
   }
   function toggleFrequency(hz: number): void {
@@ -369,6 +443,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     if (has && frequencies.value.length === 1) return
     frequencies.value = has ? frequencies.value.filter((f) => f !== hz) : [...frequencies.value, hz].sort((a, b) => a - b)
     runEstimate()
+    void refreshMachines()
   }
 
   // ============================================================================
@@ -610,6 +685,10 @@ export const useOptimizationStore = defineStore('optimization', () => {
     comparison,
     estimateScoreForBest,
     canExplain,
+    explainsEarlierRun,
+    machines,
+    machinesBusy,
+    refreshMachines,
     explainBlockedReason,
     explain,
     view,

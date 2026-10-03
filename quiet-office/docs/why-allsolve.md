@@ -53,10 +53,13 @@ through that in a GUI. What the SDK gives us, concretely:
 - **Geometry as variables.** Screen positions are project variables
   (`s0_x`, `s0_y`, ...). One project describes every layout; see
   [`project_builder.py`](../backend/app/allsolve/project_builder.py).
-- **Parallel by construction.** A round of layouts is split into several sweeps that mesh
-  and solve at the same time in the cloud, started from plain Python threads. With several
+- **Parallel by construction.** Every step of a sweep runs on its own cloud machine, up to
+  100 at the same time, so a round of layouts takes about as long as one layout. With several
   noise sources each layout needs one solve per source and band, so this is where the wall
-  time goes, and where local software on one workstation would queue.
+  time goes, and where local software on one workstation would queue. What takes time is
+  booting the machines, not solving: see the measurements in
+  [`machines.py`](../backend/app/allsolve/machines.py). The fast search boots them once with a
+  resource reservation, or uses machines started beforehand.
 - **Sweeps as one cloud job.** `create_variable_overrides` plus one mesh and one harmonic
   simulation run a whole round of layouts and frequencies. Allsolve remeshes only when the
   geometry changes, so the frequencies of a layout share its mesh.

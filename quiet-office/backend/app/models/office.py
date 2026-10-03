@@ -91,6 +91,15 @@ class Office(BaseModel):
             points.extend(zone.sample_points())
         return points
 
+    def objective_indices(self) -> List[int]:
+        """Which of receivers() the search minimises the noise at.
+
+        The quiet zones when there are any: they are the places the user asked to keep quiet.
+        Desks are then still reported, but do not steer the search. Without zones, the desks.
+        """
+        n_desks, n_all = len(self.desks), len(self.receivers())
+        return list(range(n_desks, n_all)) if n_all > n_desks else list(range(n_desks))
+
     def zone_ranges(self) -> List[Tuple[int, int]]:
         """For each quiet zone, where its points sit in receivers(): (start, end)."""
         ranges, start = [], len(self.desks)
@@ -180,12 +189,13 @@ class OptimizationParams(BaseModel):
         description="True: the panel faces absorb sound. False: they reflect it. Only used in 3D.",
     )
     parallel_jobs: int = Field(
-        default=4,
+        default=1,
         ge=1,
         le=8,
         description=(
-            "How many Allsolve jobs each round of layouts is split into and run at the same time. "
-            "More is faster but uses more of a shared account's compute quota."
+            "How many sweeps each round of layouts is split into. Allsolve already runs every step "
+            "of one sweep on its own machine, and measured runs were slower when split, so 1 is best. "
+            "Not used by the fast search."
         ),
     )
     model: Literal["2d", "3d"] = Field(
@@ -203,13 +213,32 @@ class OptimizationParams(BaseModel):
         max_length=4,
         description="Speech bands to simulate. Higher bands need a much finer mesh.",
     )
-    strategy: Literal["greedy", "exhaustive"] = Field(
+    strategy: Literal["greedy", "exhaustive", "fast"] = Field(
         default="greedy",
         description=(
             "greedy places one screen at a time and keeps the best (about 12+11+10 layouts); "
-            "exhaustive tries every combination (220 layouts for 3 screens in 12 slots)"
+            "exhaustive tries every combination (220 layouts for 3 screens in 12 slots); "
+            "fast simulates as many of candidate_layouts as fit time_budget_s, all at once"
         ),
     )
+    candidate_layouts: List[List[int]] = Field(
+        default_factory=list,
+        max_length=3000,
+        description=(
+            "For the fast search: layouts (slot ids, one per screen) worth simulating, most promising "
+            "first. The browser ranks every combination with its quick estimate. Empty: an even "
+            "spread over all combinations."
+        ),
+    )
+    fixed_mesh: bool = Field(
+        default=True,
+        description=(
+            "Fast search only. True: every candidate position is drawn into one mesh and a screen is "
+            "switched on by making its rectangle very heavy, so nothing is meshed per layout. "
+            "False: each layout cuts its screens out of the air and gets its own mesh."
+        ),
+    )
+    time_budget_s: float = Field(default=30.0, ge=15.0, le=300.0, description="Wall time the fast search aims for")
 
 
 class LayoutResult(BaseModel):
