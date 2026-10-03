@@ -35,3 +35,6 @@ __MACOSX/
 
 # Deploy config example is committed
 !.env.deploy.example
+
+# Browser automation snapshots
+.playwright-mcp/
