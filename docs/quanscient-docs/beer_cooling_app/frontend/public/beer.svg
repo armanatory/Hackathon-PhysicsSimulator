@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="beer" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b"/>
+      <stop offset="100%" style="stop-color:#d97706"/>
+    </linearGradient>
+    <linearGradient id="foam" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#fef3c7"/>
+      <stop offset="100%" style="stop-color:#fde68a"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e5e7eb;stop-opacity:0.3"/>
+      <stop offset="50%" style="stop-color:#ffffff;stop-opacity:0.1"/>
+      <stop offset="100%" style="stop-color:#e5e7eb;stop-opacity:0.3"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Glass -->
+  <path d="M25 20 L20 85 Q20 90 25 90 L75 90 Q80 90 80 85 L75 20 Z" fill="url(#glass)" stroke="#9ca3af" stroke-width="2"/>
+
+  <!-- Beer liquid -->
+  <path d="M27 35 L23 83 Q23 87 27 87 L73 87 Q77 87 77 83 L73 35 Z" fill="url(#beer)"/>
+
+  <!-- Foam -->
+  <ellipse cx="50" cy="35" rx="24" ry="8" fill="url(#foam)"/>
+  <ellipse cx="35" cy="30" rx="8" ry="5" fill="#fef3c7"/>
+  <ellipse cx="55" cy="28" rx="10" ry="6" fill="#fef3c7"/>
+  <ellipse cx="65" cy="32" rx="7" ry="4" fill="#fef3c7"/>
+
+  <!-- Bubbles -->
+  <circle cx="35" cy="60" r="2" fill="#fef3c7" opacity="0.6"/>
+  <circle cx="55" cy="70" r="1.5" fill="#fef3c7" opacity="0.5"/>
+  <circle cx="45" cy="55" r="1" fill="#fef3c7" opacity="0.4"/>
+  <circle cx="60" cy="65" r="1.5" fill="#fef3c7" opacity="0.5"/>
+  <circle cx="40" cy="75" r="1" fill="#fef3c7" opacity="0.4"/>
+
+  <!-- Handle -->
+  <path d="M80 30 Q95 30 95 50 Q95 70 80 70" fill="none" stroke="#9ca3af" stroke-width="8" stroke-linecap="round"/>
+  <path d="M80 30 Q92 30 92 50 Q92 70 80 70" fill="none" stroke="url(#glass)" stroke-width="4" stroke-linecap="round"/>
+</svg>
+

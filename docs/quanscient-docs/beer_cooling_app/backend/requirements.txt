@@ -1,0 +1,22 @@
+# FastAPI and server
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.6
+
+# Async support
+httpx>=0.26.0
+websockets>=12.0
+
+# Data validation
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# YAML handling
+pyyaml>=6.0.1
+
+# Allsolve SDK
+# allsolve>=0.2.0
+
+# Utilities
+python-dotenv>=1.0.0
+

@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply font-sans antialiased;
+  background-color: #FAFAFA;
+  min-height: 100vh;
+  color: #212121;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-grey-100 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-grey-400 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-grey-500;
+}
+
+.card {
+  @apply bg-white rounded-lg border border-grey-200 shadow-sm;
+}
+
+.temp-gradient-hot {
+  background: linear-gradient(90deg, #ef4444 0%, #f97316 50%, #eab308 100%);
+}
+
+.temp-gradient-cold {
+  background: linear-gradient(90deg, #0ea5e9 0%, #06b6d4 50%, #22d3d8 100%);
+}
+
+input[type="range"] {
+  @apply w-full h-1.5 rounded-full appearance-none cursor-pointer bg-grey-300;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  @apply appearance-none w-4 h-4 rounded-full bg-primary-500 shadow-md;
+  cursor: grab;
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  @apply bg-primary-600 scale-110;
+}
+
+.btn-primary {
+  @apply px-5 py-2.5 bg-primary-500 text-white font-medium rounded-lg text-sm;
+  @apply hover:bg-primary-600 active:bg-primary-700;
+  @apply transition-colors duration-150;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-secondary {
+  @apply px-5 py-2.5 bg-white text-grey-700 font-medium rounded-lg text-sm;
+  @apply border border-grey-300 hover:bg-grey-50;
+  @apply transition-colors duration-150;
+}
+
+.btn-danger {
+  @apply px-5 py-2.5 bg-red-600 text-white font-medium rounded-lg text-sm;
+  @apply hover:bg-red-700 active:bg-red-800;
+  @apply transition-colors duration-150;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+}
