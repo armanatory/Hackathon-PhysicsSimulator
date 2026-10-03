@@ -1,4 +1,4 @@
-"""Data models for the QuietOffice API."""
+"""Data models for the Allquiet API."""
 
 from .office import (
     Capabilities,

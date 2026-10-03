@@ -1,4 +1,4 @@
-// Writes sample-office.glb: the QuietOffice demo office as a 3D model, in the same container
+// Writes sample-office.glb: the Allquiet demo office as a 3D model, in the same container
 // and conventions as a phone scan export (binary glTF 2.0, one mesh, metres, Y up).
 // It is generated, not scanned: a clean, closed room to test scan import against.
 //
@@ -51,7 +51,7 @@ const min = [0, 1, 2].map((k) => Math.min(...positions.filter((_, i) => i % 3 ==
 const max = [0, 1, 2].map((k) => Math.max(...positions.filter((_, i) => i % 3 === k)))
 
 const gltf = {
-  asset: { version: '2.0', generator: 'QuietOffice make-sample-office' },
+  asset: { version: '2.0', generator: 'Allquiet make-sample-office' },
   scene: 0,
   scenes: [{ nodes: [0] }],
   nodes: [{ mesh: 0, name: 'sample-office' }],

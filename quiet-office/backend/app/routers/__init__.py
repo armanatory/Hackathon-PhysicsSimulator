@@ -1,4 +1,4 @@
-"""API routers for QuietOffice."""
+"""API routers for Allquiet."""
 
 from .optimization import router as optimization_router
 

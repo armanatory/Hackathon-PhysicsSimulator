@@ -1,4 +1,4 @@
-# QuietOffice frontend: build the Vue app, then serve it with nginx.
+# Allquiet frontend: build the Vue app, then serve it with nginx.
 FROM node:22-alpine AS build
 WORKDIR /app
 COPY package.json package-lock.json ./

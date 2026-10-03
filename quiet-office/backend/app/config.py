@@ -34,7 +34,7 @@ class Settings(BaseSettings):
     openai_model: str = "gpt-4o-mini"
 
     # Application settings
-    app_name: str = "QuietOffice"
+    app_name: str = "Allquiet"
     debug: bool = False
 
     # Keep the Allsolve project after a run so it can be opened in the browser.

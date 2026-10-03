@@ -16,7 +16,7 @@ from ..models.office import AIR_DENSITY, OptimizationParams
 from .project_builder import SCREEN_DENSITY_RATIO
 
 BATCH_VARIABLE = "batch"
-BATCH_DONE_LINE = "QuietOffice batch"  # start of the line a machine prints when its share is solved
+BATCH_DONE_LINE = "Allquiet batch"  # start of the line a machine prints when its share is solved
 PRESSURES_OUTPUT = "pressures"  # [layout][source][band][probe], flattened
 SECONDS_OUTPUT = "solve_seconds"  # one per solve, in the same order
 

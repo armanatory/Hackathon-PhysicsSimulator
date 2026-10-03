@@ -20,8 +20,8 @@ const props = defineProps<{
   scanPlacement: Placement | null
 }>()
 
-const INK = 0x17302b
-const PIN = 0xd9a520
+const INK = 0x1d1b2f
+const PIN = 0x5b3fd3
 const DESK = { width: 1.2, depth: 0.7, height: 0.75 }
 
 const host = ref<HTMLDivElement | null>(null)
@@ -60,12 +60,12 @@ function build(): void {
 
   // Floor
   const shape = new THREE.Shape(office.outline.map((p) => new THREE.Vector2(p.x, p.y)))
-  const floor = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshLambertMaterial({ color: 0xf8f9f5, side: THREE.DoubleSide }))
+  const floor = new THREE.Mesh(new THREE.ShapeGeometry(shape), new THREE.MeshLambertMaterial({ color: 0xffffff, side: THREE.DoubleSide }))
   floor.rotation.x = Math.PI / 2
   content.add(floor)
 
   // Walls: see-through, so the inside stays visible from any side
-  const wallMaterial = new THREE.MeshLambertMaterial({ color: 0xcbd3c8, transparent: true, opacity: 0.28, side: THREE.DoubleSide, depthWrite: false })
+  const wallMaterial = new THREE.MeshLambertMaterial({ color: 0xdfe2ec, transparent: true, opacity: 0.28, side: THREE.DoubleSide, depthWrite: false })
   const edgePoints: number[] = []
   office.outline.forEach((a, i) => {
     const b = office.outline[(i + 1) % office.outline.length]
@@ -128,7 +128,7 @@ function build(): void {
     const vertical = slot.orientation === 'v'
     const size: [number, number, number] = vertical ? [0.08, height, g.length] : [g.length, height, 0.08]
     if (chosen.has(slot.id)) {
-      const panel = new THREE.Mesh(new THREE.BoxGeometry(...size), new THREE.MeshLambertMaterial({ color: params.screen_absorbing ? 0x5a6d67 : INK }))
+      const panel = new THREE.Mesh(new THREE.BoxGeometry(...size), new THREE.MeshLambertMaterial({ color: params.screen_absorbing ? 0x646880 : INK }))
       panel.position.set(slot.x, height / 2, slot.y)
       content.add(panel)
       const cap = new THREE.Mesh(new THREE.BoxGeometry(size[0] + 0.02, 0.04, size[2] + 0.02), new THREE.MeshBasicMaterial({ color: PIN }))
@@ -194,7 +194,7 @@ onMounted(() => {
   if (!host.value) return
   renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-  renderer.setClearColor(0xedf0ea)
+  renderer.setClearColor(0xeaf2fd)
   host.value.appendChild(renderer.domElement)
 
   scene = new THREE.Scene()

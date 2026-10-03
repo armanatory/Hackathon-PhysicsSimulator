@@ -1,4 +1,4 @@
-# QuietOffice backend
+# Allquiet backend
 
 FastAPI backend that searches for the best placement of a few acoustic screens in an
 open-plan office by running Allsolve acoustic simulations through the Python SDK.

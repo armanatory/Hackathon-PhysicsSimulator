@@ -1,4 +1,4 @@
-"""Allsolve SDK integration for QuietOffice."""
+"""Allsolve SDK integration for Allquiet."""
 
 from .optimization_runner import ALLSOLVE_AVAILABLE, OptimizationAborted, OptimizationRunner, planned_layout_count
 from .machines import WARM_MACHINES, plan_fast_search, pool, solve_seconds, unknowns_2d

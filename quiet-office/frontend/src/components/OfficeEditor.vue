@@ -256,7 +256,7 @@ async function onFile(event: Event): Promise<void> {
     >
       <defs>
         <pattern id="grid" :width="U" :height="U" patternUnits="userSpaceOnUse">
-          <path :d="`M${U} 0H0V${U}`" fill="none" stroke="#17302b" stroke-opacity=".08" stroke-width=".2" />
+          <path :d="`M${U} 0H0V${U}`" fill="none" stroke="#1d1b2f" stroke-opacity=".08" stroke-width=".2" />
         </pattern>
       </defs>
       <rect :x="view.minX * U" :y="view.minY * U" :width="view.width * U" :height="view.height * U" fill="url(#grid)" />

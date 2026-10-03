@@ -1,4 +1,4 @@
-"""Build the QuietOffice Allsolve project in 3D.
+"""Build the Allquiet Allsolve project in 3D.
 
 Same idea as the 2D builder, with height:
 

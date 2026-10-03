@@ -435,7 +435,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
     const link = document.createElement('a')
     link.href = URL.createObjectURL(new Blob([JSON.stringify(record, null, 2)], { type: 'application/json' }))
-    link.download = `quietoffice-run-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.json`
+    link.download = `allquiet-run-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.json`
     link.click()
     URL.revokeObjectURL(link.href)
   }

@@ -1,13 +1,13 @@
-# QuietOffice
+# Allquiet
 
 **Put acoustic treatment where physics says it matters.**
 
-An open office can afford only a few acoustic screens. QuietOffice simulates how speech from
+An open office can afford only a few acoustic screens. Allquiet simulates how speech from
 one conversation spreads through the room and searches for the screen positions that lower
 the speech level at the desks the most.
 
 This folder is self-contained so it does not collide with the other ideas in the repository.
-Everything QuietOffice lives here; the shared `backend/`, `frontend/` and `simulations/`
+Everything Allquiet lives here; the shared `backend/`, `frontend/` and `simulations/`
 folders in the repository root are left untouched.
 
 ## Read first

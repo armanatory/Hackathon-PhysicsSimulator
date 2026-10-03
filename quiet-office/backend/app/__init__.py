@@ -1,1 +1,1 @@
-"""QuietOffice backend application."""
+"""Allquiet backend application."""

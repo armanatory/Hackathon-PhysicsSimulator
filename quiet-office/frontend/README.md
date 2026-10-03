@@ -1,4 +1,4 @@
-# QuietOffice frontend
+# Allquiet frontend
 
 Vue 3 + Vite + TypeScript + Pinia. Structure follows the reference app in
 [beer_cooling_app/frontend](../../docs/quanscient-docs/beer_cooling_app/frontend); the look comes

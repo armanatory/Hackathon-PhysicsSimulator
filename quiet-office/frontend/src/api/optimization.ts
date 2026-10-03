@@ -1,5 +1,5 @@
 /**
- * API client for the QuietOffice backend
+ * API client for the Allquiet backend
  */
 
 import type {

@@ -19,9 +19,9 @@ OPENAI_URL = "https://api.openai.com/v1/chat/completions"
 MAX_SOLVER_LINES = 12
 MAX_LOG_ENTRIES = 60
 
-SYSTEM_PROMPT = """You explain one run of QuietOffice to an office manager who is not an engineer.
+SYSTEM_PROMPT = """You explain one run of Allquiet to an office manager who is not an engineer.
 
-QuietOffice decides where to put a few acoustic screens in an open office so that the places
+Allquiet decides where to put a few acoustic screens in an open office so that the places
 marked as quiet get as little noise as possible. The run you explain is a real physics
 simulation of sound waves, done in the cloud on Quanscient Allsolve.
 

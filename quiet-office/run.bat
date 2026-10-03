@@ -1,13 +1,13 @@
 @echo off
-rem QuietOffice launcher. Double-click to install what is missing and start the app.
+rem Allquiet launcher. Double-click to install what is missing and start the app.
 rem Frontend always starts. Backend starts too when Python 3.10+ is installed.
 rem The Python environment (.venv) and the keys (.env) live in the repository root.
 setlocal
 cd /d "%~dp0"
-title QuietOffice launcher
+title Allquiet launcher
 
 echo.
-echo  QuietOffice
+echo  Allquiet
 echo  -----------
 
 where node >nul 2>nul
@@ -67,18 +67,18 @@ if not exist "..\.env" (
 )
 
 echo  Starting the backend on http://localhost:8000 ...
-start "QuietOffice backend" /d "%~dp0backend" cmd /k ..\..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+start "Allquiet backend" /d "%~dp0backend" cmd /k ..\..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
 
 :frontend
 echo  Starting the frontend on http://localhost:5173 ...
-start "QuietOffice frontend" /d "%~dp0frontend" cmd /k npm run dev
+start "Allquiet frontend" /d "%~dp0frontend" cmd /k npm run dev
 
 rem Give the dev server a moment before opening the browser.
 ping -n 6 127.0.0.1 >nul
 start "" http://localhost:5173
 
 echo.
-echo  Running. Close the "QuietOffice frontend" and "QuietOffice backend" windows to stop.
+echo  Running. Close the "Allquiet frontend" and "Allquiet backend" windows to stop.
 ping -n 9 127.0.0.1 >nul
 exit /b 0
 

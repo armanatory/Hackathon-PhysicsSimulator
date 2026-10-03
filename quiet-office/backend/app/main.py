@@ -1,5 +1,5 @@
 """
-QuietOffice API
+Allquiet API
 
 A FastAPI application that searches for the best placement of a few acoustic screens
 in an open-plan office, using Allsolve harmonic acoustic simulations through the SDK.
@@ -33,7 +33,7 @@ logger.info(f"   Allsolve SDK installed: {'yes' if ALLSOLVE_AVAILABLE else 'no'}
 logger.info(f"   API key configured: {'yes' if settings.has_credentials else 'no'}")
 
 app = FastAPI(
-    title="QuietOffice API",
+    title="Allquiet API",
     description="""
     Put acoustic treatment where physics says it matters.
 

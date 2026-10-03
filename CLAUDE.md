@@ -1,6 +1,6 @@
 # Hackathon-PhysicsSimulator
 
-QuietOffice lives in `quiet-office/`: a Vue frontend (`frontend/`) and a Python backend (`backend/`) that builds and runs acoustic simulations with the Quanscient Allsolve SDK. Start everything with `quiet-office/run.bat`. The `.venv` and `.env` (Allsolve keys) live in the repository root.
+Allquiet lives in `quiet-office/`: a Vue frontend (`frontend/`) and a Python backend (`backend/`) that builds and runs acoustic simulations with the Quanscient Allsolve SDK. Start everything with `quiet-office/run.bat`. The `.venv` and `.env` (Allsolve keys) live in the repository root.
 
 ## Allsolve code
 

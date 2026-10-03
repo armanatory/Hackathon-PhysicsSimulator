@@ -1,4 +1,4 @@
-# QuietOffice backend: FastAPI + Allsolve SDK
+# Allquiet backend: FastAPI + Allsolve SDK
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \

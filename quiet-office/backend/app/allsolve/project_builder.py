@@ -1,4 +1,4 @@
-"""Build the QuietOffice Allsolve project from an office description.
+"""Build the Allquiet Allsolve project from an office description.
 
 The model is a 2D top-down slice of the office solved with harmonic acoustic waves:
 
@@ -129,13 +129,13 @@ def project_name(params: OptimizationParams, model: str, fixed_mesh: bool = Fals
     """A name that tells one search from another in the Allsolve project list.
 
     Model, room size, what is searched and when it started, for example
-    "QuietOffice 2D fast - 16.0 x 10.0 m - 12 positions - 03 Oct 16:42:07". The one-mesh project
+    "Allquiet 2D fast - 16.0 x 10.0 m - 12 positions - 03 Oct 16:42:07". The one-mesh project
     serves any number of panels, so it is named by its candidate positions.
     """
     min_x, min_y, max_x, max_y = params.office.bounds
     searched = f"{len(params.office.slots)} positions" if fixed_mesh else f"{params.n_screens} panels"
     kind = f"{model} fast" if fixed_mesh else model
-    return f"QuietOffice {kind} - {max_x - min_x:.1f} x {max_y - min_y:.1f} m - {searched} - {datetime.now():%d %b %H:%M:%S}"
+    return f"Allquiet {kind} - {max_x - min_x:.1f} x {max_y - min_y:.1f} m - {searched} - {datetime.now():%d %b %H:%M:%S}"
 
 
 def source_variables(index: int) -> List[str]:

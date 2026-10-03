@@ -59,7 +59,14 @@ async function importScan(event: Event): Promise<void> {
 <template>
   <header class="bar">
     <div class="wrap">
-      <span class="brand"><i></i>QuietOffice</span>
+      <span class="brand">
+        <svg viewBox="0 0 32 32" aria-hidden="true">
+          <rect width="32" height="32" rx="7" />
+          <path d="M9 9v14M16 12v8M23 15v2" />
+        </svg>
+        <span>All<b>quiet</b></span>
+        <small>simulated on Allsolve</small>
+      </span>
       <button v-if="store.started" type="button" class="btn ghost small" :disabled="store.isRunning" @click="store.newJob()">New job</button>
     </div>
   </header>
