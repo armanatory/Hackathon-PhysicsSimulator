@@ -19,6 +19,7 @@ Our entry for **Hack for Humanity: Finland** (Tampere, 3 Oct 2026) — the Quans
     ├── idea-<name>.md      # personal brainstorm files (Arman, Santeri, Veli)
     ├── sdk-feedback.md     # SDK pain points & insights (a judging criterion!)
     ├── pitch.md            # pitch / demo notes
+    ├── ui-exploring/       # static UI sketches, one numbered folder each
     └── quanscient-docs/    # challenge brief, example app, SDK agent skills
 ```
 

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UI explorations</title>
+  <style>
+    :root {
+      --bg: #f6f6f8; --surface: #fff; --text: #17171c; --muted: #62626e;
+      --border: #dedee6; --accent: #5b3fd6;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #131317; --surface: #1c1c22; --text: #ececf1; --muted: #a0a0ad;
+        --border: #30303a; --accent: #a594ff;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 48px 16px; background: var(--bg); color: var(--text);
+      font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    main { max-width: 960px; margin: 0 auto; }
+    h1 { margin: 0 0 4px; font-size: 28px; }
+    p.lead { margin: 0 0 32px; color: var(--muted); }
+    .grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .card {
+      display: block; padding: 20px; border: 1px solid var(--border); border-radius: 12px;
+      background: var(--surface); color: inherit; text-decoration: none;
+    }
+    a.card:hover { border-color: var(--accent); }
+    .card .num { color: var(--accent); font-size: 13px; font-weight: 600; letter-spacing: .04em; }
+    .card h2 { margin: 4px 0 6px; font-size: 18px; }
+    .card p { margin: 0; color: var(--muted); font-size: 14px; }
+    .card .by { margin-top: 12px; font-size: 13px; }
+    .empty { border-style: dashed; }
+    code { font-size: 13px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>UI explorations</h1>
+    <p class="lead">Static sketches of the app UI. Each one lives in its own numbered folder.</p>
+
+    <div class="grid">
+      <!-- Copy this card for each exploration:
+      <a class="card" href="01-your-direction/index.html">
+        <div class="num">01</div>
+        <h2>Your direction</h2>
+        <p>One line on the look and what screens it covers.</p>
+        <p class="by">by Name</p>
+      </a>
+      -->
+      <div class="card empty">
+        <div class="num">NEXT</div>
+        <h2>Add an exploration</h2>
+        <p>Create <code>01-your-direction/</code> with its own <code>index.html</code>, then add a card here. See the README.</p>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
