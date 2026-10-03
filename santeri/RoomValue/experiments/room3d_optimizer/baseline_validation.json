@@ -1,0 +1,144 @@
+{
+  "generated_at_utc": "2026-10-03T11:26:08.224990+00:00",
+  "dimension": 3,
+  "frequency_hz": 125.0,
+  "source_id": "src1",
+  "source_strength": 1.0,
+  "source_normalization": "1 Pa peak pressure at radius 0.08 m sphere; RMS = |complex pressure| / sqrt(2)",
+  "current_provenance": {
+    "project_id": "wplkBNw5wTUbgLDuPI",
+    "project_url": "https://allsolve.quanscient.com/#/projects/wplkBNw5wTUbgLDuPI/model",
+    "mesh": {
+      "mesh_id": "WnnAHZPdRz508Z_UMG",
+      "dimension": 3,
+      "status": "SUCCESS",
+      "bounds_m": [
+        [
+          0.0,
+          5.705
+        ],
+        [
+          0.0,
+          5.965
+        ],
+        [
+          0.0,
+          2.355
+        ]
+      ],
+      "tetrahedron_count": 332020,
+      "volume_m3": 80.14141537500001,
+      "max_edge_m": 0.3631316798915856,
+      "min_elements_per_wavelength": 7.644169191816968,
+      "field_interpolation_order": 2
+    },
+    "model_sha256": "8db251f48410990f72e6f0937cfcf6f4f2c83db0179bba381547d39e16a44989",
+    "simulation_id": "ROY0ZBA4DLHEv3KqPe",
+    "status": "SUCCESS",
+    "field_file": "F:\\H4H quanscient\\RoomValue\\experiments\\room3d_optimizer\\fields\\src1__baseline\\complex.npz",
+    "field_cache_sha256": "7c04936700dddc93b5d415b4146c1f78277fb4c97066552863ac96084d72cf35",
+    "independent_probe_validation": true,
+    "interpolation_order": 2
+  },
+  "reference_provenance": {
+    "record_file": "F:\\H4H quanscient\\RoomValue\\experiments\\room3d\\VERIFIED_3D.json",
+    "record_sha256": "eb5b184b14362bb6d86256a3e6c385587ea875d3cc09694ba20c95bf47104fff",
+    "project_id": "poAAljkgyCczG-Khjn",
+    "project_url": "https://allsolve.quanscient.com/#/projects/poAAljkgyCczG-Khjn/model",
+    "simulation_id": "aZjUiTfT2z-CnLX-QC",
+    "mesh_id": "X0J_nt5SN6D3WGVJRd",
+    "model_sha256": "729f0362d8a9f871554acf1890dd1ad597ade4b39bb9485e006362a88d926737",
+    "mesh_level": "refined",
+    "status": "SUCCESS"
+  },
+  "comparison": [
+    {
+      "id": "mic1",
+      "position_m": [
+        0.80316092,
+        3.83141445,
+        1.04391528
+      ],
+      "current_real_pa": 0.0604473487922734,
+      "current_imag_pa": 0.0,
+      "current_peak_amplitude_pa": 0.0604473487922734,
+      "current_rms_pressure_pa": 0.042742730235764984,
+      "reference_peak_amplitude_pa": 0.06091509641956942,
+      "relative_amplitude_change_percent": -0.7678681554967648,
+      "amplitude_change_db": -0.0669535683639415
+    },
+    {
+      "id": "mic26",
+      "position_m": [
+        3.08212703,
+        3.42108318,
+        1.49048013
+      ],
+      "current_real_pa": -0.2966561236904562,
+      "current_imag_pa": 0.0,
+      "current_peak_amplitude_pa": 0.2966561236904562,
+      "current_rms_pressure_pa": 0.20976755674203676,
+      "reference_peak_amplitude_pa": 0.2970249306663746,
+      "relative_amplitude_change_percent": -0.12416701018698184,
+      "amplitude_change_db": -0.010791710731374454
+    }
+  ],
+  "screening_tolerance_db": 0.5,
+  "maximum_absolute_amplitude_change_db": 0.0669535683639415,
+  "within_two_probe_screening_tolerance": true,
+  "default_quiet_zones_untreated": [
+    {
+      "id": "zone1",
+      "center_m": [
+        0.80316092,
+        3.83141445,
+        1.04391528
+      ],
+      "size_m": [
+        0.4,
+        0.4
+      ],
+      "target_pressure_pa": 0.05,
+      "sample_count": 81,
+      "max_sampled_rms_pressure_pa": 0.2711507460658576,
+      "min_sampled_rms_pressure_pa": 0.0010305961066248224,
+      "worst_point_m": [
+        1.00316092,
+        4.03141445,
+        1.04391528
+      ],
+      "untreated_met_target": false
+    },
+    {
+      "id": "zone2",
+      "center_m": [
+        3.08212703,
+        3.42108318,
+        1.49048013
+      ],
+      "size_m": [
+        0.4,
+        0.4
+      ],
+      "target_pressure_pa": 0.05,
+      "sample_count": 81,
+      "max_sampled_rms_pressure_pa": 0.31769597956145607,
+      "min_sampled_rms_pressure_pa": 0.08784875171313761,
+      "worst_point_m": [
+        2.93212703,
+        3.6210831800000003,
+        1.49048013
+      ],
+      "untreated_met_target": false
+    }
+  ],
+  "limitations": [
+    "Only two independently exported reference microphone values are compared; agreement does not establish convergence of all area samples.",
+    "The earlier reference uses fewer transparent air partitions and a different mesh; both untreated problems use the same rigid cuboid, source position, normalized spherical excitation and 125 Hz frequency.",
+    "This comparison does not validate the new damped object layouts or prove that the discrete optimal layout is independent of mesh resolution.",
+    "The normalized RMS values are not calibrated to measured source sound power, room boundary loss, source directivity, broadband noise or dB(A).",
+    "Quiet areas are assessed on their 9x9 horizontal sample grid; unsampled locations are not guaranteed."
+  ],
+  "quietness_metric": "absolute_rms_pressure_pa",
+  "target_record_note": "This record preserves the initial 0.05 Pa target check; the website subsequently changed its default to relative 6 dB reduction. Baseline pressures and numerical probe comparison remain applicable."
+}

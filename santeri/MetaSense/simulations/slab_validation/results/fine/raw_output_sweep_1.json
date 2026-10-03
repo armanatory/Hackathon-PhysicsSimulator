@@ -1,0 +1,83 @@
+{
+  "simulation_id": "ZIcIMoFe_imveYQxwx",
+  "sweep_index": 1,
+  "public_output_values": {
+    "nostep": {
+      "specified_incident_power_W": [
+        3.318023409991194e-16
+      ],
+      "slab_index": [
+        1.5
+      ],
+      "entrance_forward_power_W": [
+        3.3326356425755953e-16
+      ],
+      "entrance_backward_power_W": [
+        4.9666380064278846e-17
+      ],
+      "entrance_net_flux_W": [
+        2.835971841932807e-16
+      ],
+      "entrance_poynting_flux_W": [
+        2.8359718419328064e-16
+      ],
+      "entrance_crosspolarized_power_W": [
+        1.5022051842641758e-22
+      ],
+      "entrance_Ex_cos": [
+        0.615307593703749
+      ],
+      "entrance_Ex_sin": [
+        -3.4778892632015976e-05
+      ],
+      "entrance_Hy_cos": [
+        0.0036872254262887163
+      ],
+      "entrance_Hy_sin": [
+        6.052891135297119e-07
+      ],
+      "exit_forward_power_W": [
+        2.836554796738534e-16
+      ],
+      "exit_backward_power_W": [
+        8.98936240673753e-22
+      ],
+      "exit_net_flux_W": [
+        2.836545807376127e-16
+      ],
+      "exit_poynting_flux_W": [
+        2.836545807376127e-16
+      ],
+      "exit_crosspolarized_power_W": [
+        3.1078348757446424e-23
+      ],
+      "exit_Ex_cos": [
+        -1.1922392093947327e-05
+      ],
+      "exit_Ex_sin": [
+        0.9231469273469605
+      ],
+      "exit_Hy_cos": [
+        7.069995205134172e-07
+      ],
+      "exit_Hy_sin": [
+        0.002458153262628617
+      ],
+      "reflectance": [
+        0.14903033331869026
+      ],
+      "transmittance": [
+        0.8511445897356873
+      ],
+      "energy_residual": [
+        -0.000174923054377496
+      ],
+      "incident_normalization_ratio": [
+        1.0044038967719158
+      ],
+      "exit_backward_fraction": [
+        2.697373301748099e-06
+      ]
+    }
+  }
+}

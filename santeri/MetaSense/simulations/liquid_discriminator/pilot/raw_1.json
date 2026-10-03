@@ -1,0 +1,244 @@
+{
+  "nostep": {
+    "specified_incident_power_W": [
+      9.413111614033083e-17
+    ],
+    "candidate_id": [
+      0.0
+    ],
+    "input_index": [
+      1.0
+    ],
+    "wavelength_nm": [
+      900.0000000000001
+    ],
+    "wavelength_frequency_ratio": [
+      0.9999999999985317
+    ],
+    "n_liquid": [
+      1.38
+    ],
+    "n_sin": [
+      2.018327062251652
+    ],
+    "n_substrate": [
+      1.4517539550240655
+    ],
+    "period_nm": [
+      513.9426798457885
+    ],
+    "period_y_nm": [
+      100.0
+    ],
+    "fill_factor": [
+      0.31000430208906676
+    ],
+    "ridge_height_nm": [
+      118.5041045716767
+    ],
+    "film_thickness_nm": [
+      100.00000000000001
+    ],
+    "exterior_diffraction_cutoff_ratio": [
+      0.8290203534698732
+    ],
+    "entrance_Ex_cos": [
+      -3.05319580469097e-05
+    ],
+    "entrance_Ex_sin": [
+      -1.0101188765772275e-06
+    ],
+    "entrance_Ey_cos": [
+      1.0961570095067816
+    ],
+    "entrance_Ey_sin": [
+      -0.08042135008627574
+    ],
+    "entrance_Hx_cos": [
+      -0.0033308634424711013
+    ],
+    "entrance_Hx_sin": [
+      -0.0002994978618853712
+    ],
+    "entrance_Hy_cos": [
+      -7.265521722890176e-07
+    ],
+    "entrance_Hy_sin": [
+      -2.652704668352727e-07
+    ],
+    "entrance_forward_power_W": [
+      9.464575578476108e-17
+    ],
+    "entrance_backward_power_W": [
+      1.4406239033968734e-18
+    ],
+    "entrance_crosspolarized_power_W": [
+      2.1423131277579535e-24
+    ],
+    "entrance_net_flux_W": [
+      9.32051318813642e-17
+    ],
+    "entrance_local_forward_power_W": [
+      9.464599965180784e-17
+    ],
+    "entrance_local_backward_power_W": [
+      1.4408833493745742e-18
+    ],
+    "entrance_local_crosspolarized_power_W": [
+      4.4680788320121036e-23
+    ],
+    "entrance_poynting_flux_W": [
+      9.320511630243327e-17
+    ],
+    "entrance_local_directional_flux_W": [
+      9.320511630243326e-17
+    ],
+    "entrance_local_flux_identity_error_W": [
+      -1.232595164407831e-32
+    ],
+    "entrance_local_flux_identity_error_fraction": [
+      -1.3094449688350406e-16
+    ],
+    "entrance_forward_excess_power_W": [
+      2.438670467615188e-22
+    ],
+    "entrance_backward_excess_power_W": [
+      2.594459777007305e-22
+    ],
+    "entrance_coherent_local_flux_difference_W": [
+      -1.5578930931893177e-23
+    ],
+    "entrance_coherent_local_flux_difference_fraction": [
+      -1.6550245626183886e-07
+    ],
+    "entrance_forward_excess_fraction": [
+      2.5907166170000725e-06
+    ],
+    "entrance_backward_excess_fraction": [
+      2.75621907333966e-06
+    ],
+    "entrance_material_admittance_S": [
+      0.003663097844630276
+    ],
+    "entrance_material_admittance_ratio": [
+      0.9999999999999994
+    ],
+    "exit_Ex_cos": [
+      -8.371435081958045e-07
+    ],
+    "exit_Ex_sin": [
+      -3.3001373910615453e-05
+    ],
+    "exit_Ey_cos": [
+      -0.7872554030813929
+    ],
+    "exit_Ey_sin": [
+      -0.5619946605596341
+    ],
+    "exit_Hx_cos": [
+      0.003050698951213107
+    ],
+    "exit_Hx_sin": [
+      0.0021747026617617822
+    ],
+    "exit_Hy_cos": [
+      -4.3467266463011373e-07
+    ],
+    "exit_Hy_sin": [
+      -2.743239552803315e-07
+    ],
+    "exit_forward_power_W": [
+      9.312318811818765e-17
+    ],
+    "exit_backward_power_W": [
+      6.155797043412721e-22
+    ],
+    "exit_crosspolarized_power_W": [
+      9.348352875787464e-25
+    ],
+    "exit_net_flux_W": [
+      9.31225725384833e-17
+    ],
+    "exit_local_forward_power_W": [
+      9.312354045555662e-17
+    ],
+    "exit_local_backward_power_W": [
+      9.340287955387016e-22
+    ],
+    "exit_local_crosspolarized_power_W": [
+      3.6887032590689454e-23
+    ],
+    "exit_poynting_flux_W": [
+      9.31226064267611e-17
+    ],
+    "exit_local_directional_flux_W": [
+      9.312260642676108e-17
+    ],
+    "exit_local_flux_identity_error_W": [
+      -1.232595164407831e-32
+    ],
+    "exit_local_flux_identity_error_fraction": [
+      -1.3094449688350406e-16
+    ],
+    "exit_forward_excess_power_W": [
+      3.5233736897628673e-22
+    ],
+    "exit_backward_excess_power_W": [
+      3.184490911974294e-22
+    ],
+    "exit_coherent_local_flux_difference_W": [
+      3.388827778977135e-23
+    ],
+    "exit_coherent_local_flux_difference_fraction": [
+      3.600114306437273e-07
+    ],
+    "exit_forward_excess_fraction": [
+      3.7430488814243057e-06
+    ],
+    "exit_backward_excess_fraction": [
+      3.3830374508965236e-06
+    ],
+    "exit_material_admittance_S": [
+      0.0038535628866537205
+    ],
+    "exit_material_admittance_ratio": [
+      0.9999999999999997
+    ],
+    "reflectance": [
+      0.01522122034371063
+    ],
+    "transmittance": [
+      0.983912985279171
+    ],
+    "coherent_reflectance": [
+      0.01522122034371063
+    ],
+    "coherent_transmittance": [
+      0.983912985279171
+    ],
+    "energy_residual": [
+      0.0008657943771183119
+    ],
+    "incident_normalization_ratio": [
+      1.0054672638074642
+    ],
+    "exit_backward_fraction": [
+      6.5040391852456074e-06
+    ],
+    "entrance_crosspolarized_fraction": [
+      2.2635068102048877e-08
+    ],
+    "exit_crosspolarized_fraction": [
+      9.877202414704202e-09
+    ],
+    "local_reflectance": [
+      0.01522392234933779
+    ],
+    "local_transmittance": [
+      0.983914172792805
+    ],
+    "local_energy_residual": [
+      0.0008619048578570876
+    ]
+  }
+}

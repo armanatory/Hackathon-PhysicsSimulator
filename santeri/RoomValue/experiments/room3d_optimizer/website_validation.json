@@ -1,0 +1,92 @@
+{
+  "generated_at_utc": "2026-10-03T11:45:53.659614+00:00",
+  "passed": true,
+  "website_url": "http://127.0.0.1:5175/",
+  "browser_automation": "unavailable; API and source/build checks performed",
+  "cases": {
+    "default_relative": {
+      "job_id": "9a1f44c6-fc6c-481c-9b45-d959017de541",
+      "metric": "relative_pressure_reduction_db",
+      "feasible": true,
+      "evaluated_layouts": 7,
+      "source_ids": [
+        "src1"
+      ],
+      "object_count": 1,
+      "simulation_ids": [
+        "CMa3NQv5-vtgO1Prlr",
+        "ROY0ZBA4DLHEv3KqPe",
+        "TCWN6jzs8jfc4KnSKF",
+        "cJAE2hFIQUN351_TaA",
+        "gHy-13ONDf6xJtGlZK",
+        "n74505QJ9nlwFN4Mi_",
+        "ulIaIols5xFdYaJCfP"
+      ]
+    },
+    "absolute_without_objects": {
+      "job_id": "69ee8eba-215e-40fe-80d8-c13d1488f5d9",
+      "metric": "absolute_rms_pressure_pa",
+      "feasible": false,
+      "evaluated_layouts": 1,
+      "source_ids": [
+        "src1"
+      ],
+      "object_count": 0,
+      "simulation_ids": [
+        "ROY0ZBA4DLHEv3KqPe"
+      ]
+    },
+    "two_independent_sources": {
+      "job_id": "a34b9241-6edf-4291-bf78-a146662a06c1",
+      "metric": "relative_pressure_reduction_db",
+      "feasible": true,
+      "evaluated_layouts": 1,
+      "source_ids": [
+        "src1",
+        "src2"
+      ],
+      "object_count": 0,
+      "simulation_ids": [
+        "ROY0ZBA4DLHEv3KqPe",
+        "ywGJYWPA5RZoya-xgx"
+      ]
+    },
+    "two_damped_objects": {
+      "job_id": "35448763-6fd2-4370-8f97-36e266ca4467",
+      "metric": "relative_pressure_reduction_db",
+      "feasible": false,
+      "evaluated_layouts": 4,
+      "source_ids": [
+        "src1"
+      ],
+      "object_count": 1,
+      "simulation_ids": [
+        "ROY0ZBA4DLHEv3KqPe",
+        "gHy-13ONDf6xJtGlZK",
+        "n74505QJ9nlwFN4Mi_",
+        "ora4bQzkn86x4s8leI"
+      ]
+    },
+    "restored_default": {
+      "job_id": "af49c019-f751-44f3-9db4-b0623e8d976b",
+      "metric": "relative_pressure_reduction_db",
+      "feasible": true,
+      "evaluated_layouts": 7,
+      "source_ids": [
+        "src1"
+      ],
+      "object_count": 1,
+      "simulation_ids": [
+        "CMa3NQv5-vtgO1Prlr",
+        "ROY0ZBA4DLHEv3KqPe",
+        "TCWN6jzs8jfc4KnSKF",
+        "cJAE2hFIQUN351_TaA",
+        "gHy-13ONDf6xJtGlZK",
+        "n74505QJ9nlwFN4Mi_",
+        "ulIaIols5xFdYaJCfP"
+      ]
+    }
+  },
+  "project_id": "wplkBNw5wTUbgLDuPI",
+  "project_url": "https://allsolve.quanscient.com/#/projects/wplkBNw5wTUbgLDuPI/model"
+}

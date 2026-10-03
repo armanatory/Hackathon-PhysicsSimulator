@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142d38">
+  <title>ExhaustLab · Collector study</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <aside class="rail" aria-label="Study navigation">
+    <a class="brand" href="#top" aria-label="ExhaustLab home">E<span>↗</span></a>
+    <nav>
+      <a class="rail-link active" href="#comparison" aria-label="Compare layouts" title="Compare layouts"><svg viewBox="0 0 24 24"><path d="M4 19V9h4v10M10 19V4h4v15M16 19v-7h4v7"/></svg></a>
+      <a class="rail-link" href="#trajectories" aria-label="Particle trajectories" title="Particle trajectories"><svg viewBox="0 0 24 24"><path d="M3 17c7 0 4-10 11-10h7M3 12c5 0 7 6 12 6h6M3 6h5"/></svg></a>
+      <a class="rail-link" href="#evidence" aria-label="Assumptions and evidence" title="Assumptions and evidence"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h4"/></svg></a>
+    </nav>
+    <span class="rail-bottom">PILOT<br>STUDY</span>
+  </aside>
+
+  <main id="top">
+    <header class="topbar">
+      <div class="wordmark">Exhaust<span>Lab</span><span class="wordmark-divider"></span><span class="wordmark-sub">Collector design studio</span></div>
+      <div id="connection-status" class="status-pill"><span class="status-dot"></span><span>Connecting to study</span></div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <p class="eyebrow"><span></span> ELECTROSTATIC PARTICLE COLLECTION</p>
+        <h1>A small channel.<br>A clearer design choice.</h1>
+        <p class="hero-copy">Compare plate gaps using simulated gas and electric fields.<br>Explore how particle size and precharge change modeled capture.</p>
+      </div>
+      <div class="hero-diagram" aria-hidden="true">
+        <svg viewBox="0 0 310 142"><defs><linearGradient id="plate" x1="0" x2="1"><stop stop-color="#467c83"/><stop offset="1" stop-color="#234653"/></linearGradient></defs><path d="M33 33 252 15 282 36 60 57z" fill="url(#plate)"/><path d="m33 108 219-18 30 21-222 21z" fill="url(#plate)"/><path d="m60 57 222-21v4L60 61z" fill="#5eabb0"/><path d="m60 132 222-21v5L60 137z" fill="#527e87"/><g stroke="#dfac66" stroke-width="1.6" fill="none" opacity=".8"><path d="M20 78c45-4 49 32 91 30M27 67c53-4 64 39 128 36M37 86c23 3 23 31 69 27"/></g><g fill="#f1b875"><circle cx="39" cy="71" r="3"/><circle cx="81" cy="98" r="3"/><circle cx="136" cy="103" r="3"/><circle cx="56" cy="97" r="2.8"/></g><text x="248" y="62" fill="#abc3ca" font-size="11" font-family="sans-serif">+ V</text><text x="247" y="137" fill="#abc3ca" font-size="11" font-family="sans-serif">0 V</text></svg>
+        <span>COLLECTOR SCHEMATIC · PRECHARGED AEROSOL</span>
+      </div>
+    </section>
+
+    <section class="conditions" aria-label="Fixed study conditions">
+      <div><span class="condition-label">SIDE-STREAM FLOW</span><strong>0.2 <small>L/min</small></strong></div>
+      <div><span class="condition-label">CHANNEL LENGTH</span><strong>60 <small>mm</small></strong></div>
+      <div><span class="condition-label">PLATE SPAN</span><strong>20 <small>mm</small></strong></div>
+      <div><span class="condition-label">OPERATING ENVELOPE</span><strong class="condition-text">Cold, dilute gas</strong></div>
+      <div class="condition-source"><span class="source-icon">↗</span><div><strong>Allsolve fields</strong><span>Local particle postprocessing</span></div></div>
+    </section>
+
+    <div class="scope-note"><span class="scope-icon">i</span><p><strong>Modeled pilot collector.</strong> Capture is conditional on entered particle size, fixed precharge and absorbing walls. These results describe this cold side-stream model; hot exhaust behavior and certified emission reduction require further validation.</p></div>
+
+    <div id="error-banner" class="error-banner" role="alert" hidden><div><strong id="error-title">Study unavailable</strong><p id="error-message"></p></div><button type="button" id="retry-button">Retry connection ↗</button></div>
+
+    <section id="comparison" class="comparison">
+      <div class="section-title"><div><p class="eyebrow dark">DESIGN COMPARISON</p><h2>Three gaps. One controlled study.</h2></div><span id="evaluation-label" class="evaluation-label">Waiting for solver results</span></div>
+      <div id="layout-cards" class="layout-cards" aria-live="polite"><div class="empty-cards"><span class="spinner"></span><p>Loading the verified study…</p></div></div>
+      <p id="ranking-note" class="ranking-note">Capture, pressure penalty and entered budgets inform the next prototype.</p>
+    </section>
+
+    <div class="workbench">
+      <section id="trajectories" class="trajectory-panel panel">
+        <div class="panel-heading"><div><p class="eyebrow dark">PARTICLE TRANSPORT</p><h2>Follow the collection path</h2></div><span id="selected-gap" class="gap-badge">Select a layout</span></div>
+        <div class="chart-subtitle"><span>x–y projection · z collapsed · axes scaled independently</span><span id="path-count">No trajectory data</span></div>
+        <div class="chart-wrap"><canvas id="trajectory-canvas" aria-label="Particle trajectory preview projected onto the channel x-y plane" role="img"></canvas><div id="chart-empty" class="chart-empty">Trajectories appear when the study is connected.</div></div>
+        <div class="chart-legend"><span><i class="legend-dot captured"></i>Wall capture</span><span><i class="legend-dot outlet"></i>Outlet</span><span><i class="legend-dot unresolved"></i>Unresolved</span></div>
+        <div id="fate-strip" class="fate-strip"><div><span>CAPTURED</span><strong>—</strong></div><div><span>AT OUTLET</span><strong>—</strong></div><div><span>UNRESOLVED</span><strong>—</strong></div></div>
+        <p class="chart-footnote">Illustrative sampled particle paths. Fractions use the full inlet distribution with gas-flux weighting, including any unresolved weight.</p>
+      </section>
+
+      <form id="study-form" class="controls-panel panel">
+        <div class="panel-heading"><div><p class="eyebrow dark">YOUR SCENARIO</p><h2>Adjust the aerosol</h2></div><button type="button" id="reset-button" class="text-button">Reset</button></div>
+        <p class="controls-intro">Recalculate trajectories from the computed fields within this study’s envelope.</p>
+        <div class="parameter"><div class="parameter-heading"><label for="charge_e">Particle precharge</label><div class="number-unit"><input id="charge_e" name="charge_e" type="number" min="0" max="60" step="1" value="30" required aria-label="Particle precharge in elementary charges"><span>e</span></div></div><input id="charge-range" type="range" min="0" max="60" step="1" value="30" aria-label="Particle precharge slider"><div class="range-scale"><span>0 e</span><span>60 e</span></div></div>
+        <div class="parameter"><div class="parameter-heading"><label for="diameter_um">Particle diameter</label><div class="number-unit"><input id="diameter_um" name="diameter_um" type="number" min="0.5" max="2" step="0.1" value="1" required aria-label="Particle diameter in micrometers"><span>µm</span></div></div><input id="diameter-range" type="range" min="0.5" max="2" step="0.1" value="1" aria-label="Particle diameter slider"><div class="range-scale"><span>0.5 µm</span><span>2.0 µm</span></div></div>
+        <div class="parameter"><div class="parameter-heading"><label for="voltage_v">Plate voltage</label><div class="number-unit"><input id="voltage_v" name="voltage_v" type="number" min="0" max="200" step="1" value="200" required aria-label="Plate voltage in volts"><span>V</span></div></div><input id="voltage-range" type="range" min="0" max="200" step="1" value="200" aria-label="Plate voltage slider"><div class="range-scale"><span>0 V</span><span>200 V</span></div></div>
+        <button id="evaluate-button" class="primary-button" type="submit"><span>Evaluate scenario</span><span aria-hidden="true">↗</span></button>
+        <p id="form-status" class="form-status" aria-live="polite">30 e · 1.0 µm · 200 V</p>
+      </form>
+    </div>
+
+    <section class="budget-panel panel">
+      <div class="budget-intro"><p class="eyebrow dark">PROTOTYPE CONSTRAINTS</p><h2>Put the tradeoff in context</h2><p>Enter your own build cost and power allowance. Blank values remain unknown.</p></div>
+      <div class="budget-fields">
+        <div class="cost-fields"><label for="cost-gap4">4 mm build cost <span>€</span></label><input id="cost-gap4" form="study-form" type="number" min="0" step="any" placeholder="Not entered"><label for="cost-gap6">6 mm build cost <span>€</span></label><input id="cost-gap6" form="study-form" type="number" min="0" step="any" placeholder="Not entered"><label for="cost-gap8">8 mm build cost <span>€</span></label><input id="cost-gap8" form="study-form" type="number" min="0" step="any" placeholder="Not entered"></div>
+        <div class="allowance-fields"><div><label for="budget_eur">Build budget <span>€</span></label><input id="budget_eur" form="study-form" type="number" min="0" step="any" placeholder="Not entered"></div><div><label for="supply_power_w">Entered supply draw <span>W</span></label><input id="supply_power_w" form="study-form" type="number" min="0" step="any" placeholder="Not entered"></div><div><label for="power_budget_w">Power budget <span>W</span></label><input id="power_budget_w" form="study-form" type="number" min="0" step="any" placeholder="Not entered"></div></div>
+        <p class="budget-footnote">Air power is Q × Δp. Supply draw is user entered; the electrostatic model does not predict electrical consumption.</p>
+      </div>
+    </section>
+
+    <section id="evidence" class="evidence-panel">
+      <details><summary><span class="evidence-mark">01</span><div><strong>Model assumptions & limits</strong><span>What the capture result depends on</span></div><span class="disclosure">+</span></summary><div class="details-body"><ul id="assumptions-list"><li>Loading study assumptions…</li></ul><p class="limit-note">Mesh and field-sampling convergence, hot gas behavior, corona charging and real collector performance need additional validation.</p></div></details>
+      <details><summary><span class="evidence-mark">02</span><div><strong>Simulation evidence</strong><span id="evidence-subtitle">Selected layout · fields, validation and provenance</span></div><span class="disclosure">+</span></summary><div class="details-body"><div id="validation-summary"></div><div id="provenance-links" class="provenance-links"></div><details class="raw-evidence"><summary>Inspect recorded data</summary><pre id="raw-evidence">Study not yet connected.</pre></details></div></details>
+    </section>
+    <footer><span><strong>ExhaustLab</strong> · A modeled side-stream pilot</span><span>Allsolve flow & electrostatics → local trajectories → design comparison</span></footer>
+  </main>
+</body>
+</html>

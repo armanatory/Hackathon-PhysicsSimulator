@@ -1,0 +1,472 @@
+{
+  "generated_at_utc": "2026-10-03T10:52:12.526325+00:00",
+  "dimension": 3,
+  "project_id": "poAAljkgyCczG-Khjn",
+  "project_url": "https://allsolve.quanscient.com/#/projects/poAAljkgyCczG-Khjn/model",
+  "frequency_hz": 125.0,
+  "room": {
+    "size_m": [
+      5.705,
+      5.965,
+      2.355
+    ],
+    "nominal_publication_size_m": [
+      6.0,
+      6.0,
+      2.4
+    ],
+    "volume_m3": 80.141415375,
+    "speed_of_sound_m_s": 346.98,
+    "temperature_c": 24.0,
+    "relative_humidity_percent": 80.0,
+    "coordinate_frame": "Absolute calibrated Cartesian XYZ; origin [0,0,0], +Z upward; west x=0, east x=Lx, south y=0, north y=Ly, floor z=0, ceiling z=Lz.",
+    "geometry_provenance": "Calibrated inner room bounds from annotation HDF5 and each SOFA RoomCornerB, rather than rounded nominal dimensions in the article.",
+    "environment_provenance": "Publication section 2.2 and repository constants; SOFA RoomTemperature and RoomVolume are zero placeholders."
+  },
+  "source": {
+    "id": "src1",
+    "position_m": [
+      1.89407487,
+      4.52190448,
+      1.4481839
+    ],
+    "directivity": "Directional Avanton MIXCUBE; a point monopole FEM source is an illustrative approximation, not matched source directivity or power.",
+    "radius_m": 0.08,
+    "boundary_pressure_pa": 1
+  },
+  "receivers": [
+    {
+      "id": "mic1",
+      "position_m": [
+        0.80316092,
+        3.83141445,
+        1.04391528
+      ]
+    },
+    {
+      "id": "mic26",
+      "position_m": [
+        3.08212703,
+        3.42108318,
+        1.49048013
+      ]
+    }
+  ],
+  "treatments": {
+    "east_wall": {
+      "position": [
+        5.505,
+        2.0,
+        0.65
+      ],
+      "size": [
+        0.2,
+        2.0,
+        1.0
+      ]
+    },
+    "ceiling": {
+      "position": [
+        2.0,
+        2.0,
+        2.155
+      ],
+      "size": [
+        2.0,
+        1.0,
+        0.2
+      ]
+    }
+  },
+  "treatment_damping_value": 0.5,
+  "dataset_manifest_sha256": "86a0c97754e402349d266b727f8312ec759940ee65dcf7a6ba890f577d3584f2",
+  "model_sha256": "729f0362d8a9f871554acf1890dd1ad597ade4b39bb9485e006362a88d926737",
+  "meshes": {
+    "coarse": {
+      "mesh_id": "OMfPfxPO2ePw2726mD",
+      "status": "SUCCESS",
+      "bounds_m": [
+        [
+          0.0,
+          5.705
+        ],
+        [
+          0.0,
+          5.965
+        ],
+        [
+          0.0,
+          2.355
+        ]
+      ],
+      "node_count": 12987,
+      "tetrahedron_count": 68355,
+      "volume_m3": 80.141415375,
+      "expected_volume_m3": 80.141415375,
+      "sdk_elements": 76312,
+      "max_edge_m": 0.5304993158179809,
+      "p95_edge_m": 0.34093146528455764,
+      "wavelength_m": 2.77584,
+      "min_elements_per_wavelength": 5.232504392055457,
+      "mesh_file": "outputs\\coarse_OMfPfxPO2ePw2726mD.msh"
+    },
+    "fine": {
+      "mesh_id": "GH3b2_Ky0vX6Fvtrwy",
+      "status": "SUCCESS",
+      "bounds_m": [
+        [
+          0.0,
+          5.705
+        ],
+        [
+          0.0,
+          5.965
+        ],
+        [
+          0.0,
+          2.355
+        ]
+      ],
+      "node_count": 29389,
+      "tetrahedron_count": 159387,
+      "volume_m3": 80.14141537500001,
+      "expected_volume_m3": 80.141415375,
+      "sdk_elements": 173642,
+      "max_edge_m": 0.40221628377754354,
+      "p95_edge_m": 0.2597456608770177,
+      "wavelength_m": 2.77584,
+      "min_elements_per_wavelength": 6.901361560824456,
+      "mesh_file": "outputs\\fine_GH3b2_Ky0vX6Fvtrwy.msh"
+    },
+    "refined": {
+      "mesh_id": "X0J_nt5SN6D3WGVJRd",
+      "status": "SUCCESS",
+      "bounds_m": [
+        [
+          0.0,
+          5.705
+        ],
+        [
+          0.0,
+          5.965
+        ],
+        [
+          0.0,
+          2.355
+        ]
+      ],
+      "node_count": 49923,
+      "tetrahedron_count": 274035,
+      "volume_m3": 80.14141537500001,
+      "expected_volume_m3": 80.141415375,
+      "sdk_elements": 293508,
+      "max_edge_m": 0.29819434736693007,
+      "p95_edge_m": 0.2023922609664451,
+      "wavelength_m": 2.77584,
+      "min_elements_per_wavelength": 9.30882836817933,
+      "mesh_file": "outputs\\refined_X0J_nt5SN6D3WGVJRd.msh"
+    }
+  },
+  "runs": {
+    "coarse_baseline_125hz": {
+      "simulation_id": "elsMRrfmV0W9x_a8fK",
+      "physics_set_id": "tHTnJQXOA1zGE2PNRa",
+      "status": "SUCCESS",
+      "pressures": {
+        "mic1": {
+          "real_pa": 0.054729434430325824,
+          "imag_pa": 0.0,
+          "amplitude_pa": 0.054729434430325824
+        },
+        "mic26": {
+          "real_pa": -0.2880624846851908,
+          "imag_pa": 0.0,
+          "amplitude_pa": 0.2880624846851908
+        }
+      }
+    },
+    "coarse_east_wall_125hz": {
+      "simulation_id": "jUB9Mr5MTbi9h4oWpJ",
+      "physics_set_id": "sDzJTeQcOlTCavMN0c",
+      "status": "SUCCESS",
+      "pressures": {
+        "mic1": {
+          "real_pa": -0.02675047091778347,
+          "imag_pa": -0.008747850879617524,
+          "amplitude_pa": 0.028144494831764243
+        },
+        "mic26": {
+          "real_pa": -0.22901331730782867,
+          "imag_pa": 0.025785984742303654,
+          "amplitude_pa": 0.23046044457447906
+        }
+      }
+    },
+    "coarse_ceiling_125hz": {
+      "simulation_id": "WU_Spw_EArTQCDXC4v",
+      "physics_set_id": "i0NWO7fBpdkiEwy2hd",
+      "status": "SUCCESS",
+      "pressures": {
+        "mic1": {
+          "real_pa": -0.0070224953637746425,
+          "imag_pa": -0.0037723829506868464,
+          "amplitude_pa": 0.007971594210750391
+        },
+        "mic26": {
+          "real_pa": 0.01809648049476825,
+          "imag_pa": 0.03392136359825872,
+          "amplitude_pa": 0.038446606022675134
+        }
+      }
+    },
+    "coarse_source_off_125hz": {
+      "simulation_id": "D3d84B9Ia9ancZ2nkN",
+      "physics_set_id": "q_xOO5uUw1J4m6JrgS",
+      "status": "SUCCESS",
+      "pressures": {
+        "mic1": {
+          "real_pa": 0.0,
+          "imag_pa": 0.0,
+          "amplitude_pa": 0.0
+        },
+        "mic26": {
+          "real_pa": 0.0,
+          "imag_pa": 0.0,
+          "amplitude_pa": 0.0
+        }
+      }
+    },
+    "fine_baseline_125hz": {
+      "simulation_id": "GYStbsmyTyVGorXkuI",
+      "physics_set_id": "tHTnJQXOA1zGE2PNRa",
+      "status": "SUCCESS",
+      "pressures": {
+        "mic1": {
+          "real_pa": 0.05918677251639061,
+          "imag_pa": 0.0,
+          "amplitude_pa": 0.05918677251639061
+        },
+        "mic26": {
+          "real_pa": -0.29452858948852706,
+          "imag_pa": 0.0,
+          "amplitude_pa": 0.29452858948852706
+        }
+      }
+    },
+    "fine_east_wall_125hz": {
+      "simulation_id": "NeD_xqst78SRsIXPFn",
+      "physics_set_id": "sDzJTeQcOlTCavMN0c",
+      "status": "SUCCESS",
+      "pressures": {
+        "mic1": {
+          "real_pa": -0.026340185693991016,
+          "imag_pa": -0.008749216915956785,
+          "amplitude_pa": 0.027755254980568876
+        },
+        "mic26": {
+          "real_pa": -0.23060026529177474,
+          "imag_pa": 0.02571573281964065,
+          "amplitude_pa": 0.2320296991057137
+        }
+      }
+    },
+    "fine_ceiling_125hz": {
+      "simulation_id": "z1RTTcBD3cLM7QeG0I",
+      "physics_set_id": "i0NWO7fBpdkiEwy2hd",
+      "status": "SUCCESS",
+      "pressures": {
+        "mic1": {
+          "real_pa": -0.006368785958416797,
+          "imag_pa": -0.003924755081333774,
+          "amplitude_pa": 0.0074809850309021635
+        },
+        "mic26": {
+          "real_pa": 0.01738191158155401,
+          "imag_pa": 0.033789116420380176,
+          "amplitude_pa": 0.03799783202630075
+        }
+      }
+    },
+    "refined_baseline_125hz": {
+      "simulation_id": "aZjUiTfT2z-CnLX-QC",
+      "physics_set_id": "tHTnJQXOA1zGE2PNRa",
+      "status": "SUCCESS",
+      "pressures": {
+        "mic1": {
+          "real_pa": 0.06091509641956942,
+          "imag_pa": 0.0,
+          "amplitude_pa": 0.06091509641956942
+        },
+        "mic26": {
+          "real_pa": -0.2970249306663746,
+          "imag_pa": 0.0,
+          "amplitude_pa": 0.2970249306663746
+        }
+      }
+    },
+    "refined_east_wall_125hz": {
+      "simulation_id": "Po0_hFIl_6em5fbavJ",
+      "physics_set_id": "sDzJTeQcOlTCavMN0c",
+      "status": "SUCCESS",
+      "pressures": {
+        "mic1": {
+          "real_pa": -0.02620294772847669,
+          "imag_pa": -0.00876050819254142,
+          "amplitude_pa": 0.027628625978373716
+        },
+        "mic26": {
+          "real_pa": -0.23109415782392806,
+          "imag_pa": 0.025682863299071837,
+          "amplitude_pa": 0.232516922497244
+        }
+      }
+    },
+    "refined_ceiling_125hz": {
+      "simulation_id": "K8F8ZROaLXlY-rDvK0",
+      "physics_set_id": "i0NWO7fBpdkiEwy2hd",
+      "status": "SUCCESS",
+      "pressures": {
+        "mic1": {
+          "real_pa": -0.006125820802271381,
+          "imag_pa": -0.003985335506298616,
+          "amplitude_pa": 0.007308117377225494
+        },
+        "mic26": {
+          "real_pa": 0.017079027963563063,
+          "imag_pa": 0.033808038798569744,
+          "amplitude_pa": 0.03787712612627529
+        }
+      }
+    }
+  },
+  "failed_runs": {
+    "iYtnLwBkSSnCYP-htK": {
+      "name": "fine_east_wall_125hz",
+      "status": "ERROR",
+      "status_reason": null,
+      "last_log_stage": "Direct matrix solve on 3 core / 10 GB node",
+      "replacement": "Same physics and mesh, new job on 4 core / 64 GB node",
+      "failure_cause": "Not reported by API; memory exhaustion is a hypothesis"
+    }
+  },
+  "assumptions": [
+    "Idealized rigid reflecting floor, ceiling and walls; measured carpet/absorption not calibrated",
+    "Source is a 1 Pa spherical emitter proxy; measured src1 is a directional loudspeaker",
+    "Treatments are equal 0.4 m3 finite damped air regions, not measured commercial panels",
+    "125 Hz harmonic response only; no broadband, A-weighted or impulse-response claim"
+  ],
+  "relative_pressure_change_db": {
+    "coarse": {
+      "east_wall": {
+        "mic1": -5.776550046555191,
+        "mic26": -1.9378061409002834
+      },
+      "ceiling": {
+        "mic1": -16.733515542223063,
+        "mic26": -17.492573901214147
+      }
+    },
+    "fine": {
+      "east_wall": {
+        "mic1": -6.5775887377323725,
+        "mic26": -2.0716776140442987
+      },
+      "ceiling": {
+        "mic1": -17.96531745171754,
+        "mic26": -17.78737277949774
+      }
+    },
+    "refined": {
+      "east_wall": {
+        "mic1": -6.867312975358565,
+        "mic26": -2.1267667401246095
+      },
+      "ceiling": {
+        "mic1": -18.41838843875245,
+        "mic26": -17.88831766159221
+      }
+    }
+  },
+  "mesh_refinement_pressure_change_db": {
+    "baseline": {
+      "mic1": 0.25000555285428583,
+      "mic26": 0.07330891269743946
+    },
+    "east_wall": {
+      "mic1": -0.03971868477190773,
+      "mic26": 0.01821978661712651
+    },
+    "ceiling": {
+      "mic1": -0.20306543418062728,
+      "mic26": -0.02763596939702922
+    }
+  },
+  "mesh_refinement_check": {
+    "compared_levels": [
+      "fine",
+      "refined"
+    ],
+    "max_abs_change_db": 0.25000555285428583,
+    "tolerance_db": 0.5,
+    "passed": true
+  },
+  "mesh_refinement_history": [
+    {
+      "compared_levels": [
+        "coarse",
+        "fine"
+      ],
+      "pressure_change_db": {
+        "baseline": {
+          "mic1": 0.6800739625339307,
+          "mic26": 0.19281510326012638
+        },
+        "east_wall": {
+          "mic1": -0.12096472864324913,
+          "mic26": 0.0589436301161137
+        },
+        "ceiling": {
+          "mic1": -0.5517279469605441,
+          "mic26": -0.1019837750234693
+        }
+      },
+      "max_abs_change_db": 0.6800739625339307
+    },
+    {
+      "compared_levels": [
+        "fine",
+        "refined"
+      ],
+      "pressure_change_db": {
+        "baseline": {
+          "mic1": 0.25000555285428583,
+          "mic26": 0.07330891269743946
+        },
+        "east_wall": {
+          "mic1": -0.03971868477190773,
+          "mic26": 0.01821978661712651
+        },
+        "ceiling": {
+          "mic1": -0.20306543418062728,
+          "mic26": -0.02763596939702922
+        }
+      },
+      "max_abs_change_db": 0.25000555285428583
+    }
+  ],
+  "relative_comparison_refinement_change_db": {
+    "east_wall": {
+      "mic1": -0.28972423762619215,
+      "mic26": -0.0550891260803108
+    },
+    "ceiling": {
+      "mic1": -0.4530709870349128,
+      "mic26": -0.1009448820944705
+    }
+  },
+  "relative_comparison_refinement_check": {
+    "max_abs_change_db": 0.4530709870349128,
+    "tolerance_db": 0.5,
+    "passed": true
+  }
+}

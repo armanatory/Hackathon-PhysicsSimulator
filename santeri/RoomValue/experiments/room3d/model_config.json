@@ -1,0 +1,199 @@
+{
+  "name": "RoomValue dEchorate 3D 125 Hz",
+  "description": "Measured room dimensions and coordinates; normalized source and uncalibrated volumetric treatment loss",
+  "dimension": 3,
+  "verbose": false,
+  "labels": [
+    "roomvalue",
+    "3d-acoustics",
+    "dechorate"
+  ],
+  "geometries": [
+    {
+      "type": "box",
+      "name": "room",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "size": {
+        "x": 5.705,
+        "y": 5.965,
+        "z": 2.355
+      },
+      "alignment": "corner"
+    },
+    {
+      "type": "sphere",
+      "name": "source_sphere",
+      "position": {
+        "x": 1.89407487,
+        "y": 4.52190448,
+        "z": 1.4481839
+      },
+      "radius": 0.08
+    },
+    {
+      "type": "box",
+      "name": "east_wall",
+      "position": {
+        "x": 5.505,
+        "y": 2.0,
+        "z": 0.65
+      },
+      "size": {
+        "x": 0.2,
+        "y": 2.0,
+        "z": 1.0
+      },
+      "alignment": "corner"
+    },
+    {
+      "type": "box",
+      "name": "ceiling",
+      "position": {
+        "x": 2.0,
+        "y": 2.0,
+        "z": 2.155
+      },
+      "size": {
+        "x": 2.0,
+        "y": 1.0,
+        "z": 0.2
+      },
+      "alignment": "corner"
+    },
+    {
+      "type": "fragmentAll",
+      "name": "partition_room"
+    }
+  ],
+  "regions": [
+    {
+      "name": "room",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "room"
+        }
+      ]
+    },
+    {
+      "name": "source_sphere",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "source_sphere"
+        }
+      ]
+    },
+    {
+      "name": "east_wall",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "east_wall"
+        }
+      ]
+    },
+    {
+      "name": "ceiling",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "ceiling"
+        }
+      ]
+    },
+    {
+      "name": "all_volumes",
+      "type": "computed",
+      "entityType": "volume",
+      "operation": "union",
+      "regions": [
+        "room",
+        "source_sphere",
+        "east_wall",
+        "ceiling"
+      ]
+    },
+    {
+      "name": "source_boundary",
+      "type": "computed",
+      "entityType": "surface",
+      "operation": "boundary",
+      "regions": [
+        "source_sphere"
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "name": "Assumed homogeneous air",
+      "target": "all_volumes",
+      "density": 1.2,
+      "speedOfSound": 346.98
+    }
+  ],
+  "meshes": [
+    {
+      "name": "room3d_coarse",
+      "nodeType": "lambda",
+      "scaleFactor": 1.0,
+      "useMeshRefiner": false,
+      "curvedMesh": false,
+      "curvatureEnhancement": 6,
+      "maxRunTimeMinutes": 10,
+      "meshSizeMin": 0.025,
+      "meshSizeMax": 0.32,
+      "refinements": [
+        {
+          "region": "source_boundary",
+          "maxSize": 0.04
+        },
+        {
+          "region": "east_wall",
+          "maxSize": 0.1
+        },
+        {
+          "region": "ceiling",
+          "maxSize": 0.1
+        }
+      ]
+    },
+    {
+      "name": "room3d_fine",
+      "nodeType": "lambda",
+      "scaleFactor": 1.0,
+      "useMeshRefiner": false,
+      "curvedMesh": false,
+      "curvatureEnhancement": 6,
+      "maxRunTimeMinutes": 10,
+      "meshSizeMin": 0.025,
+      "meshSizeMax": 0.24,
+      "refinements": [
+        {
+          "region": "source_boundary",
+          "maxSize": 0.04
+        },
+        {
+          "region": "east_wall",
+          "maxSize": 0.075
+        },
+        {
+          "region": "ceiling",
+          "maxSize": 0.075
+        }
+      ]
+    }
+  ]
+}

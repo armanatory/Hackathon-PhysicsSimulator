@@ -1,0 +1,116 @@
+[
+  {
+    "id": 360004830100,
+    "level": "info",
+    "message": "Reserving resources...",
+    "timestamp": "2026-10-03T10:40:48.540867Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360007728800,
+    "level": "info",
+    "message": "Downloading inputs...",
+    "timestamp": "2026-10-03T10:40:48.569854Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360013637400,
+    "level": "info",
+    "message": "Downloading done",
+    "timestamp": "2026-10-03T10:40:48.628940Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360086148900,
+    "level": "info",
+    "message": "Quanscient Allsolve 484 int64/float64\n",
+    "timestamp": "2026-10-03T10:40:49.354055Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360086167700,
+    "level": "info",
+    "message": "Physical RAM is 11.2356 GB for 1 rank\n",
+    "timestamp": "2026-10-03T10:40:49.354243Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360088960400,
+    "level": "info",
+    "message": "Loading mesh from 'simulation.msh'\n",
+    "timestamp": "2026-10-03T10:40:49.382170Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360091846600,
+    "level": "info",
+    "message": "Detected curvature order 1\nExtracted 2098 nodes\nExtracted 12700 lines\nExtracted 20382 triangles\nExtracted 9779 tetrahedra\n",
+    "timestamp": "2026-10-03T10:40:49.411032Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360092806100,
+    "level": "info",
+    "message": "Time to load the mesh:\n38.3942 ms\n",
+    "timestamp": "2026-10-03T10:40:49.420627Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360094853200,
+    "level": "info",
+    "message": "DDM solve for 200744 dofs:\n",
+    "timestamp": "2026-10-03T10:40:49.441098Z",
+    "additional_properties": {
+      "dofcount": 200744
+    }
+  },
+  {
+    "id": 360400294800,
+    "level": "fatal",
+    "message": "Error in 'optime' object: the time variable 't' cannot be computed without FFT in harmonic domain\n",
+    "timestamp": "2026-10-03T10:40:52.495514Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360400976400,
+    "level": "error",
+    "message": "Traceback (most recent call last):\n  File \"main.py\", line 60, in <module>\n    import simulation\n  File \"simulation.py\", line 66, in <module>\n    form.allsolve(relrestol=1e-9, maxnumit=1000, nltol=1e-9, maxnumnlit=-1, relaxvalue=-1)\nRuntimeError: Error in 'optime' object: the time variable 't' cannot be computed without FFT in harmonic domain",
+    "timestamp": "2026-10-03T10:40:52.502330Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360403407600,
+    "level": "error",
+    "message": "Simulation failed",
+    "timestamp": "2026-10-03T10:40:52.526642Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360403412300,
+    "level": "info",
+    "message": "Uploading results...",
+    "timestamp": "2026-10-03T10:40:52.526689Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360403448300,
+    "level": "info",
+    "message": "100% of results uploaded",
+    "timestamp": "2026-10-03T10:40:52.527049Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360407748500,
+    "level": "info",
+    "message": "Uploading done",
+    "timestamp": "2026-10-03T10:40:52.570051Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360407802500,
+    "level": "error",
+    "message": "Job failed",
+    "timestamp": "2026-10-03T10:40:52.570591Z",
+    "additional_properties": {}
+  }
+]

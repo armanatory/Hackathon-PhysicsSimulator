@@ -1,0 +1,758 @@
+{
+  "room": {
+    "id": "dechorate",
+    "size_m": [
+      5.705,
+      5.965,
+      2.355
+    ],
+    "nominal_publication_size_m": [
+      6.0,
+      6.0,
+      2.4
+    ],
+    "volume_m3": 80.141415375,
+    "speed_of_sound_m_s": 346.98,
+    "temperature_c": 24.0,
+    "relative_humidity_percent": 80.0,
+    "coordinate_frame": "Absolute calibrated Cartesian XYZ; origin [0,0,0], +Z upward; west x=0, east x=Lx, south y=0, north y=Ly, floor z=0, ceiling z=Lz.",
+    "geometry_provenance": "Calibrated inner room bounds from annotation HDF5 and each SOFA RoomCornerB, rather than rounded nominal dimensions in the article.",
+    "environment_provenance": "Publication section 2.2 and repository constants; SOFA RoomTemperature and RoomVolume are zero placeholders.",
+    "name": "Bar-Ilan University acoustic laboratory",
+    "model_type": "cuboid"
+  },
+  "frequency_hz": 125.0,
+  "sources": [
+    {
+      "id": "src1",
+      "name": "Source 1 - south facing loudspeaker",
+      "position_m": [
+        1.89407487,
+        4.52190448,
+        1.4481839
+      ],
+      "source_type": "directional",
+      "equipment_description": "Directional Avanton MIXCUBE",
+      "position_status": "calibrated",
+      "orientation_vector": [
+        0,
+        -1,
+        0
+      ],
+      "aiming_at": "south",
+      "recording_role": "direct",
+      "directivity_note": "Dataset orientation is available; no matched frequency-dependent radiation pattern or calibrated acoustic power is imported. An omnidirectional point source is a simulation assumption.",
+      "local_measured_rirs": true
+    },
+    {
+      "id": "src2",
+      "name": "Source 2 - north facing loudspeaker",
+      "position_m": [
+        1.6330509,
+        0.8420041,
+        1.02493109
+      ],
+      "source_type": "directional",
+      "equipment_description": "Directional Avanton MIXCUBE",
+      "position_status": "calibrated",
+      "orientation_vector": [
+        0,
+        1,
+        0
+      ],
+      "aiming_at": "north",
+      "recording_role": "direct",
+      "directivity_note": "Dataset orientation is available; no matched frequency-dependent radiation pattern or calibrated acoustic power is imported. An omnidirectional point source is a simulation assumption.",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "src3",
+      "name": "Source 3 - west facing loudspeaker",
+      "position_m": [
+        4.30997826,
+        2.1408947,
+        1.09632443
+      ],
+      "source_type": "directional",
+      "equipment_description": "Directional Avanton MIXCUBE",
+      "position_status": "calibrated",
+      "orientation_vector": [
+        -1,
+        0,
+        0
+      ],
+      "aiming_at": "west",
+      "recording_role": "direct",
+      "directivity_note": "Dataset orientation is available; no matched frequency-dependent radiation pattern or calibrated acoustic power is imported. An omnidirectional point source is a simulation assumption.",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "src4",
+      "name": "Source 4 - west facing loudspeaker",
+      "position_m": [
+        4.61104211,
+        3.7451399,
+        1.50903224
+      ],
+      "source_type": "directional",
+      "equipment_description": "Directional Avanton MIXCUBE",
+      "position_status": "calibrated",
+      "orientation_vector": [
+        -1,
+        0,
+        0
+      ],
+      "aiming_at": "west",
+      "recording_role": "direct",
+      "directivity_note": "Dataset orientation is available; no matched frequency-dependent radiation pattern or calibrated acoustic power is imported. An omnidirectional point source is a simulation assumption.",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "src5",
+      "name": "Source 5 - south facing loudspeaker",
+      "position_m": [
+        1.6330509,
+        0.6820041,
+        1.16493109
+      ],
+      "source_type": "directional",
+      "equipment_description": "Directional Avanton MIXCUBE",
+      "position_status": "calibrated",
+      "orientation_vector": [
+        0,
+        -1,
+        0
+      ],
+      "aiming_at": "south",
+      "recording_role": "indirect",
+      "directivity_note": "Dataset orientation is available; no matched frequency-dependent radiation pattern or calibrated acoustic power is imported. An omnidirectional point source is a simulation assumption.",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "src6",
+      "name": "Source 6 - east facing loudspeaker",
+      "position_m": [
+        4.46997826,
+        2.1408947,
+        1.23632443
+      ],
+      "source_type": "directional",
+      "equipment_description": "Directional Avanton MIXCUBE",
+      "position_status": "calibrated",
+      "orientation_vector": [
+        1,
+        0,
+        0
+      ],
+      "aiming_at": "east",
+      "recording_role": "indirect",
+      "directivity_note": "Dataset orientation is available; no matched frequency-dependent radiation pattern or calibrated acoustic power is imported. An omnidirectional point source is a simulation assumption.",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "src7",
+      "name": "Source 7 - omnidirectional position 1",
+      "position_m": [
+        3.651,
+        1.004,
+        1.38
+      ],
+      "source_type": "omnidirectional",
+      "equipment_description": "Omnidirectional B&G",
+      "position_status": "dataset_position_not_echo_calibrated",
+      "orientation_vector": null,
+      "directivity_note": "The author geometry code marks these positions NOT calibrated. One omnidirectional loudspeaker was moved between these three positions. Orientation is not applicable; no calibrated acoustic power is imported.",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "src8",
+      "name": "Source 8 - omnidirectional position 2",
+      "position_m": [
+        2.958,
+        4.558,
+        1.486
+      ],
+      "source_type": "omnidirectional",
+      "equipment_description": "Omnidirectional B&G",
+      "position_status": "dataset_position_not_echo_calibrated",
+      "orientation_vector": null,
+      "directivity_note": "The author geometry code marks these positions NOT calibrated. One omnidirectional loudspeaker was moved between these three positions. Orientation is not applicable; no calibrated acoustic power is imported.",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "src9",
+      "name": "Source 9 - omnidirectional position 3",
+      "position_m": [
+        0.892,
+        3.013,
+        1.403
+      ],
+      "source_type": "omnidirectional",
+      "equipment_description": "Omnidirectional B&G",
+      "position_status": "dataset_position_not_echo_calibrated",
+      "orientation_vector": null,
+      "directivity_note": "The author geometry code marks these positions NOT calibrated. One omnidirectional loudspeaker was moved between these three positions. Orientation is not applicable; no calibrated acoustic power is imported.",
+      "local_measured_rirs": false
+    }
+  ],
+  "microphones": [
+    {
+      "id": "mic1",
+      "name": "Microphone 1",
+      "position_m": [
+        0.80316092,
+        3.83141445,
+        1.04391528
+      ],
+      "array_id": "arr1",
+      "position_status": "calibrated",
+      "local_measured_rirs": true
+    },
+    {
+      "id": "mic2",
+      "name": "Microphone 2",
+      "position_m": [
+        0.8406819,
+        3.84527719,
+        1.04391528
+      ],
+      "array_id": "arr1",
+      "position_status": "calibrated",
+      "local_measured_rirs": true
+    },
+    {
+      "id": "mic3",
+      "name": "Microphone 3",
+      "position_m": [
+        0.88758314,
+        3.86260561,
+        1.04391528
+      ],
+      "array_id": "arr1",
+      "position_status": "calibrated",
+      "local_measured_rirs": true
+    },
+    {
+      "id": "mic4",
+      "name": "Microphone 4",
+      "position_m": [
+        0.94855474,
+        3.88513257,
+        1.04391528
+      ],
+      "array_id": "arr1",
+      "position_status": "calibrated",
+      "local_measured_rirs": true
+    },
+    {
+      "id": "mic5",
+      "name": "Microphone 5",
+      "position_m": [
+        1.0423572,
+        3.91978942,
+        1.04391528
+      ],
+      "array_id": "arr1",
+      "position_status": "calibrated",
+      "local_measured_rirs": true
+    },
+    {
+      "id": "mic6",
+      "name": "Microphone 6",
+      "position_m": [
+        0.88136256,
+        2.1876319,
+        0.98664873
+      ],
+      "array_id": "arr2",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic7",
+      "name": "Microphone 7",
+      "position_m": [
+        0.86610109,
+        2.15065775,
+        0.98664873
+      ],
+      "array_id": "arr2",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic8",
+      "name": "Microphone 8",
+      "position_m": [
+        0.84702425,
+        2.10444007,
+        0.98664873
+      ],
+      "array_id": "arr2",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic9",
+      "name": "Microphone 9",
+      "position_m": [
+        0.82222436,
+        2.04435708,
+        0.98664873
+      ],
+      "array_id": "arr2",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic10",
+      "name": "Microphone 10",
+      "position_m": [
+        0.78407068,
+        1.95192172,
+        0.98664873
+      ],
+      "array_id": "arr2",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic11",
+      "name": "Microphone 11",
+      "position_m": [
+        2.21190695,
+        1.71556362,
+        1.30742631
+      ],
+      "array_id": "arr3",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic12",
+      "name": "Microphone 12",
+      "position_m": [
+        2.24779803,
+        1.69790489,
+        1.30742631
+      ],
+      "array_id": "arr3",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic13",
+      "name": "Microphone 13",
+      "position_m": [
+        2.29266187,
+        1.67583147,
+        1.30742631
+      ],
+      "array_id": "arr3",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic14",
+      "name": "Microphone 14",
+      "position_m": [
+        2.35098486,
+        1.64713603,
+        1.30742631
+      ],
+      "array_id": "arr3",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic15",
+      "name": "Microphone 15",
+      "position_m": [
+        2.44071254,
+        1.6029892,
+        1.30742631
+      ],
+      "array_id": "arr3",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic16",
+      "name": "Microphone 16",
+      "position_m": [
+        3.35956993,
+        2.40748639,
+        1.38561103
+      ],
+      "array_id": "arr4",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic17",
+      "name": "Microphone 17",
+      "position_m": [
+        3.3818327,
+        2.44071843,
+        1.38561103
+      ],
+      "array_id": "arr4",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic18",
+      "name": "Microphone 18",
+      "position_m": [
+        3.40966117,
+        2.48225849,
+        1.38561103
+      ],
+      "array_id": "arr4",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic19",
+      "name": "Microphone 19",
+      "position_m": [
+        3.44583818,
+        2.53626056,
+        1.38561103
+      ],
+      "array_id": "arr4",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic20",
+      "name": "Microphone 20",
+      "position_m": [
+        3.50149512,
+        2.61934068,
+        1.38561103
+      ],
+      "array_id": "arr4",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic21",
+      "name": "Microphone 21",
+      "position_m": [
+        3.72758061,
+        4.02235716,
+        0.95058622
+      ],
+      "array_id": "arr5",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic22",
+      "name": "Microphone 22",
+      "position_m": [
+        3.70088482,
+        3.99256898,
+        0.95058622
+      ],
+      "array_id": "arr5",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic23",
+      "name": "Microphone 23",
+      "position_m": [
+        3.6675151,
+        3.95533377,
+        0.95058622
+      ],
+      "array_id": "arr5",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic24",
+      "name": "Microphone 24",
+      "position_m": [
+        3.62413445,
+        3.90692799,
+        0.95058622
+      ],
+      "array_id": "arr5",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic25",
+      "name": "Microphone 25",
+      "position_m": [
+        3.55739499,
+        3.83245756,
+        0.95058622
+      ],
+      "array_id": "arr5",
+      "position_status": "calibrated",
+      "local_measured_rirs": false
+    },
+    {
+      "id": "mic26",
+      "name": "Microphone 26",
+      "position_m": [
+        3.08212703,
+        3.42108318,
+        1.49048013
+      ],
+      "array_id": "arr6",
+      "position_status": "calibrated",
+      "local_measured_rirs": true
+    },
+    {
+      "id": "mic27",
+      "name": "Microphone 27",
+      "position_m": [
+        3.04939035,
+        3.44406817,
+        1.49048013
+      ],
+      "array_id": "arr6",
+      "position_status": "calibrated",
+      "local_measured_rirs": true
+    },
+    {
+      "id": "mic28",
+      "name": "Microphone 28",
+      "position_m": [
+        3.00846949,
+        3.4727994,
+        1.49048013
+      ],
+      "array_id": "arr6",
+      "position_status": "calibrated",
+      "local_measured_rirs": true
+    },
+    {
+      "id": "mic29",
+      "name": "Microphone 29",
+      "position_m": [
+        2.95527238,
+        3.51015,
+        1.49048013
+      ],
+      "array_id": "arr6",
+      "position_status": "calibrated",
+      "local_measured_rirs": true
+    },
+    {
+      "id": "mic30",
+      "name": "Microphone 30",
+      "position_m": [
+        2.87343067,
+        3.56761246,
+        1.49048013
+      ],
+      "array_id": "arr6",
+      "position_status": "calibrated",
+      "local_measured_rirs": true
+    }
+  ],
+  "slots": [
+    {
+      "id": "east_a",
+      "name": "East wall \u00b7 south",
+      "position_m": [
+        5.505,
+        1,
+        0.6
+      ],
+      "size_m": [
+        0.2,
+        2,
+        1
+      ],
+      "area_m2": 2
+    },
+    {
+      "id": "east_b",
+      "name": "East wall \u00b7 north",
+      "position_m": [
+        5.505,
+        3.5,
+        0.6
+      ],
+      "size_m": [
+        0.2,
+        2,
+        1
+      ],
+      "area_m2": 2
+    },
+    {
+      "id": "west",
+      "name": "West wall",
+      "position_m": [
+        0,
+        1,
+        0.6
+      ],
+      "size_m": [
+        0.2,
+        2,
+        1
+      ],
+      "area_m2": 2
+    },
+    {
+      "id": "south",
+      "name": "South wall",
+      "position_m": [
+        2,
+        0,
+        0.6
+      ],
+      "size_m": [
+        2,
+        0.2,
+        1
+      ],
+      "area_m2": 2
+    },
+    {
+      "id": "ceiling_a",
+      "name": "Ceiling \u00b7 west",
+      "position_m": [
+        0.8,
+        2,
+        2.155
+      ],
+      "size_m": [
+        2,
+        1,
+        0.2
+      ],
+      "area_m2": 2
+    },
+    {
+      "id": "ceiling_b",
+      "name": "Ceiling \u00b7 east",
+      "position_m": [
+        3,
+        2,
+        2.155
+      ],
+      "size_m": [
+        2,
+        1,
+        0.2
+      ],
+      "area_m2": 2
+    }
+  ],
+  "quietness_metric": "relative_pressure_reduction_db",
+  "samples_per_zone": 81,
+  "point_defaults": {
+    "sources": [
+      {
+        "id": "src1",
+        "position_m": [
+          1.89407487,
+          4.52190448,
+          1.4481839
+        ],
+        "level_db": 90.96910013008056
+      }
+    ],
+    "listener_m": [
+      0.80316092,
+      3.83141445,
+      1.04391528
+    ],
+    "max_panels": 1,
+    "allowed_slot_ids": [
+      "east_a",
+      "east_b",
+      "west",
+      "south",
+      "ceiling_a",
+      "ceiling_b"
+    ]
+  },
+  "source_level_reference": {
+    "reference_pressure_pa": 2e-05,
+    "metric": "normalized_spl_db",
+    "location": "source sphere boundary",
+    "default_level_db": 90.96910013008056
+  },
+  "defaults": {
+    "sources": [
+      {
+        "id": "src1",
+        "strength": 1
+      }
+    ],
+    "quiet_zones": [
+      {
+        "id": "zone1",
+        "center_m": [
+          0.80316092,
+          3.83141445,
+          1.04391528
+        ],
+        "size_m": [
+          0.4,
+          0.4
+        ],
+        "target_pressure_pa": 0.05,
+        "target_reduction_db": 6
+      },
+      {
+        "id": "zone2",
+        "center_m": [
+          3.08212703,
+          3.42108318,
+          1.49048013
+        ],
+        "size_m": [
+          0.4,
+          0.4
+        ],
+        "target_pressure_pa": 0.05,
+        "target_reduction_db": 6
+      }
+    ],
+    "quietness_metric": "relative_pressure_reduction_db",
+    "budget_eur": 600,
+    "max_objects": 3,
+    "object_cost_eur": 120,
+    "allowed_slot_ids": [
+      "east_a",
+      "east_b",
+      "west",
+      "south",
+      "ceiling_a",
+      "ceiling_b"
+    ]
+  },
+  "maximums": {
+    "sources": 3,
+    "quiet_zones": 4,
+    "objects": 6
+  },
+  "dataset": {
+    "name": "dEchorate",
+    "url": "https://zenodo.org/records/4626590",
+    "license": "MIT"
+  },
+  "assumptions": [
+    "Room dimensions and source coordinates come from the dEchorate laboratory dataset.",
+    "125 Hz harmonic model; rigid room boundaries and omnidirectional 0.08 m spherical sources.",
+    "Source strength 1 imposes 1 Pa peak at its sphere; optional absolute area ceilings are normalized RMS pressure.",
+    "Independent source powers are summed; coherent phase relationships are not modeled.",
+    "Each object is a 0.4 m3 air region with illustrative volumetric damping 0.5, not a calibrated commercial absorber.",
+    "Optimum means fewest affordable objects among six fixed placements, then greatest minimum margin in the selected metric.",
+    "Quietness is checked at 81 samples per horizontal area; unsampled positions and other frequencies are not guaranteed.",
+    "Prices are editable planning inputs; absolute pressure is not calibrated to recorded sound power or dB(A)."
+  ],
+  "allsolve_ready": false
+}

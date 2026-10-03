@@ -1,0 +1,245 @@
+{
+  "case": "gap4",
+  "created_utc": "2026-10-03T10:28:27.420933+00:00",
+  "source": {
+    "project_id": "6kKSYSlR2wgjalVClN",
+    "project_url": "https://allsolve.quanscient.com/#/projects/6kKSYSlR2wgjalVClN/model",
+    "mesh_id": "g5lBsdt5mmevHRh8Qv",
+    "mesh_job_id": "82fBLb9z50GdtQIwO6",
+    "flow_simulation_id": "zBwgnqMxrPaSp8rIVZ",
+    "flow_job_id": "YQe6m1FwM2r8NxuWXn",
+    "electric_simulation_id": "MvwwEyHbDf4FvSQJur",
+    "electric_job_id": "TqNh0IngTEraoSw2zS",
+    "file_sha256": {
+      "state.json": "338f4eddc4813c08aabb5ebb9cec570b62c7522e2c08cac7421c0600272379aa",
+      "flow_samples.json": "5b23a70d2fc2cddce9ecb6e17f81370234f3d89b885c9743647c16f40b533855",
+      "electric_samples.json": "4b6f7fe079544a6c218428d8c26afb19596e505c1c2152477f35239688b5ff69"
+    }
+  },
+  "grid_shape": [
+    25,
+    17,
+    9
+  ],
+  "quadrature": "Composite Simpson in y/z; mean pressure fit over x=20\u201380% of duct length",
+  "mesh_convergence": {
+    "status": "not_evaluated",
+    "note": "A passing single mesh checks this benchmark only; compare an independently refined mesh before claiming mesh convergence."
+  },
+  "limitations": [
+    "Flux and surface mean pressure use sampled grids, not direct FE surface integration.",
+    "Analytical quadrature-bias normalization is reported as a diagnostic and assumes the developed profile.",
+    "Developed pressure drop extrapolates the fitted internal gradient over full length; actual inlet/outlet mean difference is also reported.",
+    "This is a fixed-property cold pilot benchmark, with no soot charging, hot exhaust chemistry, or emission certification."
+  ],
+  "flow": {
+    "status": "pass",
+    "checks": {
+      "gas_volume_relative_error": {
+        "value": 4.218847493575595e-15,
+        "limit": 1e-06,
+        "comparison": "<=",
+        "pass": true
+      },
+      "sampled_inlet_outlet_flux_relative_mismatch": {
+        "value": 0.00014065935292186405,
+        "limit": 0.01,
+        "comparison": "<=",
+        "pass": true
+      },
+      "sampled_all_sections_flux_relative_range": {
+        "value": 0.0005949774543086806,
+        "limit": 0.02,
+        "comparison": "<=",
+        "pass": true
+      },
+      "sampled_inlet_error_after_analytic_quadrature_normalization": {
+        "value": 0.0004133456161798943,
+        "limit": 0.01,
+        "comparison": "<=",
+        "pass": true
+      },
+      "developed_pressure_drop_relative_error": {
+        "value": 0.00014711729971916832,
+        "limit": 0.05,
+        "comparison": "<=",
+        "pass": true
+      },
+      "developed_velocity_profile_relative_l2_error": {
+        "value": 0.0007065771121221744,
+        "limit": 0.05,
+        "comparison": "<=",
+        "pass": true
+      },
+      "transverse_velocity_rms_over_mean_velocity": {
+        "value": 0.0001665867623737038,
+        "limit": 0.02,
+        "comparison": "<=",
+        "pass": true
+      },
+      "maximum_wall_speed_over_mean_velocity": {
+        "value": 3.6678835234003685e-15,
+        "limit": 1e-05,
+        "comparison": "<=",
+        "pass": true
+      },
+      "pressure_fit_r_squared": {
+        "value": 0.9999999982057365,
+        "limit": 0.995,
+        "comparison": ">=",
+        "pass": true
+      }
+    },
+    "expected_mean_velocity_m_s": 0.041666666666666664,
+    "expected_flow_m3_s": 3.3333333333333333e-06,
+    "reference_pressure_gradient_pa_m": 0.6472095041955764,
+    "reference_pressure_drop_pa": 0.03883257025173458,
+    "developed_pressure_gradient_pa_m": 0.6473047199101861,
+    "developed_pressure_drop_pa": 0.03883828319461117,
+    "surface_mean_pressure_drop_pa": 0.038835476999875544,
+    "surface_mean_pressure_drop_relative_error": 7.48533543393215e-05,
+    "developed_resistance_pa_s_m3": 11651.484958383351,
+    "reference_resistance_pa_s_m3": 11649.771075520375,
+    "developed_hydraulic_power_w": 1.2946094398203722e-07,
+    "surface_hydraulic_power_w": 1.2945158999958515e-07,
+    "pressure_fit_x_range_m": [
+      0.0125,
+      0.0475
+    ],
+    "pressure_fit_residual_rms_pa": 2.9615923464977713e-07,
+    "sampled_inlet_flux_m3_s": 3.305566301967473e-06,
+    "sampled_outlet_flux_m3_s": 3.305101343150398e-06,
+    "analytic_profile_sampled_flux_m3_s": 3.304200525165417e-06,
+    "analytic_profile_quadrature_relative_bias": -0.008739842450374957,
+    "analytic_bias_corrected_median_flux_m3_s_diagnostic": 3.333501443856304e-06,
+    "minimum_axial_velocity_m_s": -1.5282843088227355e-16,
+    "maximum_axial_velocity_m_s": 0.07147021491155471,
+    "sampled_sections": {
+      "x_m": [
+        0.0,
+        0.0025,
+        0.005,
+        0.0075,
+        0.01,
+        0.0125,
+        0.015,
+        0.0175,
+        0.02,
+        0.0225,
+        0.025,
+        0.0275,
+        0.03,
+        0.0325,
+        0.035,
+        0.0375,
+        0.04,
+        0.0425,
+        0.045,
+        0.0475,
+        0.05,
+        0.0525,
+        0.055,
+        0.0575,
+        0.06
+      ],
+      "mean_pressure_pa": [
+        0.038835476999875544,
+        0.03722029475582721,
+        0.03560155328808529,
+        0.033982890781745406,
+        0.032364711627334716,
+        0.030747498256611737,
+        0.029129352776754342,
+        0.02751068919231045,
+        0.025892397617901183,
+        0.024274215004022964,
+        0.022656229713102747,
+        0.021037822958916253,
+        0.019419037077445103,
+        0.017801334411542923,
+        0.016183218200208474,
+        0.014565452212940987,
+        0.012946617067387995,
+        0.011327754049158253,
+        0.009709720862739317,
+        0.0080919390296377,
+        0.006473251322919179,
+        0.004855211488128845,
+        0.0032360093563073115,
+        0.0016181356357016319,
+        1.8364208012026666e-20
+      ],
+      "volume_flux_m3_s": [
+        3.305566301967473e-06,
+        3.3039078492017216e-06,
+        3.303943539800405e-06,
+        3.304392667208827e-06,
+        3.304798802028598e-06,
+        3.304011927207057e-06,
+        3.304310718262349e-06,
+        3.304058125951292e-06,
+        3.3037019598776386e-06,
+        3.3036849146892577e-06,
+        3.304582453534386e-06,
+        3.30360027800269e-06,
+        3.3042524497633762e-06,
+        3.303932893633189e-06,
+        3.3047774046236804e-06,
+        3.30425770416047e-06,
+        3.304483119612695e-06,
+        3.304929038893329e-06,
+        3.304453661763805e-06,
+        3.3045765940237564e-06,
+        3.303998731194026e-06,
+        3.3043671664289025e-06,
+        3.304550953437601e-06,
+        3.3046164616996716e-06,
+        3.305101343150398e-06
+      ]
+    }
+  },
+  "electric": {
+    "status": "pass",
+    "checks": {
+      "gas_volume_relative_error": {
+        "value": 4.218847493575595e-15,
+        "limit": 1e-06,
+        "comparison": "<=",
+        "pass": true
+      },
+      "uniform_field_relative_l2_error": {
+        "value": 1.8786971260988644e-15,
+        "limit": 0.01,
+        "comparison": "<=",
+        "pass": true
+      },
+      "linear_potential_rms_error_over_voltage": {
+        "value": 3.2144902676357227e-16,
+        "limit": 0.01,
+        "comparison": "<=",
+        "pass": true
+      },
+      "plate_potential_maximum_error_over_voltage": {
+        "value": 7.105427357601002e-16,
+        "limit": 1e-05,
+        "comparison": "<=",
+        "pass": true
+      }
+    },
+    "expected_electric_field_v_m": [
+      0.0,
+      -50000.0,
+      0.0
+    ],
+    "volume_mean_electric_field_v_m": [
+      -1.5731438008063816e-12,
+      -49999.99999999972,
+      3.959459429804574e-13
+    ],
+    "potential_min_v": -1.2689793245345493e-13,
+    "potential_max_v": 200.00000000000009,
+    "maximum_field_relative_error": 1.413732794235009e-14
+  },
+  "all_field_benchmark_checks_passed": true,
+  "passed": true
+}

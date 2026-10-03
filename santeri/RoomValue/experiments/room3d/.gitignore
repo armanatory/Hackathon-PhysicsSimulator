@@ -1,0 +1,5 @@
+.allsolve_cache/
+state.json
+outputs/
+*.log
+__pycache__/

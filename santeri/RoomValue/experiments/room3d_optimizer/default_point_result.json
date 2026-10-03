@@ -1,0 +1,235 @@
+{
+  "job_id": "e2c5c2f1-a1d4-430c-9453-4ffaff5cf4e8",
+  "kind": "room3d_point",
+  "status": "completed",
+  "request": {
+    "sources": [
+      {
+        "id": "src1",
+        "position_m": [
+          1.89407487,
+          4.52190448,
+          1.4481839
+        ],
+        "level_db": 90.96910013008056
+      }
+    ],
+    "listener_m": [
+      0.80316092,
+      3.83141445,
+      1.04391528
+    ],
+    "max_panels": 1,
+    "allowed_slot_ids": [
+      "east_a",
+      "east_b",
+      "west",
+      "south",
+      "ceiling_a",
+      "ceiling_b"
+    ]
+  },
+  "progress": {
+    "stage": "completed",
+    "message": "Lowest listener noise found within the panel limit",
+    "project_url": "https://allsolve.quanscient.com/#/projects/wplkBNw5wTUbgLDuPI/model",
+    "evaluated": 7,
+    "total": 7,
+    "best_count": 1,
+    "latest_simulation_id": "CMa3NQv5-vtgO1Prlr"
+  },
+  "attempt": 1,
+  "created_at": "2026-10-03T11:56:21.979524+00:00",
+  "updated_at": "2026-10-03T11:56:25.775973+00:00",
+  "error": null,
+  "result": {
+    "objective": "minimize_listener_noise",
+    "dimension": 3,
+    "frequency_hz": 125.0,
+    "noise_metric": "normalized_spl_db",
+    "pressure_reference_pa": 2e-05,
+    "sources": [
+      {
+        "id": "src1",
+        "position_m": [
+          1.89407487,
+          4.52190448,
+          1.4481839
+        ],
+        "level_db": 90.96910013008056
+      }
+    ],
+    "listener_m": [
+      0.80316092,
+      3.83141445,
+      1.04391528
+    ],
+    "max_panels": 1,
+    "baseline": {
+      "slot_ids": [],
+      "object_count": 0,
+      "pressure_rms_pa": 0.042742730235764984,
+      "noise_db": 66.59664528111783,
+      "reduction_db": 0.0,
+      "simulation_ids": [
+        "ROY0ZBA4DLHEv3KqPe"
+      ],
+      "status": "SUCCESS"
+    },
+    "optimal_layout": {
+      "slot_ids": [
+        "ceiling_b"
+      ],
+      "object_count": 1,
+      "pressure_rms_pa": 0.01297444764387161,
+      "noise_db": 56.24117764398993,
+      "reduction_db": 10.355467637127902,
+      "simulation_ids": [
+        "n74505QJ9nlwFN4Mi_"
+      ],
+      "status": "SUCCESS"
+    },
+    "evaluations": [
+      {
+        "slot_ids": [],
+        "object_count": 0,
+        "pressure_rms_pa": 0.042742730235764984,
+        "noise_db": 66.59664528111783,
+        "reduction_db": 0.0,
+        "simulation_ids": [
+          "ROY0ZBA4DLHEv3KqPe"
+        ],
+        "status": "SUCCESS"
+      },
+      {
+        "slot_ids": [
+          "ceiling_a"
+        ],
+        "object_count": 1,
+        "pressure_rms_pa": 0.041405832978220154,
+        "noise_db": 66.32063060566657,
+        "reduction_db": 0.2760146754512647,
+        "simulation_ids": [
+          "gHy-13ONDf6xJtGlZK"
+        ],
+        "status": "SUCCESS"
+      },
+      {
+        "slot_ids": [
+          "ceiling_b"
+        ],
+        "object_count": 1,
+        "pressure_rms_pa": 0.01297444764387161,
+        "noise_db": 56.24117764398993,
+        "reduction_db": 10.355467637127902,
+        "simulation_ids": [
+          "n74505QJ9nlwFN4Mi_"
+        ],
+        "status": "SUCCESS"
+      },
+      {
+        "slot_ids": [
+          "east_a"
+        ],
+        "object_count": 1,
+        "pressure_rms_pa": 0.06351712781443383,
+        "noise_db": 70.03721711611361,
+        "reduction_db": -3.4405718349957795,
+        "simulation_ids": [
+          "cJAE2hFIQUN351_TaA"
+        ],
+        "status": "SUCCESS"
+      },
+      {
+        "slot_ids": [
+          "east_b"
+        ],
+        "object_count": 1,
+        "pressure_rms_pa": 0.035574527842316295,
+        "noise_db": 65.0021829804203,
+        "reduction_db": 1.5944623006975291,
+        "simulation_ids": [
+          "ulIaIols5xFdYaJCfP"
+        ],
+        "status": "SUCCESS"
+      },
+      {
+        "slot_ids": [
+          "south"
+        ],
+        "object_count": 1,
+        "pressure_rms_pa": 0.047697115081028904,
+        "noise_db": 67.5492423248478,
+        "reduction_db": -0.9525970437299662,
+        "simulation_ids": [
+          "TCWN6jzs8jfc4KnSKF"
+        ],
+        "status": "SUCCESS"
+      },
+      {
+        "slot_ids": [
+          "west"
+        ],
+        "object_count": 1,
+        "pressure_rms_pa": 0.049737020115730037,
+        "noise_db": 67.91299532499568,
+        "reduction_db": -1.316350043877847,
+        "simulation_ids": [
+          "CMa3NQv5-vtgO1Prlr"
+        ],
+        "status": "SUCCESS"
+      }
+    ],
+    "search": {
+      "evaluated_layouts": 7,
+      "total_layouts": 7,
+      "candidate_slots": [
+        "east_a",
+        "east_b",
+        "west",
+        "south",
+        "ceiling_a",
+        "ceiling_b"
+      ],
+      "optimality_scope": "Lowest RMS pressure at the chosen listener among every allowed fixed placement subset from zero through the maximum panel count; exact ties prefer fewer panels.",
+      "source_combination": "incoherent_power_sum"
+    },
+    "assumptions": [
+      "Room dimensions come from the dEchorate laboratory dataset; edited source positions are user inputs.",
+      "125 Hz harmonic model; rigid room boundaries and omnidirectional 0.08 m spherical sources.",
+      "Source dB levels prescribe RMS pressure at the source sphere boundary, referenced to 20 microPa; this is an uncalibrated normalized model, not measured loudness or dB(A).",
+      "Independent source powers are summed; coherent phase relationships are not modeled.",
+      "Each panel is a 0.4 m3 air region with illustrative volumetric damping 0.5, not a calibrated commercial absorber.",
+      "The minimum is at one XYZ listener among all allowed fixed panel placements up to the panel limit; no budget or cost is used.",
+      "Other listening positions and frequencies are not optimized; continuous placement and global room quietness are not guaranteed."
+    ],
+    "project_id": "wplkBNw5wTUbgLDuPI",
+    "project_url": "https://allsolve.quanscient.com/#/projects/wplkBNw5wTUbgLDuPI/model",
+    "mesh": {
+      "mesh_id": "WnnAHZPdRz508Z_UMG",
+      "dimension": 3,
+      "status": "SUCCESS",
+      "bounds_m": [
+        [
+          0.0,
+          5.705
+        ],
+        [
+          0.0,
+          5.965
+        ],
+        [
+          0.0,
+          2.355
+        ]
+      ],
+      "tetrahedron_count": 332020,
+      "volume_m3": 80.14141537500001,
+      "max_edge_m": 0.3631316798915856,
+      "min_elements_per_wavelength": 7.644169191816968,
+      "field_interpolation_order": 2
+    },
+    "model_sha256": "8db251f48410990f72e6f0937cfcf6f4f2c83db0179bba381547d39e16a44989",
+    "source_geometry": "dataset_positions"
+  }
+}

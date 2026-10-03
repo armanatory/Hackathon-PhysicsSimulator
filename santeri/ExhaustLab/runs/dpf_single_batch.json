@@ -1,0 +1,31 @@
+{
+  "max_active_jobs": 1,
+  "peak_active_jobs": 1,
+  "requested_cases": [
+    "dpf_d160_l200_refined"
+  ],
+  "events": [
+    {
+      "at_utc": "2026-10-03T11:20:49.590869+00:00",
+      "event": "dispatch",
+      "case": "dpf_d160_l200_refined",
+      "stage": "mesh",
+      "active_jobs": 1
+    },
+    {
+      "at_utc": "2026-10-03T11:21:00.042001+00:00",
+      "event": "transition",
+      "case": "dpf_d160_l200_refined",
+      "stage": "simulation",
+      "active_jobs": 1
+    },
+    {
+      "at_utc": "2026-10-03T11:21:24.940751+00:00",
+      "event": "complete",
+      "case": "dpf_d160_l200_refined",
+      "stage": "simulation",
+      "active_jobs": 0
+    }
+  ],
+  "note": "Concurrent independent one-rank jobs; client dispatch overlap, not a distributed-solver scaling benchmark."
+}

@@ -1,0 +1,442 @@
+{
+  "schema_version": 1,
+  "dataset": "dEchorate bounded measured 3D reference subset",
+  "dataset_doi": "10.5281/zenodo.4626590",
+  "paper_doi": "10.1186/s13636-021-00229-0",
+  "room": {
+    "size_m": [
+      5.705,
+      5.965,
+      2.355
+    ],
+    "nominal_publication_size_m": [
+      6.0,
+      6.0,
+      2.4
+    ],
+    "volume_m3": 80.141415375,
+    "speed_of_sound_m_s": 346.98,
+    "temperature_c": 24.0,
+    "relative_humidity_percent": 80.0,
+    "coordinate_frame": "Absolute calibrated Cartesian XYZ; origin [0,0,0], +Z upward; west x=0, east x=Lx, south y=0, north y=Ly, floor z=0, ceiling z=Lz.",
+    "geometry_provenance": "Calibrated inner room bounds from annotation HDF5 and each SOFA RoomCornerB, rather than rounded nominal dimensions in the article.",
+    "environment_provenance": "Publication section 2.2 and repository constants; SOFA RoomTemperature and RoomVolume are zero placeholders."
+  },
+  "source": {
+    "id": "src1",
+    "position_m": [
+      1.89407487,
+      4.52190448,
+      1.4481839
+    ],
+    "directivity": "Directional Avanton MIXCUBE; a point monopole FEM source is an illustrative approximation, not matched source directivity or power."
+  },
+  "receivers": [
+    {
+      "id": "mic1",
+      "position_m": [
+        0.80316092,
+        3.83141445,
+        1.04391528
+      ]
+    },
+    {
+      "id": "mic26",
+      "position_m": [
+        3.08212703,
+        3.42108318,
+        1.49048013
+      ]
+    }
+  ],
+  "all_receivers": [
+    {
+      "id": "mic1",
+      "position_m": [
+        0.80316092,
+        3.83141445,
+        1.04391528
+      ]
+    },
+    {
+      "id": "mic2",
+      "position_m": [
+        0.8406819,
+        3.84527719,
+        1.04391528
+      ]
+    },
+    {
+      "id": "mic3",
+      "position_m": [
+        0.88758314,
+        3.86260561,
+        1.04391528
+      ]
+    },
+    {
+      "id": "mic4",
+      "position_m": [
+        0.94855474,
+        3.88513257,
+        1.04391528
+      ]
+    },
+    {
+      "id": "mic5",
+      "position_m": [
+        1.0423572,
+        3.91978942,
+        1.04391528
+      ]
+    },
+    {
+      "id": "mic26",
+      "position_m": [
+        3.08212703,
+        3.42108318,
+        1.49048013
+      ]
+    },
+    {
+      "id": "mic27",
+      "position_m": [
+        3.04939035,
+        3.44406817,
+        1.49048013
+      ]
+    },
+    {
+      "id": "mic28",
+      "position_m": [
+        3.00846949,
+        3.4727994,
+        1.49048013
+      ]
+    },
+    {
+      "id": "mic29",
+      "position_m": [
+        2.95527238,
+        3.51015,
+        1.49048013
+      ]
+    },
+    {
+      "id": "mic30",
+      "position_m": [
+        2.87343067,
+        3.56761246,
+        1.49048013
+      ]
+    }
+  ],
+  "room_states": {
+    "011111": {
+      "surface_order": [
+        "floor",
+        "ceiling",
+        "west",
+        "south",
+        "east",
+        "north"
+      ],
+      "surface_state": {
+        "floor": "absorbent",
+        "ceiling": "reflective",
+        "west": "reflective",
+        "south": "reflective",
+        "east": "reflective",
+        "north": "reflective"
+      },
+      "furnished": false
+    },
+    "000000": {
+      "surface_order": [
+        "floor",
+        "ceiling",
+        "west",
+        "south",
+        "east",
+        "north"
+      ],
+      "surface_state": {
+        "floor": "absorbent",
+        "ceiling": "absorbent",
+        "west": "absorbent",
+        "south": "absorbent",
+        "east": "absorbent",
+        "north": "absorbent"
+      },
+      "furnished": false
+    }
+  },
+  "surface_material_descriptions": {
+    "floor_absorbent": "Hairy carpet",
+    "wall_and_ceiling_absorbent": "Glass wool mats covered with porous tin (article Table 8)",
+    "wall_and_ceiling_reflective": "Formica panels, 20 mm thick; plaster also identified for walls (article Table 8)",
+    "impedance_status": "No calibrated frequency-dependent complex surface impedance is supplied in this subset. Material descriptions and binary states cannot be interpreted as measured commercial treatment performance."
+  },
+  "measurements": [
+    {
+      "room_code": "011111",
+      "file": "dEchorate_room011111_src1_arr1_mics1-5.sofa",
+      "source_id": "src1",
+      "receiver_ids": [
+        "mic1",
+        "mic2",
+        "mic3",
+        "mic4",
+        "mic5"
+      ],
+      "sampling_rate_hz": 48000.0,
+      "shape": [
+        1,
+        5,
+        48000
+      ],
+      "shape_axes": [
+        "measurement",
+        "receiver",
+        "sample"
+      ],
+      "duration_s": 1.0,
+      "source_description": "Directional Avanton MIXCUBE",
+      "receiver_coordinates": "Already absolute Cartesian XYZ in metres; checked against annotations. Do not add ListenerPosition or rotate by ListenerView.",
+      "sofa_room_description_verbatim": "room_code:020002->is reflective?floor:0_ceiling:1_west:0_south:0_east:0_north:1_hasFornituer?:1",
+      "sofa_room_temperature_placeholder": [
+        0.0
+      ],
+      "sofa_room_volume_placeholder": [
+        0.0
+      ],
+      "selected_receiver_diagnostics": {
+        "mic1": {
+          "finite": true,
+          "peak_time_s": 0.003875,
+          "geometry_direct_arrival_s": 0.0038990341112771377,
+          "measured_peak_near_direct_arrival_s": 0.003875,
+          "fullband_t20_screening_s": 0.5836090668858996,
+          "fullband_t20_fit_r_squared": 0.9993905745910646,
+          "diagnostic_scope": "Original measured FIR. T20 is a fullband screening fit to -5 to -25 dB reverse energy; no octave filtering, noise compensation, ISO validation, or FEM calibration."
+        }
+      }
+    },
+    {
+      "room_code": "011111",
+      "file": "dEchorate_room011111_src1_arr6_mics26-30.sofa",
+      "source_id": "src1",
+      "receiver_ids": [
+        "mic26",
+        "mic27",
+        "mic28",
+        "mic29",
+        "mic30"
+      ],
+      "sampling_rate_hz": 48000.0,
+      "shape": [
+        1,
+        5,
+        48000
+      ],
+      "shape_axes": [
+        "measurement",
+        "receiver",
+        "sample"
+      ],
+      "duration_s": 1.0,
+      "source_description": "Directional Avanton MIXCUBE",
+      "receiver_coordinates": "Already absolute Cartesian XYZ in metres; checked against annotations. Do not add ListenerPosition or rotate by ListenerView.",
+      "sofa_room_description_verbatim": "room_code:020002->is reflective?floor:0_ceiling:1_west:0_south:0_east:0_north:1_hasFornituer?:1",
+      "sofa_room_temperature_placeholder": [
+        0.0
+      ],
+      "sofa_room_volume_placeholder": [
+        0.0
+      ],
+      "selected_receiver_diagnostics": {
+        "mic26": {
+          "finite": true,
+          "peak_time_s": 0.004666666666666667,
+          "geometry_direct_arrival_s": 0.004669447983301109,
+          "measured_peak_near_direct_arrival_s": 0.004666666666666667,
+          "fullband_t20_screening_s": 0.5869742827589493,
+          "fullband_t20_fit_r_squared": 0.9976814419524616,
+          "diagnostic_scope": "Original measured FIR. T20 is a fullband screening fit to -5 to -25 dB reverse energy; no octave filtering, noise compensation, ISO validation, or FEM calibration."
+        }
+      }
+    },
+    {
+      "room_code": "000000",
+      "file": "dEchorate_room000000_src1_arr1_mics1-5.sofa",
+      "source_id": "src1",
+      "receiver_ids": [
+        "mic1",
+        "mic2",
+        "mic3",
+        "mic4",
+        "mic5"
+      ],
+      "sampling_rate_hz": 48000.0,
+      "shape": [
+        1,
+        5,
+        48000
+      ],
+      "shape_axes": [
+        "measurement",
+        "receiver",
+        "sample"
+      ],
+      "duration_s": 1.0,
+      "source_description": "Directional Avanton MIXCUBE",
+      "receiver_coordinates": "Already absolute Cartesian XYZ in metres; checked against annotations. Do not add ListenerPosition or rotate by ListenerView.",
+      "sofa_room_description_verbatim": "room_code:020002->is reflective?floor:0_ceiling:1_west:0_south:0_east:0_north:1_hasFornituer?:1",
+      "sofa_room_temperature_placeholder": [
+        0.0
+      ],
+      "sofa_room_volume_placeholder": [
+        0.0
+      ],
+      "selected_receiver_diagnostics": {
+        "mic1": {
+          "finite": true,
+          "peak_time_s": 0.003875,
+          "geometry_direct_arrival_s": 0.0038990341112771377,
+          "measured_peak_near_direct_arrival_s": 0.003875,
+          "fullband_t20_screening_s": 0.16657644412614325,
+          "fullband_t20_fit_r_squared": 0.9848289905601133,
+          "diagnostic_scope": "Original measured FIR. T20 is a fullband screening fit to -5 to -25 dB reverse energy; no octave filtering, noise compensation, ISO validation, or FEM calibration."
+        }
+      }
+    },
+    {
+      "room_code": "000000",
+      "file": "dEchorate_room000000_src1_arr6_mics26-30.sofa",
+      "source_id": "src1",
+      "receiver_ids": [
+        "mic26",
+        "mic27",
+        "mic28",
+        "mic29",
+        "mic30"
+      ],
+      "sampling_rate_hz": 48000.0,
+      "shape": [
+        1,
+        5,
+        48000
+      ],
+      "shape_axes": [
+        "measurement",
+        "receiver",
+        "sample"
+      ],
+      "duration_s": 1.0,
+      "source_description": "Directional Avanton MIXCUBE",
+      "receiver_coordinates": "Already absolute Cartesian XYZ in metres; checked against annotations. Do not add ListenerPosition or rotate by ListenerView.",
+      "sofa_room_description_verbatim": "room_code:020002->is reflective?floor:0_ceiling:1_west:0_south:0_east:0_north:1_hasFornituer?:1",
+      "sofa_room_temperature_placeholder": [
+        0.0
+      ],
+      "sofa_room_volume_placeholder": [
+        0.0
+      ],
+      "selected_receiver_diagnostics": {
+        "mic26": {
+          "finite": true,
+          "peak_time_s": 0.004666666666666667,
+          "geometry_direct_arrival_s": 0.004669447983301109,
+          "measured_peak_near_direct_arrival_s": 0.004666666666666667,
+          "fullband_t20_screening_s": 0.17544901161215218,
+          "fullband_t20_fit_r_squared": 0.9825820734175232,
+          "diagnostic_scope": "Original measured FIR. T20 is a fullband screening fit to -5 to -25 dB reverse energy; no octave filtering, noise compensation, ISO validation, or FEM calibration."
+        }
+      }
+    }
+  ],
+  "csv_exports": {
+    "011111": {
+      "file": "measured_room011111_src1_mic1_mic26_4khz.csv",
+      "sha256": "2ce9c154fc331eed7292f597f0b271c25a2a1ff910a119ba33c421e2f401d56c",
+      "sampling_rate_hz": 4000.0,
+      "samples": 4000,
+      "filter": {
+        "type": "241-tap Kaiser-window FIR lowpass, centered convolution before decimation",
+        "cutoff_hz": 1000.0,
+        "kaiser_beta": 8.6,
+        "decimation_factor": 12
+      },
+      "scope": "Convenience band-limited derivative; centered filtering can ring before arrivals and affects record edges. Use unchanged SOFA for measured validation. FIR amplitudes are not calibrated sound pressure in pascals."
+    },
+    "000000": {
+      "file": "measured_room000000_src1_mic1_mic26_4khz.csv",
+      "sha256": "b7d7bfa74c8a06cbcc1ee41d5001fd20f061d895589098add5ce13a0a8245e55",
+      "sampling_rate_hz": 4000.0,
+      "samples": 4000,
+      "filter": {
+        "type": "241-tap Kaiser-window FIR lowpass, centered convolution before decimation",
+        "cutoff_hz": 1000.0,
+        "kaiser_beta": 8.6,
+        "decimation_factor": 12
+      },
+      "scope": "Convenience band-limited derivative; centered filtering can ring before arrivals and affects record edges. Use unchanged SOFA for measured validation. FIR amplitudes are not calibrated sound pressure in pascals."
+    }
+  },
+  "files": [
+    {
+      "name": "dEchorate_annotations.h5",
+      "url": "https://www.sofaconventions.org/data/database/dechorate/dEchorate_annotations.h5",
+      "bytes": 30324,
+      "sha256": "1c2810a2dc3870c75276a4b954c36b884e31b291483190634b2030040061317e"
+    },
+    {
+      "name": "dEchorate_room011111_src1_arr1_mics1-5.sofa",
+      "url": "https://www.sofaconventions.org/data/database/dechorate/dEchorate_room011111_src1_arr1_mics1-5.sofa",
+      "bytes": 1767577,
+      "sha256": "ec8a4f2305b4b170e7ec9b5dab4f51695d861b462125e3119e2a33fd20813fa1"
+    },
+    {
+      "name": "dEchorate_room011111_src1_arr6_mics26-30.sofa",
+      "url": "https://www.sofaconventions.org/data/database/dechorate/dEchorate_room011111_src1_arr6_mics26-30.sofa",
+      "bytes": 1763789,
+      "sha256": "a6298fad1510ed7bd13ac19773a3e0ebf85d1334f7a3df6679e13fa44c93f109"
+    },
+    {
+      "name": "dEchorate_room000000_src1_arr1_mics1-5.sofa",
+      "url": "https://www.sofaconventions.org/data/database/dechorate/dEchorate_room000000_src1_arr1_mics1-5.sofa",
+      "bytes": 1758263,
+      "sha256": "26a76bbafb80af0dc29a6838ae9d8fdc4846249c8a4e60a2ef87d13b87496b07"
+    },
+    {
+      "name": "dEchorate_room000000_src1_arr6_mics26-30.sofa",
+      "url": "https://www.sofaconventions.org/data/database/dechorate/dEchorate_room000000_src1_arr6_mics26-30.sofa",
+      "bytes": 1755740,
+      "sha256": "46f7f20f2e54561f5d606ea7307b6eab64cbfd73e5cb14a164184253203d4c1e"
+    }
+  ],
+  "license": {
+    "spdx": "MIT",
+    "source": "License attribute in every downloaded SOFA file",
+    "text": "The MIT License (MIT) Copyright (c) 2019, Diego Di Carlo. Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.",
+    "notice_file": "LICENSE.dataset.txt"
+  },
+  "primary_sources": {
+    "paper": "https://arxiv.org/html/2104.13168",
+    "dataset_record": "https://zenodo.org/records/4626590",
+    "small_file_repository": "https://www.sofaconventions.org/data/database/dechorate/",
+    "calibrated_constants": "https://raw.githubusercontent.com/Chutlhu/dEchorate/master/dechorate/__init__.py",
+    "coordinate_construction": "https://raw.githubusercontent.com/Chutlhu/dEchorate/master/dechorate/main_geometry_from_echo_calibration.py",
+    "sofa_builder": "https://raw.githubusercontent.com/Chutlhu/dEchorate/master/dechorate/main_build_sofa_database.py"
+  },
+  "caveats": [
+    "A controlled cuboid acoustics laboratory is a validation fixture, not a measured cafeteria or school dataset.",
+    "ReceiverPosition is absolute in these files despite usual SOFA listener-relative semantics; cross-checked against calibrated annotations.",
+    "SOFA RoomDescription contains an inconsistent room_code:020002 furnished-room description in selected files. Infer surface state from verified filename/title plus the article state table, not this stale attribute.",
+    "SOFA RoomTemperature and RoomVolume contain zero placeholders. Use publication environment and derived volume.",
+    "The floor is absorbent carpet in both 011111 and 000000; do not call 011111 an entirely rigid or entirely untreated room.",
+    "Source src1 is directional, while an uncalibrated monopole solver source has different radiation and level.",
+    "All solver boundary impedance, volumetric damping, and commercial product costs remain explicit assumptions pending measurement; this dataset import does not calibrate FEM.",
+    "The one-second RIRs and screening fits do not establish broadband cafeteria noise reduction or speech intelligibility."
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "passed": false,
+  "gates": {
+    "pressure_relative_error": true,
+    "flux_relative_error": false,
+    "cylinder_volume_relative_error": true,
+    "thermal_exact_error_k": true,
+    "temperature_bounds": true,
+    "thermal_physical_plug_relative_excess_error": true
+  },
+  "pressure_relative_error": 0.0006117497958502138,
+  "flux_relative_error": 1.0,
+  "cylinder_volume_relative_error": 0.0019141033972003285,
+  "thermal_exact_error_k": 0.0001837319823607686,
+  "pressure_factor": 0.9993882502041498,
+  "thermal_factor": 0.971355423788522,
+  "plug_outlet_error_k": 0.8379345592159098,
+  "plug_relative_excess_error": 0.0020964977746035195,
+  "source_hashes": {
+    "state.json": "3560c5f5c1d69fb9d6b5d46d8e81b08f3a23d1f4310d277a8e899a775e2bd704",
+    "samples.json": "cd75d68d59db35e8a3d4e1359e428a44d2125e0468288acc02331459ffe7a22b",
+    "darcy_thermal.py": "e9d6dc9870b45c6d707cca1a6f9bca78aa0fb9147d18a8b12440643e163c1cab",
+    "sample_dpf.py": "2b5270cb191b6fa634cd2e56e4eaae5153541ca7a5609afe5e691f5b02bcb524"
+  },
+  "checked_utc": "2026-10-03T11:15:07.284811+00:00"
+}

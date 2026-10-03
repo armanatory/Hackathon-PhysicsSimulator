@@ -1,0 +1,20 @@
+{
+  "rendered": [
+    "F:\\H4H quanscient\\RoomValue\\experiments\\room3d\\room3d.png",
+    "F:\\H4H quanscient\\RoomValue\\experiments\\room3d\\measured_ir.png",
+    "F:\\H4H quanscient\\RoomValue\\experiments\\room3d\\pressure_slice_mic1.png"
+  ],
+  "field_validation": {
+    "field_file": "F:\\H4H quanscient\\RoomValue\\experiments\\room3d\\outputs\\refined_field\\Pressure in phase_nostep_0.hdf",
+    "mesh_level": "refined",
+    "run_name": "refined_baseline_125hz",
+    "simulation_id": "aZjUiTfT2z-CnLX-QC",
+    "mesh_id": "X0J_nt5SN6D3WGVJRd",
+    "tetrahedron_count": 274035,
+    "height_m": 1.04391528,
+    "field_probe_pa": 0.06091509641956941,
+    "independent_cloud_probe_pa": 0.06091509641956942,
+    "slice_interior_coverage_fraction": 1.0,
+    "interpolation_order": 2
+  }
+}

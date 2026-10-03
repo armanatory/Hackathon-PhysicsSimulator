@@ -1,0 +1,596 @@
+{
+  "schema_version": 1,
+  "generated_utc": "2026-10-03T10:37:14.883230+00:00",
+  "label": "Modeled cold pilot collection conditional on entered spherical particle diameter and charge; finest passed field sources",
+  "nominal_inlet_grid": [
+    48,
+    32
+  ],
+  "nominal_max_step_s": 0.01,
+  "max_time_s": 30,
+  "export_mesh_comparison_inlet_grid": [
+    96,
+    64
+  ],
+  "export_mesh_comparison_max_step_s": 0.005,
+  "nominal": [
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 1,
+      "charge_e": 30,
+      "voltage_v": 200.0,
+      "capture_percent": 57.59027342177446,
+      "outlet_percent": 42.40972657822554,
+      "unresolved_percent": 0.0,
+      "pressure_drop_pa": 0.038831024903114256,
+      "zerocharge_capture_percent": 0.0,
+      "zerocharge_outlet_percent": 99.97499400352827,
+      "zerocharge_unresolved_percent": 0.02500599647172791,
+      "timestep_capture_change_pp": 0.0,
+      "inlet_capture_change_pp": 0.9449097370875514,
+      "export_grid_capture_change_pp": 0.6632532018364778,
+      "mesh_capture_change_pp": 0.005765599341989169,
+      "project_url": "https://allsolve.quanscient.com/#/projects/zGDsVITicdtGPhAAbR/model"
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 1,
+      "charge_e": 30,
+      "voltage_v": 200.0,
+      "capture_percent": 37.8605136098672,
+      "outlet_percent": 62.1394863901328,
+      "unresolved_percent": 0.0,
+      "pressure_drop_pa": 0.012399613409172614,
+      "zerocharge_capture_percent": 0.0,
+      "zerocharge_outlet_percent": 99.81856377867932,
+      "zerocharge_unresolved_percent": 0.18143622132067938,
+      "timestep_capture_change_pp": 0.0,
+      "inlet_capture_change_pp": 0.18048098351408082,
+      "export_grid_capture_change_pp": 0.8705794410577006,
+      "mesh_capture_change_pp": 2.73368665149043e-05,
+      "project_url": "https://allsolve.quanscient.com/#/projects/K0pjyYL9U2mAYvdVRv/model"
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 1,
+      "charge_e": 30,
+      "voltage_v": 200.0,
+      "capture_percent": 28.546766217784498,
+      "outlet_percent": 71.45323378221549,
+      "unresolved_percent": 0.0,
+      "pressure_drop_pa": 0.005670510604052334,
+      "zerocharge_capture_percent": 0.0,
+      "zerocharge_outlet_percent": 99.63912621320084,
+      "zerocharge_unresolved_percent": 0.36087378679914606,
+      "timestep_capture_change_pp": 0.0,
+      "inlet_capture_change_pp": 0.1185286066115121,
+      "export_grid_capture_change_pp": 0.5038176662845062,
+      "mesh_capture_change_pp": 0.0013230269936270744,
+      "project_url": "https://allsolve.quanscient.com/#/projects/Asw8FbQLHL-sei8Opb/model"
+    }
+  ],
+  "sensitivities": [
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 0.5,
+      "charge_e": 0,
+      "voltage_v": 200.0,
+      "capture_percent": 0.0,
+      "outlet_percent": 99.97499400352827,
+      "unresolved_percent": 0.02500599647172791,
+      "capture_upper_bound_percent": 0.02500599647172791
+    },
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 0.5,
+      "charge_e": 15,
+      "voltage_v": 200.0,
+      "capture_percent": 64.16318042233286,
+      "outlet_percent": 35.83681957766714,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 64.16318042233286
+    },
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 0.5,
+      "charge_e": 30,
+      "voltage_v": 200.0,
+      "capture_percent": 100.0,
+      "outlet_percent": 0.0,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 100.0
+    },
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 0.5,
+      "charge_e": 60,
+      "voltage_v": 200.0,
+      "capture_percent": 100.0,
+      "outlet_percent": 0.0,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 100.0
+    },
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 1.0,
+      "charge_e": 0,
+      "voltage_v": 200.0,
+      "capture_percent": 0.0,
+      "outlet_percent": 99.97499400352827,
+      "unresolved_percent": 0.02500599647172791,
+      "capture_upper_bound_percent": 0.02500599647172791
+    },
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 1.0,
+      "charge_e": 15,
+      "voltage_v": 200.0,
+      "capture_percent": 29.11930957760892,
+      "outlet_percent": 70.88069042239108,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 29.11930957760892
+    },
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 1.0,
+      "charge_e": 30,
+      "voltage_v": 200.0,
+      "capture_percent": 57.59027342177446,
+      "outlet_percent": 42.40972657822554,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 57.59027342177446
+    },
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 1.0,
+      "charge_e": 60,
+      "voltage_v": 200.0,
+      "capture_percent": 100.0,
+      "outlet_percent": 0.0,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 100.0
+    },
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 2.0,
+      "charge_e": 0,
+      "voltage_v": 200.0,
+      "capture_percent": 0.0,
+      "outlet_percent": 99.97499400352827,
+      "unresolved_percent": 0.02500599647172791,
+      "capture_upper_bound_percent": 0.02500599647172791
+    },
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 2.0,
+      "charge_e": 15,
+      "voltage_v": 200.0,
+      "capture_percent": 13.693131322821195,
+      "outlet_percent": 86.30686867717881,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 13.693131322821195
+    },
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 2.0,
+      "charge_e": 30,
+      "voltage_v": 200.0,
+      "capture_percent": 26.653799600126902,
+      "outlet_percent": 73.3462003998731,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 26.653799600126902
+    },
+    {
+      "case": "gap4fine",
+      "gap_mm": 4.0,
+      "diameter_um": 2.0,
+      "charge_e": 60,
+      "voltage_v": 200.0,
+      "capture_percent": 52.91272308599394,
+      "outlet_percent": 47.08727691400607,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 52.91272308599394
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 0.5,
+      "charge_e": 0,
+      "voltage_v": 200.0,
+      "capture_percent": 0.0,
+      "outlet_percent": 99.81856377867932,
+      "unresolved_percent": 0.18143622132067938,
+      "capture_upper_bound_percent": 0.18143622132067938
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 0.5,
+      "charge_e": 15,
+      "voltage_v": 200.0,
+      "capture_percent": 43.46188588707602,
+      "outlet_percent": 56.53811411292398,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 43.46188588707602
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 0.5,
+      "charge_e": 30,
+      "voltage_v": 200.0,
+      "capture_percent": 81.22562899050646,
+      "outlet_percent": 18.77437100949352,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 81.22562899050646
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 0.5,
+      "charge_e": 60,
+      "voltage_v": 200.0,
+      "capture_percent": 99.99999999999999,
+      "outlet_percent": 0.0,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 99.99999999999999
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 1.0,
+      "charge_e": 0,
+      "voltage_v": 200.0,
+      "capture_percent": 0.0,
+      "outlet_percent": 99.81856377867932,
+      "unresolved_percent": 0.18143622132067938,
+      "capture_upper_bound_percent": 0.18143622132067938
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 1.0,
+      "charge_e": 15,
+      "voltage_v": 200.0,
+      "capture_percent": 19.238904089698494,
+      "outlet_percent": 80.7610959103015,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 19.238904089698494
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 1.0,
+      "charge_e": 30,
+      "voltage_v": 200.0,
+      "capture_percent": 37.8605136098672,
+      "outlet_percent": 62.1394863901328,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 37.8605136098672
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 1.0,
+      "charge_e": 60,
+      "voltage_v": 200.0,
+      "capture_percent": 73.00541913258806,
+      "outlet_percent": 26.994580867411933,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 73.00541913258806
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 2.0,
+      "charge_e": 0,
+      "voltage_v": 200.0,
+      "capture_percent": 0.0,
+      "outlet_percent": 99.81856377867932,
+      "unresolved_percent": 0.18143622132067938,
+      "capture_upper_bound_percent": 0.18143622132067938
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 2.0,
+      "charge_e": 15,
+      "voltage_v": 200.0,
+      "capture_percent": 9.207949792417933,
+      "outlet_percent": 90.79205020758207,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 9.207949792417933
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 2.0,
+      "charge_e": 30,
+      "voltage_v": 200.0,
+      "capture_percent": 18.23829368864421,
+      "outlet_percent": 81.7617063113558,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 18.23829368864421
+    },
+    {
+      "case": "gap6fine",
+      "gap_mm": 6.0,
+      "diameter_um": 2.0,
+      "charge_e": 60,
+      "voltage_v": 200.0,
+      "capture_percent": 35.3617335504528,
+      "outlet_percent": 64.6382664495472,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 35.3617335504528
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 0.5,
+      "charge_e": 0,
+      "voltage_v": 200.0,
+      "capture_percent": 0.0,
+      "outlet_percent": 99.63912621320084,
+      "unresolved_percent": 0.36087378679914606,
+      "capture_upper_bound_percent": 0.36087378679914606
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 0.5,
+      "charge_e": 15,
+      "voltage_v": 200.0,
+      "capture_percent": 32.529278920371254,
+      "outlet_percent": 67.47072107962875,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 32.529278920371254
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 0.5,
+      "charge_e": 30,
+      "voltage_v": 200.0,
+      "capture_percent": 62.33511475425464,
+      "outlet_percent": 37.66488524574535,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 62.33511475425464
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 0.5,
+      "charge_e": 60,
+      "voltage_v": 200.0,
+      "capture_percent": 99.99999999999997,
+      "outlet_percent": 0.0,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 99.99999999999997
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 1.0,
+      "charge_e": 0,
+      "voltage_v": 200.0,
+      "capture_percent": 0.0,
+      "outlet_percent": 99.63912621320084,
+      "unresolved_percent": 0.36087378679914606,
+      "capture_upper_bound_percent": 0.36087378679914606
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 1.0,
+      "charge_e": 15,
+      "voltage_v": 200.0,
+      "capture_percent": 14.533933808150787,
+      "outlet_percent": 85.4660661918492,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 14.533933808150787
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 1.0,
+      "charge_e": 30,
+      "voltage_v": 200.0,
+      "capture_percent": 28.546766217784498,
+      "outlet_percent": 71.45323378221549,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 28.546766217784498
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 1.0,
+      "charge_e": 60,
+      "voltage_v": 200.0,
+      "capture_percent": 55.29264124210567,
+      "outlet_percent": 44.70735875789431,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 55.29264124210567
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 2.0,
+      "charge_e": 0,
+      "voltage_v": 200.0,
+      "capture_percent": 0.0,
+      "outlet_percent": 99.63912621320084,
+      "unresolved_percent": 0.36087378679914606,
+      "capture_upper_bound_percent": 0.36087378679914606
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 2.0,
+      "charge_e": 15,
+      "voltage_v": 200.0,
+      "capture_percent": 7.111289308934243,
+      "outlet_percent": 92.88871069106574,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 7.111289308934243
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 2.0,
+      "charge_e": 30,
+      "voltage_v": 200.0,
+      "capture_percent": 14.011184191694493,
+      "outlet_percent": 85.98881580830549,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 14.011184191694493
+    },
+    {
+      "case": "gap8fine",
+      "gap_mm": 8.0,
+      "diameter_um": 2.0,
+      "charge_e": 60,
+      "voltage_v": 200.0,
+      "capture_percent": 26.617346321837452,
+      "outlet_percent": 73.38265367816254,
+      "unresolved_percent": 0.0,
+      "capture_upper_bound_percent": 26.617346321837452
+    }
+  ],
+  "sources": {
+    "gap4fine": {
+      "source_provenance": {
+        "case": "gap4fine",
+        "project_id": "zGDsVITicdtGPhAAbR",
+        "project_url": "https://allsolve.quanscient.com/#/projects/zGDsVITicdtGPhAAbR/model",
+        "mesh_id": "NDnHiZlBXzgDbeeND7",
+        "mesh_job_id": "8ysfT6yujVv23eQXRh",
+        "flow_simulation_id": "RPJ9R6pNJZCtUY_0ed",
+        "flow_job_id": "bU5dPgHc4hbVubAZWx",
+        "electric_simulation_id": "9sNVYkVAtKWUMqp18J",
+        "electric_job_id": "1KsubZl8R7ty0B9JVr",
+        "mesh_status": "JobStatusType.SUCCESS",
+        "flow_status": "JobStatusType.SUCCESS",
+        "electric_status": "JobStatusType.SUCCESS",
+        "grid_shape": [
+          49,
+          33,
+          17
+        ],
+        "field_origin": "Allsolve finite-element cloud interpolation outputs",
+        "vector_fields": {
+          "flow": "velocity [ux,uy,uz], m/s",
+          "electric": "-grad(potential) [Ex,Ey,Ez], V/m"
+        },
+        "scalar_fields": {
+          "flow": "gauge pressure, Pa",
+          "electric": "potential, V"
+        },
+        "file_sha256": {
+          "state.json": "37004d8c118a028a5cbf9d07e8372ef663946d19932ddfcadac0001592c7c51e",
+          "flow_samples.json": "b7d2719c9e65a1c3a6ef6054f05decf5c4aa1b747dabfcac5917e07f2395d1e8",
+          "electric_samples.json": "409895757833b1fbcbcc60475592b338f53f43693b2b4b264a77fb93d26a180a"
+        },
+        "validation_file_sha256": "c727acc012a588c9dce5d8bfbbf938e301032d230430a189344c9039dfe2cfb3"
+      },
+      "particles_json_sha256": "6517bf08112878c5a2776eb772c58c2fa15fca6371d9fa12def57cf03726597c",
+      "convergence_report_json_sha256": "60f093303aad4a8940e21a9f5160959b6011506be90b16b79281f97abfe63144"
+    },
+    "gap6fine": {
+      "source_provenance": {
+        "case": "gap6fine",
+        "project_id": "K0pjyYL9U2mAYvdVRv",
+        "project_url": "https://allsolve.quanscient.com/#/projects/K0pjyYL9U2mAYvdVRv/model",
+        "mesh_id": "vWeUpPjjE0uET4J1WE",
+        "mesh_job_id": "DI33vSdnzPUdpN4JtO",
+        "flow_simulation_id": "m0rBORnnI9jboCye16",
+        "flow_job_id": "QFI2S1jojrS9kdpYbP",
+        "electric_simulation_id": "OEz40p9E1zHA9GkXhN",
+        "electric_job_id": "B3UlGF0moygbBZsGic",
+        "mesh_status": "JobStatusType.SUCCESS",
+        "flow_status": "JobStatusType.SUCCESS",
+        "electric_status": "JobStatusType.SUCCESS",
+        "grid_shape": [
+          49,
+          33,
+          17
+        ],
+        "field_origin": "Allsolve finite-element cloud interpolation outputs",
+        "vector_fields": {
+          "flow": "velocity [ux,uy,uz], m/s",
+          "electric": "-grad(potential) [Ex,Ey,Ez], V/m"
+        },
+        "scalar_fields": {
+          "flow": "gauge pressure, Pa",
+          "electric": "potential, V"
+        },
+        "file_sha256": {
+          "state.json": "be3c2ca0789ee468f752ae92fac0c5dbb6bae0d5c129cd9b577d1ef576b127e6",
+          "flow_samples.json": "a599f9484cfd942a29eeb8e64c2acef0b34b3dba258eb3f1edcdc55aa7f6b875",
+          "electric_samples.json": "578082bfb991c176588ee52d40a4731bcbc5d79e228c7a3d194a01a91b640de0"
+        },
+        "validation_file_sha256": "67bf26550f29fad24e9fd99477cdda18d589d309edc4b8e572fee18332d82e26"
+      },
+      "particles_json_sha256": "70df8b3151208447e7bdfcfe036a6a5e3dc5b40278799cc8e11558ae59ab56a4",
+      "convergence_report_json_sha256": "a79525bfb2fa621373de738ebeb6dcf15d2d295207652a22e3e7d183dc75c6bf"
+    },
+    "gap8fine": {
+      "source_provenance": {
+        "case": "gap8fine",
+        "project_id": "Asw8FbQLHL-sei8Opb",
+        "project_url": "https://allsolve.quanscient.com/#/projects/Asw8FbQLHL-sei8Opb/model",
+        "mesh_id": "yCP_e3uOVJK0iX5T9B",
+        "mesh_job_id": "rrJpiIgGdfZS8NxY-S",
+        "flow_simulation_id": "Szrb0E-euamEXRbVsG",
+        "flow_job_id": "sQmILm9lomnjh_IqRc",
+        "electric_simulation_id": "4iCAhmoxLeXDcUr9TZ",
+        "electric_job_id": "Sklt61eJzlcK3jOQS1",
+        "mesh_status": "JobStatusType.SUCCESS",
+        "flow_status": "JobStatusType.SUCCESS",
+        "electric_status": "JobStatusType.SUCCESS",
+        "grid_shape": [
+          49,
+          33,
+          17
+        ],
+        "field_origin": "Allsolve finite-element cloud interpolation outputs",
+        "vector_fields": {
+          "flow": "velocity [ux,uy,uz], m/s",
+          "electric": "-grad(potential) [Ex,Ey,Ez], V/m"
+        },
+        "scalar_fields": {
+          "flow": "gauge pressure, Pa",
+          "electric": "potential, V"
+        },
+        "file_sha256": {
+          "state.json": "7476cba8651ed881872a57bcf4249c09258fc783209e51d71cbba2cbedb788c9",
+          "flow_samples.json": "a0993eca32efffc2c5a7a4c48d019cb6207d23531c6be1723518110f2b744320",
+          "electric_samples.json": "0477629f75990a3de098d0c2386d46a0da456f21ce9ee3a1cb8a3525dae1cbcd"
+        },
+        "validation_file_sha256": "3791a3eea7f5a5a59cd6a4df5f18ef692596b8837536ab571d2c4911e801707a"
+      },
+      "particles_json_sha256": "b648830665ad2d3b9ad11fca1f661cbe3f47264a4b30722144523487353212e3",
+      "convergence_report_json_sha256": "db2e44e8242cbcae8b0283971989365e77bd58fcdd6cb016ab3528f3909fa582"
+    }
+  },
+  "assumptions": [
+    "Uniform carrier-aerosol concentration and carrier-flux weighting.",
+    "Ideal absorbing walls and overdamped Cunningham-corrected Stokes motion.",
+    "No Brownian diffusion, gravity, charging/corona, space-charge, or resuspension.",
+    "Counts are computational seeds; percentages include all inlet flux and unresolved outcomes.",
+    "Convergence changes describe the tested nominal particle refinements, not physical validation across every sensitivity."
+  ]
+}

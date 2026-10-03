@@ -1,0 +1,178 @@
+{
+  "objective": "minimize_listener_noise",
+  "dimension": 3,
+  "frequency_hz": 125.0,
+  "noise_metric": "normalized_spl_db",
+  "pressure_reference_pa": 2e-05,
+  "sources": [
+    {
+      "id": "src3",
+      "position_m": [
+        4.30997826,
+        2.1408947,
+        1.09632443
+      ],
+      "level_db": 90.9691
+    },
+    {
+      "id": "src4",
+      "position_m": [
+        4.61104211,
+        3.7451399,
+        1.50903224
+      ],
+      "level_db": 90.9691
+    },
+    {
+      "id": "src2",
+      "position_m": [
+        1.6330509,
+        0.8420041,
+        1.02493109
+      ],
+      "level_db": 90.9691
+    }
+  ],
+  "listener_m": [
+    1.8666268645867898,
+    1.2051886840452226,
+    1.0
+  ],
+  "max_panels": 6,
+  "baseline": {
+    "slot_ids": [],
+    "object_count": 0,
+    "pressure_rms_pa": 0.710234204403328,
+    "noise_db": 91.00743176272954,
+    "reduction_db": 0.0,
+    "simulation_ids": [
+      "62P_p608DJzbHqI0bz",
+      "l72XDPchAghsyzskbj",
+      "ywGJYWPA5RZoya-xgx"
+    ],
+    "status": "SUCCESS"
+  },
+  "optimal_layout": {
+    "slot_ids": [],
+    "object_count": 0,
+    "pressure_rms_pa": 0.710234204403328,
+    "noise_db": 91.00743176272954,
+    "reduction_db": 0.0,
+    "simulation_ids": [
+      "62P_p608DJzbHqI0bz",
+      "l72XDPchAghsyzskbj",
+      "ywGJYWPA5RZoya-xgx"
+    ],
+    "status": "SUCCESS"
+  },
+  "evaluations": [
+    {
+      "slot_ids": [],
+      "object_count": 0,
+      "pressure_rms_pa": 0.710234204403328,
+      "noise_db": 91.00743176272954,
+      "reduction_db": 0.0,
+      "simulation_ids": [
+        "62P_p608DJzbHqI0bz",
+        "l72XDPchAghsyzskbj",
+        "ywGJYWPA5RZoya-xgx"
+      ],
+      "status": "SUCCESS"
+    }
+  ],
+  "search": {
+    "evaluated_layouts": 1,
+    "total_layouts": 1,
+    "candidate_slots": [],
+    "optimality_scope": "Lowest RMS pressure at the chosen listener among every allowed fixed placement subset from zero through the maximum panel count; exact ties prefer fewer panels.",
+    "source_combination": "incoherent_power_sum"
+  },
+  "assumptions": [
+    "Room dimensions come from the dEchorate laboratory dataset; edited source positions are user inputs.",
+    "125 Hz harmonic model; rigid room boundaries and omnidirectional 0.08 m spherical sources.",
+    "Source dB levels prescribe RMS pressure at the source sphere boundary, referenced to 20 microPa; this is an uncalibrated normalized model, not measured loudness or dB(A).",
+    "Independent source powers are summed; coherent phase relationships are not modeled.",
+    "Each panel is a 0.4 m3 air region with illustrative volumetric damping 0.5, not a calibrated commercial absorber.",
+    "The minimum is at one XYZ listener among all allowed fixed panel placements up to the panel limit; no budget or cost is used.",
+    "Other listening positions and frequencies are not optimized; continuous placement and global room quietness are not guaranteed."
+  ],
+  "project_id": "wplkBNw5wTUbgLDuPI",
+  "project_url": "https://allsolve.quanscient.com/#/projects/wplkBNw5wTUbgLDuPI/model",
+  "mesh": {
+    "mesh_id": "WnnAHZPdRz508Z_UMG",
+    "dimension": 3,
+    "status": "SUCCESS",
+    "bounds_m": [
+      [
+        0.0,
+        5.705
+      ],
+      [
+        0.0,
+        5.965
+      ],
+      [
+        0.0,
+        2.355
+      ]
+    ],
+    "tetrahedron_count": 332020,
+    "volume_m3": 80.14141537500001,
+    "max_edge_m": 0.3631316798915856,
+    "min_elements_per_wavelength": 7.644169191816968,
+    "field_interpolation_order": 2
+  },
+  "model_sha256": "8db251f48410990f72e6f0937cfcf6f4f2c83db0179bba381547d39e16a44989",
+  "parallel_execution": {
+    "strategy": "quota_aware_parallel_refill",
+    "basis_cores": 4,
+    "total_basis_solves": 3,
+    "cached_basis_fields": 1,
+    "newly_started_basis_solves": 2,
+    "peak_parallel_solves": 2,
+    "peak_inflight_solves": 2,
+    "peak_allocated_cores": 8,
+    "completed_simulation_ids": [
+      "62P_p608DJzbHqI0bz",
+      "l72XDPchAghsyzskbj",
+      "ywGJYWPA5RZoya-xgx"
+    ],
+    "observations": [
+      {
+        "observed_at": "2026-10-03T12:39:57.110229+00:00",
+        "running_count": 1,
+        "running_simulation_ids": [
+          "l72XDPchAghsyzskbj"
+        ],
+        "cloud_job_ids": [
+          "VUe8mwlEzJ9EZhog_J"
+        ],
+        "max_concurrent_cores": 512,
+        "account_running_cores": 22,
+        "account_reserved_cores": 94
+      },
+      {
+        "observed_at": "2026-10-03T12:39:59.246634+00:00",
+        "running_count": 2,
+        "running_simulation_ids": [
+          "62P_p608DJzbHqI0bz",
+          "l72XDPchAghsyzskbj"
+        ],
+        "cloud_job_ids": [
+          "0JsGq6QlA3wDhyM9sd",
+          "VUe8mwlEzJ9EZhog_J"
+        ],
+        "max_concurrent_cores": 512,
+        "account_running_cores": 25,
+        "account_reserved_cores": 93
+      }
+    ],
+    "started_at": "2026-10-03T12:39:43.673150+00:00",
+    "polling": "Job.refresh_statuses",
+    "max_concurrent_cores": 512,
+    "account_running_cores": 28,
+    "account_reserved_cores": 28,
+    "finished_at": "2026-10-03T12:41:05.420804+00:00"
+  },
+  "source_geometry": "dataset_positions"
+}
