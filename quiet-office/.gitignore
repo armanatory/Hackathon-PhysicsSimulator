@@ -2,7 +2,3 @@
 frontend/dist/
 *.tsbuildinfo
 .allsolve_cache/
-
-# Real scans are large and contain photos of real spaces. Keep them local.
-docs/scans/*.glb
-!docs/scans/sample-office.glb
