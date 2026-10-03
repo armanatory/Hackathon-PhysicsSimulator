@@ -1,13 +1,100 @@
 # Ideas — Veli
 
-Copy the block below for each idea.
-
-## Idea 1: <title>
-
-- **Customer:**
-- **Problem:**
-- **User input:**
-- **Simulation / physics:** (thermal / structural / acoustics / RF)
-- **Result the user can act on:**
-- **Why an app beats the Allsolve UI:**
-- **Benefit to humanity:**
+Hushly
+EchoGo
+EchoBeGone
+QuietIQ
+SoundLess
+NoiseOff
+WaveOff
+MutePoint
+QuietUp
+HushNow
+NoisyNo
+ByeNoise
+DeadEcho
+EchoKill
+EchoZap
+NoiseZap
+SoundZap
+WaveZap
+Quietify
+Hushify
+Muteify
+SilenceIt
+FixEcho
+KillEcho
+LessNoise
+NoNoise
+QuietBox
+SoundBox
+HushBox
+EchoBox
+QuietMap
+SoundMap
+EchoMap
+HushMap
+NoiseMap
+QuietScan
+EchoScan
+NoiseScan
+RoomTune
+TuneRoom
+SoundTune
+EchoTune
+RoomHush
+RoomMute
+QuietRoom
+HushRoom
+SoundSense
+EchoSense
+NoiseSense
+HushSense
+SoundSight
+EchoSight
+WaveSight
+NoiseSight
+QuietSight
+EchoDrop
+NoiseDrop
+SoundDrop
+HushDrop
+EchoGone
+NoiseGone
+WaveGone
+SoundGone
+QuietAF 😄
+Hush.exe
+Echo.exe
+Mute.exe
+Noise.exe
+Ctrl+Mute
+Alt+Hush
+Echo404
+Noise404
+Sound404
+EchoOops
+OopsEcho
+NopeEcho
+NopeWave
+NopeSound
+ShushIt
+ShutIt
+ZipIt
+SonicShush
+SoundBender
+WaveBender
+EchoBender
+NoiseNinja
+EchoNinja
+HushNinja
+QuietNinja
+Silentium
+Silencio
+SilenQ
+HushQ
+EchoQ
+WaveQ
+QuietQ
+QEcho
+QHush
