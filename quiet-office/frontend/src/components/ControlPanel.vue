@@ -11,6 +11,10 @@ function bandLabel(hz: number): string {
 }
 
 // Jobs Allsolve has not finished, and the machines they run on: one per sweep step.
+function clock(seconds: number): string {
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
+}
+
 const liveJobs = computed(() => store.cloudJobs.filter((job) => job.status === 'running'))
 const liveMachines = computed(() => liveJobs.value.filter((job) => job.server_status === 'running').reduce((sum, job) => sum + job.steps, 0))
 
@@ -62,7 +66,12 @@ const sizeHint = computed(() => {
 
     <div v-if="store.isRunning" class="progress" role="status">
       <div class="track"><i :style="{ width: `${store.progress}%` }"></i></div>
-      <p class="hint">{{ store.message }}</p>
+      <p class="hint"><b class="timer">{{ clock(store.elapsedS) }}</b> {{ store.message }}</p>
+      <p v-if="store.projectName" class="hint">
+        Allsolve project:
+        <a v-if="store.projectUrl" :href="store.projectUrl" target="_blank" rel="noopener"><b>{{ store.projectName }}</b></a>
+        <b v-else>{{ store.projectName }}</b>
+      </p>
       <template v-if="liveJobs.length">
         <h2 class="live">
           On Allsolve now<template v-if="liveMachines > 1">: {{ liveMachines }} machines running at the same time</template>

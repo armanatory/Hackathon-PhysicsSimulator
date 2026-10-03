@@ -21,6 +21,7 @@ from .project_builder import (
     ELEMENTS_PER_WAVELENGTH,
     TALKER_RADIUS_M,
     OfficeProject,
+    project_name,
     screen_variables,
     source_variables,
     wall_strips,
@@ -64,13 +65,13 @@ def build_office_project_3d(client: Any, params: OptimizationParams, log: Any = 
 
     office = params.office
     project = client.create_project(
-        name=f"QuietOffice 3D - {params.n_screens} screens",
+        name=project_name(params, "3D"),
         description="3D harmonic acoustics of an open-plan office with movable screens",
         labels=["quietoffice", "3d"],
         dimension=3,
     )
 
-    received("project", f"Allsolve created 3D project {project.id}", {"project_id": project.id, "dimension": 3})
+    received("project", f"Allsolve created 3D project '{project.name}' ({project.id})", {"project_id": project.id, "name": project.name, "dimension": 3})
 
     first = office.slots[0]
     min_x, min_y, max_x, max_y = office.bounds

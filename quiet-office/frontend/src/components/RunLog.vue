@@ -91,6 +91,7 @@ function pressure(values: number[][] | undefined): string {
       <div class="logbar">
         <h3>Record of the run</h3>
         <label v-if="solverLines"><input v-model="showSolver" type="checkbox" /> show {{ solverLines }} lines from the cloud jobs</label>
+        <button type="button" class="btn ghost small" @click="store.downloadLog()">Download the whole log</button>
       </div>
       <ol class="log" aria-live="polite">
         <li v-for="entry in entries" :key="entry.index" :data-kind="entry.kind">

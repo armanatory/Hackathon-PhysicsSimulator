@@ -158,6 +158,7 @@ class OptimizationRunner:
         self._jobs_lock = threading.Lock()
         self._abort = threading.Event()
         self.project_url: Optional[str] = None
+        self.project_name: Optional[str] = None  # as it is listed in Allsolve
         self.project_id: Optional[str] = None
         self.log = RunLog()
         self.jobs: List[dict] = []  # every mesh and simulation job started on Allsolve
@@ -253,15 +254,16 @@ class OptimizationRunner:
             self._office_project = build_office_project(self._client, params, self.log, fixed_mesh=fast is not None and params.fixed_mesh)
         self.project_id = self._office_project.project.id
         self.project_url = self._client.get_url(self._office_project.project)
+        self.project_name = self._office_project.project.name
         if kept is not None:
             self.log.add(
                 INFO,
                 "project",
-                f"Room, sources and screen positions are the same as in an earlier search, so its project and meshes are used again: {self.project_url}",
+                f"Room, sources and screen positions are the same as in an earlier search, so its project '{self.project_name}' and its meshes are used again: {self.project_url}",
                 {"url": self.project_url, "project_id": self.project_id},
             )
         else:
-            self.log.add(RECEIVED, "project", f"Project is open at {self.project_url}", {"url": self.project_url})
+            self.log.add(RECEIVED, "project", f"Project '{self.project_name}' is open at {self.project_url}", {"url": self.project_url, "name": self.project_name})
 
         slot_ids = [slot.id for slot in params.office.slots]
         if fast is not None:
@@ -277,7 +279,7 @@ class OptimizationRunner:
                 if k == 0:
                     layouts = [[]] + layouts  # the untreated office rides along in round 1
                 start = 10 + k * span
-                batch = self._run_round(params, layouts, f"screen {k + 1} of {params.n_screens}", progress, start, start + span)
+                batch = self._run_round(params, layouts, f"panel {k + 1} of {params.n_screens}", progress, start, start + span)
                 record(batch)
                 placed = [r for r in batch if len(r.slot_ids) == k + 1]
                 chosen = min(placed, key=lambda r: r.score).slot_ids
@@ -298,6 +300,7 @@ class OptimizationRunner:
             "best": best.model_dump(),
             "layouts": [r.model_dump() for r in results],
             "project_url": self.project_url,
+            "project_name": self.project_name,
             "parameters": params.model_dump(),
             "evidence": self.evidence(params, baseline, best),
         }
@@ -418,7 +421,8 @@ class OptimizationRunner:
         span = percent_to - percent_from
         n_solves = len(layouts) * len(params.office.sources) * len(params.frequencies_hz)
         progress(
-            f"Meshing and solving {len(layouts)} layouts ({label}): {n_solves} solves in {len(chunks)} parallel jobs...",
+            f"Meshing and solving {len(layouts)} layouts ({label}): {n_solves} solves"
+            + (f", split over {len(chunks)} jobs running at the same time..." if len(chunks) > 1 else ", all at the same time..."),
             percent_from + 0.05 * span,
         )
 

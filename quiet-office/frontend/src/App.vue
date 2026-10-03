@@ -114,6 +114,7 @@ async function importScan(event: Event): Promise<void> {
         <p class="lead">
           Out of <b>{{ store.layouts.length }} layouts</b> simulated on Allsolve, this one leaves
           {{ store.office.quiet_zones.length ? 'the quiet zones' : 'the desks' }} quietest.
+          <template v-if="store.elapsedS"> The search took {{ Math.floor(store.elapsedS / 60) }} min {{ store.elapsedS % 60 }} s.</template>
         </p>
       </template>
     </div>
@@ -147,7 +148,7 @@ async function importScan(event: Event): Promise<void> {
             <SearchChart :layouts="store.layouts" :n-screens="store.placedScreens" />
             <p class="cap">
               Each dot is one layout. The line is the best noise score found so far. Lower is quieter; 100 is the room with no panels.
-              <a v-if="store.projectUrl" :href="store.projectUrl" target="_blank" rel="noopener">Open the project in Allsolve</a>
+              <a v-if="store.projectUrl" :href="store.projectUrl" target="_blank" rel="noopener">Open the project in Allsolve{{ store.projectName ? `: ${store.projectName}` : '' }}</a>
             </p>
           </template>
           <RunLog />

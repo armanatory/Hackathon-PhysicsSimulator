@@ -273,6 +273,7 @@ class OptimizationStatus(BaseModel):
     layouts_total: int = 0
     best_score: Optional[float] = None
     project_url: Optional[str] = None
+    project_name: Optional[str] = Field(default=None, description="The project's name in the Allsolve project list")
     log_size: int = Field(default=0, description="Entries in the run log so far; fetch them from /log")
     jobs: List[dict] = Field(
         default_factory=list,
@@ -293,6 +294,7 @@ class OptimizationResults(BaseModel):
     best: LayoutResult
     layouts: List[LayoutResult] = Field(description="Every layout simulated, in the order tested")
     project_url: Optional[str] = None
+    project_name: Optional[str] = None
     parameters: OptimizationParams
     evidence: Optional[dict] = Field(
         default=None,

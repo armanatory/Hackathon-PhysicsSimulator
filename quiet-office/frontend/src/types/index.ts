@@ -127,6 +127,8 @@ export interface OptimizationStatus {
   layouts_total: number
   best_score: number | null
   project_url: string | null
+  /** The project's name in the Allsolve project list */
+  project_name: string | null
   log_size: number
   jobs: CloudJob[]
 }
@@ -138,6 +140,7 @@ export interface OptimizationResults {
   best: LayoutResult
   layouts: LayoutResult[]
   project_url: string | null
+  project_name: string | null
   parameters: OptimizationParams
   evidence: Evidence | null
 }

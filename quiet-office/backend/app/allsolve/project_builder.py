@@ -22,6 +22,7 @@ like a hard wall. Density is not geometry, so every layout shares one mesh.
 
 import math
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Any, List, Optional
 
 from ..models.office import AIR_DENSITY, SPEED_OF_SOUND, Office, OptimizationParams
@@ -124,6 +125,19 @@ def wall_strips(office: Office, thickness: float = WALL_THICKNESS_M) -> List[Wal
     return strips
 
 
+def project_name(params: OptimizationParams, model: str, fixed_mesh: bool = False) -> str:
+    """A name that tells one search from another in the Allsolve project list.
+
+    Model, room size, what is searched and when it started, for example
+    "QuietOffice 2D fast - 16.0 x 10.0 m - 12 positions - 03 Oct 16:42:07". The one-mesh project
+    serves any number of panels, so it is named by its candidate positions.
+    """
+    min_x, min_y, max_x, max_y = params.office.bounds
+    searched = f"{len(params.office.slots)} positions" if fixed_mesh else f"{params.n_screens} panels"
+    kind = f"{model} fast" if fixed_mesh else model
+    return f"QuietOffice {kind} - {max_x - min_x:.1f} x {max_y - min_y:.1f} m - {searched} - {datetime.now():%d %b %H:%M:%S}"
+
+
 def source_variables(index: int) -> List[str]:
     """Names of the project variables for noise source number `index`: position and on/off."""
     return [f"src{index}_x", f"src{index}_y", f"amp{index}"]
@@ -160,13 +174,13 @@ def build_office_project(client: Any, params: OptimizationParams, log: Any = Non
 
     office = params.office
     project = client.create_project(
-        name=f"QuietOffice - {params.n_screens} screens",
+        name=project_name(params, "2D", fixed_mesh),
         description="2D harmonic acoustics of an open-plan office with movable screens",
         labels=["quietoffice"],
         dimension=2,
     )
 
-    received("project", f"Allsolve created 2D project {project.id}", {"project_id": project.id, "dimension": 2})
+    received("project", f"Allsolve created 2D project '{project.name}' ({project.id})", {"project_id": project.id, "name": project.name, "dimension": 2})
 
     first = office.slots[0]
     min_x, min_y, max_x, max_y = office.bounds

@@ -36,6 +36,34 @@ const CANDIDATE_POSITIONS = 12
 /** 'zone' moves a quiet zone; 'zonesize' drags its bottom-right corner to resize it. */
 export type Selection = { kind: 'corner' | 'desk' | 'slot' | 'source' | 'zone' | 'zonesize'; index: number } | null
 
+/** The run in progress or on screen, kept so a page reload can pick it up again from the backend. */
+interface SavedRun {
+  id: string
+  startedAt: number
+  /** How long the run took, once it has finished */
+  seconds: number | null
+  settings: { nScreens: number; strategy: Strategy; frequencies: number[]; panelTypeId: string; screenAbsorbing: boolean; model: SimulationModel }
+}
+const RUN_KEY = 'quietoffice.run.v1'
+
+function loadSavedRun(): SavedRun | null {
+  try {
+    const saved = JSON.parse(localStorage.getItem(RUN_KEY) ?? 'null')
+    return saved && typeof saved.id === 'string' && saved.settings ? (saved as SavedRun) : null
+  } catch {
+    return null
+  }
+}
+
+function saveRun(run: SavedRun | null): void {
+  try {
+    if (run) localStorage.setItem(RUN_KEY, JSON.stringify(run))
+    else localStorage.removeItem(RUN_KEY)
+  } catch {
+    // storage blocked: the run simply is not picked up after a reload
+  }
+}
+
 function loadSavedOffice(): Office | null {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null')
@@ -83,6 +111,9 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const layoutsTotal = ref(0)
   const error = ref<string | null>(null)
   const projectUrl = ref<string | null>(null)
+  const projectName = ref<string | null>(null)
+  // Seconds since the search was started; it stops counting when the run ends
+  const elapsedS = ref(0)
 
   // Every layout Allsolve simulated. Empty until a run finishes: nothing is shown as a result before that.
   const layouts = ref<LayoutResult[]>([])
@@ -247,6 +278,24 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
     syncSlots()
     void refreshMachines()
+    const saved = loadSavedRun()
+    if (saved && backendOnline.value) resume(saved)
+  }
+
+  /** After a page reload: show the run that was going on, or its result, again. The backend kept it. */
+  function resume(saved: SavedRun): void {
+    nScreens.value = saved.settings.nScreens
+    strategy.value = saved.settings.strategy
+    frequencies.value = saved.settings.frequencies
+    panelTypeId.value = saved.settings.panelTypeId
+    screenAbsorbing.value = saved.settings.screenAbsorbing
+    model.value = saved.settings.model
+    optimizationId.value = saved.id
+    status.value = 'running'
+    message.value = 'Reconnecting to the run...'
+    started.value = true
+    step.value = 'panels'
+    void follow(saved.id, saved.startedAt, saved.seconds)
   }
 
   /** Ask the backend whether machines are held ready, and what fits the time budget. */
@@ -274,6 +323,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
   function clearResult(): void {
     if (isRunning.value) return
     layouts.value = []
+    saveRun(null)
     if (step.value === 'result') step.value = 'panels'
     layoutsTotal.value = 0
     status.value = 'idle'
@@ -281,6 +331,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
     message.value = ''
     error.value = null
     projectUrl.value = null
+    projectName.value = null
+    elapsedS.value = 0
     logEntries.value = []
     evidence.value = null
     explanation.value = ''
@@ -298,6 +350,9 @@ export const useOptimizationStore = defineStore('optimization', () => {
     cloudJobs.value = []
     evidence.value = null
     explanation.value = ''
+    const startedAt = Date.now()
+    elapsedS.value = 0
+    let id: string
     try {
       const request: OptimizationParams = { ...params.value, n_screens: placedScreens.value }
       if (strategy.value === 'fast') {
@@ -309,14 +364,78 @@ export const useOptimizationStore = defineStore('optimization', () => {
           .map((l) => l.slot_ids)
         request.time_budget_s = FAST_BUDGET_S
       }
-      const response = await optimizationApi.start(request)
-      optimizationId.value = response.optimization_id
-      status.value = 'running'
-      await poll(response.optimization_id)
+      id = (await optimizationApi.start(request)).optimization_id
     } catch (e) {
       status.value = 'failed'
       error.value = e instanceof Error ? e.message : String(e)
+      return
     }
+    optimizationId.value = id
+    status.value = 'running'
+    saveRun({
+      id,
+      startedAt,
+      seconds: null,
+      settings: {
+        nScreens: nScreens.value,
+        strategy: strategy.value,
+        frequencies: frequencies.value,
+        panelTypeId: panelTypeId.value,
+        screenAbsorbing: screenAbsorbing.value,
+        model: model.value,
+      },
+    })
+    await follow(id, startedAt, null)
+  }
+
+  /**
+   * Poll a run until it ends, with the clock running. `seconds` is given for a run that had
+   * already finished before the page was reloaded: its time is known and the clock stays off.
+   */
+  async function follow(id: string, startedAt: number, seconds: number | null): Promise<void> {
+    const tick = () => (elapsedS.value = Math.round((Date.now() - startedAt) / 1000))
+    const clock = seconds === null ? setInterval(tick, 1000) : null
+    if (seconds === null) tick()
+    else elapsedS.value = seconds
+    try {
+      await poll(id)
+    } catch (e) {
+      status.value = 'failed'
+      error.value = e instanceof Error ? e.message : String(e)
+      if (error.value === 'Optimization not found') error.value = 'The backend no longer has this run. It was probably restarted while the run was going on.'
+    } finally {
+      if (clock) {
+        clearInterval(clock)
+        tick()
+      }
+      // A finished run stays findable, so a reload shows its result again. Anything else is forgotten.
+      const saved = loadSavedRun()
+      if (status.value !== 'completed') saveRun(null)
+      else if (saved?.id === id && saved.seconds === null) saveRun({ ...saved, seconds: elapsedS.value })
+    }
+  }
+
+  /** Everything known about the run on screen, as a file: settings, every log line with its data, raw solver output. */
+  function downloadLog(): void {
+    const record = {
+      downloaded_at: new Date().toISOString(),
+      optimization_id: optimizationId.value,
+      status: status.value,
+      error: error.value,
+      seconds: elapsedS.value,
+      project_name: projectName.value,
+      project_url: projectUrl.value,
+      request: params.value,
+      cloud_jobs: cloudJobs.value,
+      log: logEntries.value,
+      layouts: layouts.value,
+      evidence: evidence.value,
+    }
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(new Blob([JSON.stringify(record, null, 2)], { type: 'application/json' }))
+    link.download = `quietoffice-run-${new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-')}.json`
+    link.click()
+    URL.revokeObjectURL(link.href)
   }
 
   async function poll(id: string): Promise<void> {
@@ -326,6 +445,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
       message.value = s.message ?? ''
       layoutsTotal.value = s.layouts_total
       projectUrl.value = s.project_url
+      projectName.value = s.project_name
       cloudJobs.value = s.jobs ?? []
       if (s.log_size > logEntries.value.length) {
         const log = await optimizationApi.getLog(id, logEntries.value.length)
@@ -337,6 +457,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
         evidence.value = results.evidence
         step.value = 'result'
         projectUrl.value = results.project_url
+        projectName.value = results.project_name
         status.value = 'completed'
         lastRun.value = { id, finishedAt: new Date().toISOString(), context: explainContext() }
         void refreshMachines()
@@ -625,13 +746,22 @@ export const useOptimizationStore = defineStore('optimization', () => {
   function showScan(mesh: ScanMesh, what: string): void {
     scanAngle.value = -Math.round(dominantAngle(sliceAt(mesh, 1.2)))
     scan.value = mesh
-    if (mesh.ceilingHeight) office.value.ceiling_height_m = mesh.ceilingHeight
+    const o = office.value
+    if (mesh.ceilingHeight) o.ceiling_height_m = mesh.ceilingHeight
+    // Until something is marked on the plan, the room is the footprint of the scan.
+    const footprint = placementOf(mesh, scanAngle.value)
+    const untouched = !o.sources.length && !o.quiet_zones.length && !o.desks.length && footprint.width > 1 && footprint.height > 1
+    if (untouched) {
+      const w = snap(footprint.width), h = snap(footprint.height)
+      o.outline = [{ x: 0, y: 0 }, { x: w, y: 0 }, { x: w, y: h }, { x: 0, y: h }]
+    }
     const { up, unitScale } = mesh.orientation
     const units = unitScale === 1 ? 'metres' : unitScale === 0.01 ? 'centimetres' : 'millimetres'
     notice.value =
       `${what}: read as ${up.toUpperCase()}-up, in ${units}` +
       (mesh.ceilingHeight ? `, ceiling ${mesh.ceilingHeight.toFixed(2)} m. ` : '. ') +
-      'If it looks wrong, change the up axis or units above the plan. Then trace the room.'
+      'If it looks wrong, change the up axis or units above the plan. ' +
+      (untouched ? 'The room is set to the outer size of the scan: trace it if the room is not a rectangle.' : 'Then trace the room.')
   }
 
   async function loadScan(file: File): Promise<void> {
@@ -640,6 +770,9 @@ export const useOptimizationStore = defineStore('optimization', () => {
       const mesh = parseGlb(await file.arrayBuffer())
       scanName.value = file.name
       sliceHeight.value = 1.2
+      // A new scan is a new room: nothing of the room before it is kept.
+      office.value = blankOffice()
+      selection.value = null
       showScan(mesh, 'Model loaded')
     } catch (e) {
       scan.value = null
@@ -681,6 +814,9 @@ export const useOptimizationStore = defineStore('optimization', () => {
     layoutsTotal,
     error,
     projectUrl,
+    projectName,
+    elapsedS,
+    downloadLog,
     layouts,
     hasResult,
     logEntries,
