@@ -11,6 +11,7 @@ import { bestOf, estimateLayout, estimateSearch, suggestSlots } from '@/physics/
 import { boundsOf, interiorPoint, pointInPolygon, snap } from '@/physics/geometry'
 import type { Orientation, ScanMesh } from '@/scan/glb'
 import { dominantAngle, orient, parseGlb, placeSegments, placementOf, sliceAt } from '@/scan/glb'
+import { forgetScan, loadScanFile, loadScanView, saveScanFile, saveScanView } from '@/scan/saved'
 
 // Same rule of thumb as the backend: second-order tetrahedra at six elements per wavelength.
 const UNKNOWNS_PER_CUBIC_MESH_SIZE = 11.5
@@ -278,6 +279,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
     syncSlots()
     void refreshMachines()
+    void restoreScan()
     const saved = loadSavedRun()
     if (saved && backendOnline.value) resume(saved)
   }
@@ -705,9 +707,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     office.value = kind === 'demo' ? defaultOffice() : blankOffice()
     selection.value = null
     notice.value = ''
-    scan.value = null
-    scanName.value = ''
-    scanError.value = null
+    clearScan()
     started.value = true
     step.value = 'room'
   }
@@ -767,7 +767,9 @@ export const useOptimizationStore = defineStore('optimization', () => {
   async function loadScan(file: File): Promise<void> {
     scanError.value = null
     try {
-      const mesh = parseGlb(await file.arrayBuffer())
+      const buffer = await file.arrayBuffer()
+      const mesh = parseGlb(buffer)
+      saveScanFile(buffer)
       scanName.value = file.name
       sliceHeight.value = 1.2
       // A new scan is a new room: nothing of the room before it is kept.
@@ -792,7 +794,30 @@ export const useOptimizationStore = defineStore('optimization', () => {
     scan.value = null
     scanName.value = ''
     scanError.value = null
+    forgetScan()
   }
+
+  /** After a page reload: put the scan back under the plan exactly as it was placed. */
+  async function restoreScan(): Promise<void> {
+    const view = loadScanView()
+    if (!view || !started.value || scan.value) return
+    const buffer = await loadScanFile()
+    if (!buffer || scan.value) return
+    try {
+      const parsed = parseGlb(buffer)
+      scanAngle.value = view.angle
+      sliceHeight.value = view.sliceHeight
+      scanName.value = view.name
+      scan.value = orient(parsed.raw, parsed.indices, view.orientation)
+    } catch {
+      forgetScan()
+    }
+  }
+
+  // How the scan is placed is remembered with it.
+  watch([scan, scanAngle, sliceHeight], () => {
+    if (scan.value) saveScanView({ name: scanName.value, orientation: scan.value.orientation, angle: scanAngle.value, sliceHeight: sliceHeight.value })
+  })
 
   return {
     office,
