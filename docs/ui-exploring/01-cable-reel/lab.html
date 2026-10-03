@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sweep results — Cable Reel Fire Risk</title>
+  <link rel="stylesheet" href="reel.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap">
+      <a class="brand" href="index.html"><i></i>Unreel</a>
+      <nav aria-label="Screens">
+        <a href="index.html">Check my reel</a>
+        <a href="lab.html" aria-current="page">Sweep results</a>
+        <a href="label.html">A better label</a>
+      </nav>
+      <a class="back" href="../index.html">All explorations</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="head">
+      <div class="eyebrow">40 m reel · 1.5 mm² · 25 °C air</div>
+      <h1>72 simulations, one curve</h1>
+      <p class="lead">Each cell is one Allsolve run: a cross-section with that many turns still wound, carrying that current. The number is the hottest insulation temperature. Select a cell to see where the heat sits.</p>
+    </div>
+
+    <ol class="steps">
+      <li><b>Build the cross-section</b>Copper, PVC, air gaps and drum for N wound turns.</li>
+      <li><b>Mesh</b>Fine in the insulation, coarse in the drum.</li>
+      <li><b>Solve</b>Current flow and heat solid, coupled by Joule heating.</li>
+      <li><b>Read the peak</b>Maximum temperature in the PVC regions.</li>
+      <li><b>Bisect</b>Find the current that lands on 70 °C.</li>
+    </ol>
+
+    <section class="block grid-two">
+      <div class="panel">
+        <h2>Hottest insulation, °C</h2>
+        <div class="status"><span><b>Finished</b> · 72 of 72 runs</span><span>41 min compute</span><span>convection h = 8 W/m²K</span></div>
+        <div class="matrix-scroll">
+          <table class="matrix" id="matrix"></table>
+        </div>
+        <p class="cap">Bottom row: the largest safe current for each column, found by bisection. That row is the curve on the first screen.</p>
+      </div>
+
+      <div class="panel">
+        <h2 id="runTitle"></h2>
+        <figure class="fig">
+          <svg id="section" role="img" aria-label="Temperature field of the selected run"></svg>
+          <div class="ramp">
+            <div class="strip"></div>
+            <div class="ticks"><span>20 °C</span><span>70 °C</span><span>120 °C</span></div>
+          </div>
+        </figure>
+        <dl class="kv">
+          <dt>Result</dt><dd id="kResult"></dd>
+          <dt>Current</dt><dd id="kAmps"></dd>
+          <dt>Cable still wound</dt><dd id="kWound"></dd>
+          <dt>Peak temperature</dt><dd id="kPeak"></dd>
+          <dt>Time to 70 °C</dt><dd id="kTime"></dd>
+          <dt>Mesh</dt><dd id="kMesh"></dd>
+          <dt>Solve time</dt><dd id="kSolve"></dd>
+        </dl>
+      </div>
+    </section>
+
+    <footer class="note">UI sketch with made-up sample data. No Allsolve call is connected here.</footer>
+  </main>
+
+  <script src="reel.js"></script>
+  <script>
+    (function () {
+      var R = window.Reel, $ = function (id) { return document.getElementById(id); };
+      var reel = R.REELS[1], amb = 25;
+      var currents = [12, 10, 8, 7, 6, 5, 4, 3];
+      var fractions = [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1]; // unrolled
+      var buttons = [];
+
+      var html = '<thead><tr><th></th>' + fractions.map(function (u) {
+        return '<th scope="col">' + Math.round(u * reel.length) + ' m</th>';
+      }).join('') + '</tr></thead><tbody>';
+      currents.forEach(function (a, r) {
+        html += '<tr><th scope="row">' + a + ' A</th>' + fractions.map(function (u, c) {
+          var t = R.hotspot(reel, u, a, amb);
+          return '<td><button type="button" data-r="' + r + '" data-c="' + c + '" style="background:' + R.tempColor(t) + '" aria-label="' + a + ' amps, ' + Math.round(u * reel.length) + ' metres unrolled, ' + R.fmtTemp(t) + ' degrees">' + R.fmtTemp(t) + '</button></td>';
+        }).join('') + '</tr>';
+      });
+      html += '</tbody><tfoot><tr><th scope="row">safe up to</th>' + fractions.map(function (u) {
+        return '<td>' + R.safeAmps(reel, u, amb).toFixed(1) + ' A</td>';
+      }).join('') + '</tr></tfoot>';
+      $('matrix').innerHTML = html;
+      $('matrix').insertAdjacentHTML('afterbegin', '<caption class="cap" style="caption-side:top;text-align:left;margin:0 0 6px">Columns: cable unrolled. Rows: current.</caption>');
+
+      [].forEach.call($('matrix').querySelectorAll('button'), function (b) {
+        buttons.push(b);
+        b.onclick = function () { select(+b.dataset.r, +b.dataset.c); };
+      });
+
+      function select(r, c) {
+        var a = currents[r], u = fractions[c], t = R.hotspot(reel, u, a, amb);
+        var run = r * fractions.length + c + 1, wound = Math.round((1 - u) * reel.length);
+        var mins = R.minutesToLimit(reel, u, a, amb);
+        buttons.forEach(function (b) { b.setAttribute('aria-pressed', +b.dataset.r === r && +b.dataset.c === c); });
+        $('runTitle').textContent = 'Run ' + run + ' of 72';
+        $('kResult').innerHTML = t > R.T_LIMIT ? '<span class="pill hot">overheats</span>' : '<span class="pill">safe</span>';
+        $('kAmps').textContent = a + ' A · ' + a * R.V + ' W';
+        $('kWound').textContent = wound + ' m';
+        $('kPeak').textContent = R.fmtTemp(t) + ' °C';
+        $('kTime').textContent = mins === null ? 'never' : Math.max(1, Math.round(mins)) + ' min';
+        $('kMesh').textContent = (4200 + wound * 610).toLocaleString('en') + ' elements';
+        $('kSolve').textContent = (14 + wound * 1.1).toFixed(0) + ' s';
+        R.drawSection($('section'), { reel: reel, u: u, amps: a, amb: amb });
+      }
+      select(4, 3);
+    })();
+  </script>
+</body>
+</html>

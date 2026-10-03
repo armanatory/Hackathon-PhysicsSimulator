@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A better label — Cable Reel Fire Risk</title>
+  <link rel="stylesheet" href="reel.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap">
+      <a class="brand" href="index.html"><i></i>Unreel</a>
+      <nav aria-label="Screens">
+        <a href="index.html">Check my reel</a>
+        <a href="lab.html">Sweep results</a>
+        <a href="label.html" aria-current="page">A better label</a>
+      </nav>
+      <a class="back" href="../index.html">All explorations</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="head">
+      <div class="eyebrow">40 m reel · 1.5 mm²</div>
+      <h1>The label the reel should have had</h1>
+      <p class="lead">The same simulation results, printed where people will read them: on the drum, and on the cable itself every ten metres.</p>
+    </div>
+
+    <div class="labels">
+      <div>
+        <h2>Today</h2>
+        <div class="sticker old">
+          <div class="model"><span>40 m · 3G1.5</span><span>230 V~ 50 Hz</span></div>
+          <div class="big" id="oldWound"><small>Fully wound</small></div>
+          <div class="big" id="oldUnwound"><small>Fully unwound</small></div>
+          <p class="warn">Two numbers. Nothing for the reel that's half unrolled behind the sofa.</p>
+        </div>
+      </div>
+
+      <div>
+        <h2>Proposed</h2>
+        <div class="sticker">
+          <div class="model"><span>40 m · 3G1.5</span><span>Max load by cable unrolled</span></div>
+          <ul class="rungs" id="rungs"></ul>
+          <div class="flex-strip">
+            <svg id="flex" viewBox="0 0 640 86" role="img" aria-label="Cable with a printed wattage mark every ten metres"></svg>
+          </div>
+          <p class="warn">Printed on the cable: pull until you see the mark that matches your appliance. Rated for air up to 30 °C.</p>
+        </div>
+        <p class="no-print" style="margin-top:14px"><button class="btn" type="button" onclick="window.print()">Print label</button></p>
+      </div>
+    </div>
+
+    <footer class="note">UI sketch with made-up sample data. Not solver output and not electrical safety advice.</footer>
+  </main>
+
+  <script src="reel.js"></script>
+  <script>
+    (function () {
+      var R = window.Reel, $ = function (id) { return document.getElementById(id); };
+      var reel = R.REELS[1], amb = 30;
+      var floor100 = function (w) { return Math.floor(w / 100) * 100; };
+
+      $('oldWound').insertAdjacentText('afterbegin', 'max ' + floor100(reel.wound * R.V + 99) + ' W');
+      $('oldUnwound').insertAdjacentText('afterbegin', 'max ' + floor100(reel.unwound * R.V + 99) + ' W');
+
+      var marks = [0, 10, 20, 30, 40];
+      var top = floor100(R.safeAmps(reel, 1, amb) * R.V);
+      var watts = marks.map(function (m) { return floor100(R.safeAmps(reel, m / reel.length, amb) * R.V); });
+
+      $('rungs').innerHTML = marks.map(function (m, i) {
+        var name = m === 0 ? 'Fully wound' : m === reel.length ? 'All ' + m + ' m out' : m + ' m out';
+        return '<li class="' + (m === reel.length ? 'full' : '') + '"><span class="m">' + name + '</span>' +
+          '<span class="track"><i style="width:' + (watts[i] / top * 100).toFixed(0) + '%"></i></span>' +
+          '<span class="w">' + watts[i] + ' W</span></li>';
+      }).join('');
+
+      var h = '<rect x="0" y="30" width="640" height="26" rx="13" fill="#f26a1b"/>';
+      marks.slice(1).forEach(function (m, i) {
+        var x = 40 + (i + 0.5) * 140;
+        h += '<rect x="' + (x - 46) + '" y="30" width="92" height="26" fill="#14212b"/>';
+        h += '<text x="' + x + '" y="48" font-size="14" font-weight="600" text-anchor="middle" fill="#fff">≤ ' + watts[i + 1] + ' W</text>';
+        h += '<text x="' + x + '" y="76" font-size="12" text-anchor="middle" fill="#55646f">mark at ' + m + ' m</text>';
+      });
+      h += '<text x="0" y="18" font-size="12" fill="#55646f">socket end</text><text x="640" y="18" font-size="12" text-anchor="end" fill="#55646f">drum end</text>';
+      $('flex').innerHTML = h;
+    })();
+  </script>
+</body>
+</html>

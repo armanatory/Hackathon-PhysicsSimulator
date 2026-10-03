@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Check my reel — Cable Reel Fire Risk</title>
+  <link rel="stylesheet" href="reel.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap">
+      <a class="brand" href="index.html"><i></i>Unreel</a>
+      <nav aria-label="Screens">
+        <a href="index.html" aria-current="page">Check my reel</a>
+        <a href="lab.html">Sweep results</a>
+        <a href="label.html">A better label</a>
+      </nav>
+      <a class="back" href="../index.html">All explorations</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="head">
+      <div class="eyebrow">Extension reels · 230 V</div>
+      <h1>How much cable do I have to unroll?</h1>
+      <p class="lead">A reel label gives one rating for fully wound and one for fully unrolled. Most people use it somewhere in between. Pick your appliance and reel, then pull cable off the drum until it's safe.</p>
+    </div>
+
+    <div class="grid-tool">
+      <form class="panel" id="controls" onsubmit="return false">
+        <div class="field">
+          <div class="label">Appliance <output id="outWatts"></output></div>
+          <div class="chips" id="appliances"></div>
+          <input type="range" id="watts" min="200" max="3600" step="50" aria-label="Appliance power in watts" style="margin-top:10px">
+        </div>
+        <div class="field">
+          <div class="label">Reel</div>
+          <div class="seg" id="reels"></div>
+        </div>
+        <div class="field">
+          <label for="metres">Cable unrolled <output id="outMetres"></output></label>
+          <input type="range" id="metres" min="0" step="1">
+          <p class="hint" id="woundHint"></p>
+        </div>
+        <div class="field">
+          <label for="amb">Air temperature <output id="outAmb"></output></label>
+          <input type="range" id="amb" min="0" max="40" step="1">
+        </div>
+      </form>
+
+      <div class="stack">
+        <div class="verdict" id="verdict" aria-live="polite">
+          <div>
+            <div class="say" id="say"></div>
+            <p id="why"></p>
+          </div>
+          <div class="temp"><span id="hot"></span><small>hottest insulation · limit 70 °C</small></div>
+          <button type="button" id="fix" hidden></button>
+        </div>
+
+        <figure class="panel fig">
+          <h2>Inside the drum</h2>
+          <svg id="section" role="img" aria-label="Cut through the reel showing each wound turn coloured by temperature"></svg>
+          <div class="ramp">
+            <div class="strip"></div>
+            <div class="ticks"><span>20 °C</span><span>PVC limit 70 °C</span><span>120 °C</span></div>
+          </div>
+          <figcaption>A cut through the reel. Each circle is one turn of cable; dashed circles are turns you've pulled off. Heat from the buried turns has nowhere to go.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <section class="block grid-two">
+      <figure class="panel fig">
+        <h2>Safe amps for every metre unrolled</h2>
+        <svg id="chart" viewBox="0 0 640 360" role="img" aria-label="Chart of safe current against cable unrolled"></svg>
+        <figcaption>The two hollow dots are all the label tells you. The curve between them is what the simulation fills in.</figcaption>
+      </figure>
+      <div class="panel">
+        <h2>At this setting</h2>
+        <dl class="facts" style="grid-template-columns:1fr">
+          <div style="padding:0 0 14px;border:0"><dt>Your appliance draws</dt><dd id="fAmps"></dd></div>
+          <div style="padding:14px 0;border:0;border-top:1px solid var(--line)"><dt>The reel can carry, as it is now</dt><dd id="fSafe"></dd></div>
+          <div style="padding:14px 0 0;border:0;border-top:1px solid var(--line)"><dt>Unroll at least</dt><dd id="fMin"></dd></div>
+        </dl>
+        <p class="hint" style="margin-top:16px">Want the numbers behind the curve? See the <a href="lab.html">sweep results</a>.</p>
+      </div>
+    </section>
+
+    <footer class="note">UI sketch with made-up sample data. Not solver output and not electrical safety advice.</footer>
+  </main>
+
+  <script src="reel.js"></script>
+  <script>
+    (function () {
+      var R = window.Reel, $ = function (id) { return document.getElementById(id); };
+      var state = { reel: R.REELS[0], watts: 2000, amb: 25, metres: 6 };
+
+      R.APPLIANCES.forEach(function (a) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.dataset.watts = a.watts;
+        b.innerHTML = a.name + '<small>' + a.watts + ' W</small>';
+        b.onclick = function () { state.watts = a.watts; render(); };
+        $('appliances').appendChild(b);
+      });
+      R.REELS.forEach(function (r) {
+        var b = document.createElement('button');
+        b.type = 'button'; b.dataset.id = r.id;
+        b.innerHTML = r.name + '<span>' + r.spec + '</span>';
+        b.onclick = function () {
+          state.metres = Math.round(state.metres / state.reel.length * r.length);
+          state.reel = r; render();
+        };
+        $('reels').appendChild(b);
+      });
+      $('watts').oninput = function () { state.watts = +this.value; render(); };
+      $('metres').oninput = function () { state.metres = +this.value; render(); };
+      $('amb').oninput = function () { state.amb = +this.value; render(); };
+      $('fix').onclick = function () { state.metres = +this.dataset.to; render(); };
+
+      function drawChart(reel, u, amps, amb, uMin) {
+        var W = 640, H = 360, m = { l: 46, r: 20, t: 18, b: 44 };
+        var yMax = reel.unwound > 13 ? 18 : 16;
+        var x = function (f) { return m.l + f * (W - m.l - m.r); };
+        var y = function (a) { return H - m.b - Math.min(a, yMax) / yMax * (H - m.t - m.b); };
+        var d = '';
+        for (var f = 0; f <= 1.0001; f += 0.02) d += (d ? 'L' : 'M') + x(f).toFixed(1) + ' ' + y(R.safeAmps(reel, f, amb)).toFixed(1);
+        var h = '<defs><pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="7" height="7" fill="#fbe9e6"/><line x1="0" y1="0" x2="0" y2="7" stroke="#e9b5ae" stroke-width="2"/></pattern></defs>';
+        h += '<path d="' + d + 'L' + x(1) + ' ' + y(yMax) + 'L' + x(0) + ' ' + y(yMax) + 'Z" fill="url(#hatch)"/>';
+        h += '<path d="' + d + 'L' + x(1) + ' ' + y(0) + 'L' + x(0) + ' ' + y(0) + 'Z" fill="#dcefe8"/>';
+        for (var a = 0; a <= yMax; a += 4) {
+          h += '<line x1="' + x(0) + '" x2="' + x(1) + '" y1="' + y(a) + '" y2="' + y(a) + '" stroke="#14212b" stroke-opacity=".1"/>';
+          h += '<text x="' + (m.l - 8) + '" y="' + (y(a) + 4) + '" font-size="12" text-anchor="end" fill="#55646f">' + a + ' A</text>';
+        }
+        for (var q = 0; q <= 4; q++) {
+          h += '<text x="' + x(q / 4) + '" y="' + (H - m.b + 18) + '" font-size="12" text-anchor="middle" fill="#55646f">' + Math.round(reel.length * q / 4) + ' m</text>';
+        }
+        h += '<text x="' + x(0.5) + '" y="' + (H - 6) + '" font-size="12" text-anchor="middle" fill="#55646f">cable unrolled</text>';
+        h += '<text x="' + (x(0) + 12) + '" y="' + (y(yMax) + 22) + '" font-size="13" font-weight="600" fill="#c8261b">overheats</text>';
+        h += '<text x="' + (x(1) - 12) + '" y="' + (y(0) - 12) + '" font-size="13" font-weight="600" text-anchor="end" fill="#12805f">safe</text>';
+        h += '<path d="' + d + '" fill="none" stroke="#14212b" stroke-width="2.5"/>';
+        if (amps <= yMax) {
+          h += '<line x1="' + x(0) + '" x2="' + x(1) + '" y1="' + y(amps) + '" y2="' + y(amps) + '" stroke="#f26a1b" stroke-width="2" stroke-dasharray="6 4"/>';
+          h += '<text x="' + (x(1) - 6) + '" y="' + (y(amps) - 7) + '" font-size="12" text-anchor="end" fill="#14212b">your appliance · ' + amps.toFixed(1) + ' A</text>';
+        }
+        if (uMin !== null && uMin > 0) {
+          h += '<line x1="' + x(uMin) + '" x2="' + x(uMin) + '" y1="' + y(amps) + '" y2="' + y(0) + '" stroke="#14212b" stroke-width="1.5" stroke-dasharray="3 3"/>';
+          h += '<text x="' + (x(uMin) + 6) + '" y="' + (y(0) - 28) + '" font-size="12" fill="#14212b">safe from ' + Math.ceil(uMin * reel.length) + ' m</text>';
+        }
+        [[0, reel.wound], [1, reel.unwound]].forEach(function (p) {
+          h += '<circle cx="' + x(p[0]) + '" cy="' + y(p[1]) + '" r="6" fill="#fff" stroke="#14212b" stroke-width="2"/>';
+        });
+        var ok = amps <= R.safeAmps(reel, u, amb);
+        h += '<circle cx="' + x(u) + '" cy="' + y(amps) + '" r="8" fill="' + (ok ? '#12805f' : '#c8261b') + '" stroke="#fff" stroke-width="2.5"/>';
+        $('chart').innerHTML = h;
+      }
+
+      function render() {
+        var reel = state.reel;
+        state.metres = Math.min(state.metres, reel.length);
+        var u = state.metres / reel.length, amps = state.watts / R.V;
+        var hot = R.hotspot(reel, u, amps, state.amb);
+        var safe = R.safeAmps(reel, u, state.amb);
+        var uMin = R.minUnroll(reel, amps, state.amb);
+        var mMin = uMin === null ? null : Math.ceil(uMin * reel.length);
+
+        $('watts').value = state.watts; $('amb').value = state.amb;
+        $('metres').max = reel.length; $('metres').value = state.metres;
+        $('outWatts').textContent = state.watts + ' W';
+        $('outMetres').textContent = state.metres + ' of ' + reel.length + ' m';
+        $('outAmb').textContent = state.amb + ' °C';
+        $('woundHint').textContent = state.metres === reel.length ? 'Nothing left on the drum.' : (reel.length - state.metres) + ' m still wound on the drum.';
+        [].forEach.call($('appliances').children, function (b) { b.setAttribute('aria-pressed', +b.dataset.watts === state.watts); });
+        [].forEach.call($('reels').children, function (b) { b.setAttribute('aria-pressed', b.dataset.id === reel.id); });
+
+        var v = $('verdict'), fix = $('fix');
+        $('hot').textContent = R.fmtTemp(hot) + ' °C';
+        fix.hidden = true;
+        if (mMin === null) {
+          v.dataset.state = 'over';
+          $('say').textContent = 'Too much for this reel';
+          $('why').textContent = 'Even fully unrolled, this cable carries ' + Math.floor(R.safeAmps(reel, 1, state.amb) * R.V / 50) * 50 + ' W at ' + state.amb + ' °C. Use a thicker cable or a shorter run.';
+        } else if (state.metres < mMin) {
+          var mins = R.minutesToLimit(reel, u, amps, state.amb);
+          v.dataset.state = 'hot';
+          $('say').textContent = 'Unroll ' + (mMin - state.metres) + ' m more';
+          $('why').textContent = 'With ' + state.metres + ' m out, the buried turns pass the 70 °C insulation limit after about ' + Math.max(1, Math.round(mins)) + ' min and keep climbing.';
+          fix.hidden = false; fix.dataset.to = mMin; fix.textContent = 'Unroll to ' + mMin + ' m';
+        } else {
+          v.dataset.state = 'safe';
+          $('say').textContent = 'Safe to run';
+          $('why').textContent = 'The hottest turn settles ' + Math.round(R.T_LIMIT - hot) + ' °C under the insulation limit, however long you leave it on.';
+        }
+
+        $('fAmps').textContent = amps.toFixed(1) + ' A';
+        $('fSafe').textContent = safe.toFixed(1) + ' A · ' + Math.floor(safe * R.V / 50) * 50 + ' W';
+        $('fMin').textContent = mMin === null ? 'not possible' : mMin + ' m';
+
+        R.drawSection($('section'), { reel: reel, u: u, amps: amps, amb: state.amb });
+        drawChart(reel, u, amps, state.amb, uMin);
+      }
+      render();
+    })();
+  </script>
+</body>
+</html>

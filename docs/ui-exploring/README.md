@@ -13,7 +13,7 @@ access — plain HTML, CSS and classic JavaScript, so every page works straight 
 
 | Folder | Exploration | Covers | By |
 | --- | --- | --- | --- |
-| _none yet_ | | | |
+| [`01-cable-reel/`](01-cable-reel/index.html) | Cable Reel Fire Risk | Checker (`index.html`), sweep results (`lab.html`), redesigned label (`label.html`) | Arman |
 
 ## Folder rules
 
