@@ -1,0 +1,14 @@
+.env
+.runtime/
+.venv/
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+experiments/*_state.json
+experiments/*_failed_geometry.json
+experiments/*.msh
+experiments/generated_*/
+experiments/*.log
+__pycache__/
+.pytest_cache/
+*.py[cod]

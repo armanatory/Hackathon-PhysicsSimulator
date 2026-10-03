@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "liquids": [
+    {
+      "label": "Water",
+      "n": 1.33
+    },
+    {
+      "label": "Glycerol\u2013water",
+      "n": 1.38
+    }
+  ],
+  "wavelength_min_nm": 900,
+  "wavelength_max_nm": 1100,
+  "wavelength_samples": 3,
+  "geometry_bounds": {
+    "period_nm": {
+      "min": 450.0,
+      "max": 550.0
+    },
+    "fill_factor": {
+      "min": 0.3,
+      "max": 0.7
+    },
+    "ridge_height_nm": {
+      "min": 80.0,
+      "max": 220.0
+    }
+  },
+  "film_thickness_nm": 100,
+  "minimum_feature_nm": 50,
+  "candidate_count": 1,
+  "max_parallel_cores": 64,
+  "seed": 42,
+  "objective": "max_abs_reflectance_contrast"
+}

@@ -1,0 +1,427 @@
+{
+  "label": "offline_periodic_slab_field_audit",
+  "generated_at_utc": "2026-10-03T10:55:59.894578+00:00",
+  "project_id": "jgeSELslGe3PYqB2N9",
+  "simulation_id": "Yfo6lrDoKUV19EaRjT",
+  "periodic_multiplier_order": 2,
+  "run_folder": "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\coarse\\Yfo6lrDoKUV19EaRjT",
+  "scalar_root": "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\coarse",
+  "coordinate_matching_tolerance_m": 1e-15,
+  "phasor_convention": "E_cos - i E_sin; exp(+i omega t)",
+  "geometry_expected_SI": {
+    "minimum_m": [
+      0.0,
+      0.0,
+      -5e-07
+    ],
+    "maximum_m": [
+      5e-07,
+      5e-07,
+      6.666666666666666e-07
+    ],
+    "span_m": [
+      5e-07,
+      5e-07,
+      1.1666666666666666e-06
+    ],
+    "slab_interface_z_m": [
+      0.0,
+      1.6666666666666665e-07
+    ]
+  },
+  "method": "Compare corresponding exported samples only on facets whose three vertices match; exclude cells touching a plane only at vertices or edges. Opposite faces are translated by one period before matching.",
+  "limitations": [
+    "Only geometrically matching periodic facets are compared; nonmatching facets remain unassessed.",
+    "Nodal RMS/max are diagnostic sampled jumps, not an exact continuous L2 norm.",
+    "Normal-component jumps are not tests of hcurl tangential continuity.",
+    "No acceptance threshold, validation flag, cloud call, or tolerance adjustment is introduced."
+  ],
+  "sweeps": [
+    {
+      "sweep_index": 0,
+      "field_files": [
+        {
+          "path": "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\coarse\\Yfo6lrDoKUV19EaRjT\\fields\\sweep_0\\E cosine_nostep_0.hdf",
+          "size_bytes": 5573667,
+          "sha256": "058df1579ca17cf630290de7fb34d9b53c6519a85b4cb814e17686d3f3f47272"
+        },
+        {
+          "path": "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\coarse\\Yfo6lrDoKUV19EaRjT\\fields\\sweep_0\\E sine_nostep_0.hdf",
+          "size_bytes": 5573667,
+          "sha256": "4ae2718ebaf49ca701c019b3a07cc8439459daa56ee14f258672e7d655f6f874"
+        }
+      ],
+      "cell_count": 9779,
+      "export_sample_count": 97790,
+      "geometry_measured_SI": {
+        "minimum_m": [
+          0.0,
+          0.0,
+          -5e-07
+        ],
+        "maximum_m": [
+          5e-07,
+          5e-07,
+          6.66666666666667e-07
+        ],
+        "span_m": [
+          5e-07,
+          5e-07,
+          1.166666666666667e-06
+        ],
+        "maximum_bound_error_m": 4.235164736271502e-22
+      },
+      "interfaces": {
+        "left_slab_interface": {
+          "z_m": 0.0,
+          "left_facet_count": 230,
+          "right_facet_count": 230,
+          "matched_facet_count": 230,
+          "matched_sample_pair_count": 1380,
+          "unmatched_left_facet_count": 0,
+          "unmatched_right_facet_count": 0,
+          "normal_component": "Ez",
+          "tangential_components": [
+            "Ex",
+            "Ey"
+          ],
+          "sample_weighting": "unweighted corresponding nodal samples, six per matched facet",
+          "component_rms_jump_V_per_m": {
+            "Ex": 2.1119163672461837e-16,
+            "Ey": 1.216043118919193e-16,
+            "Ez": 0.00018543104558508644
+          },
+          "component_max_jump_V_per_m": {
+            "Ex": 8.884304560536644e-16,
+            "Ey": 5.269456047062641e-16,
+            "Ez": 0.00296778977226399
+          },
+          "tangential_rms_jump_V_per_m": {
+            "Ex": 2.1119163672461837e-16,
+            "Ey": 1.216043118919193e-16
+          },
+          "tangential_max_jump_V_per_m": {
+            "Ex": 8.884304560536644e-16,
+            "Ey": 5.269456047062641e-16
+          }
+        },
+        "right_slab_interface": {
+          "z_m": 1.6666666666666665e-07,
+          "left_facet_count": 230,
+          "right_facet_count": 230,
+          "matched_facet_count": 230,
+          "matched_sample_pair_count": 1380,
+          "unmatched_left_facet_count": 0,
+          "unmatched_right_facet_count": 0,
+          "normal_component": "Ez",
+          "tangential_components": [
+            "Ex",
+            "Ey"
+          ],
+          "sample_weighting": "unweighted corresponding nodal samples, six per matched facet",
+          "component_rms_jump_V_per_m": {
+            "Ex": 2.0060519870659433e-16,
+            "Ey": 1.381681771741514e-16,
+            "Ez": 0.00015148839614759031
+          },
+          "component_max_jump_V_per_m": {
+            "Ex": 6.473657049138937e-16,
+            "Ey": 5.756269720462632e-16,
+            "Ez": 0.0017648673051430118
+          },
+          "tangential_rms_jump_V_per_m": {
+            "Ex": 2.0060519870659433e-16,
+            "Ey": 1.381681771741514e-16
+          },
+          "tangential_max_jump_V_per_m": {
+            "Ex": 6.473657049138937e-16,
+            "Ey": 5.756269720462632e-16
+          }
+        }
+      },
+      "periodic_faces": {
+        "x": {
+          "translation_m": 5e-07,
+          "left_facet_count": 360,
+          "right_facet_count": 360,
+          "matched_facet_count": 311,
+          "matched_sample_pair_count": 1866,
+          "unmatched_left_facet_count": 49,
+          "unmatched_right_facet_count": 49,
+          "normal_component": "Ex",
+          "tangential_components": [
+            "Ey",
+            "Ez"
+          ],
+          "sample_weighting": "unweighted corresponding nodal samples, six per matched facet",
+          "component_rms_jump_V_per_m": {
+            "Ex": 0.000490163247347537,
+            "Ey": 3.763761173556119e-05,
+            "Ez": 2.9044620675036037e-05
+          },
+          "component_max_jump_V_per_m": {
+            "Ex": 0.007402985994889389,
+            "Ey": 0.00096339388335885,
+            "Ez": 0.0009604421503415023
+          },
+          "tangential_rms_jump_V_per_m": {
+            "Ey": 3.763761173556119e-05,
+            "Ez": 2.9044620675036037e-05
+          },
+          "tangential_max_jump_V_per_m": {
+            "Ey": 0.00096339388335885,
+            "Ez": 0.0009604421503415023
+          }
+        },
+        "y": {
+          "translation_m": 5e-07,
+          "left_facet_count": 360,
+          "right_facet_count": 360,
+          "matched_facet_count": 229,
+          "matched_sample_pair_count": 1374,
+          "unmatched_left_facet_count": 131,
+          "unmatched_right_facet_count": 131,
+          "normal_component": "Ey",
+          "tangential_components": [
+            "Ex",
+            "Ez"
+          ],
+          "sample_weighting": "unweighted corresponding nodal samples, six per matched facet",
+          "component_rms_jump_V_per_m": {
+            "Ex": 2.0322716738477643e-05,
+            "Ey": 0.0010900929679813368,
+            "Ez": 1.869930058812908e-05
+          },
+          "component_max_jump_V_per_m": {
+            "Ex": 0.0002942009932329917,
+            "Ey": 0.02222250201342922,
+            "Ez": 0.0004902548697349296
+          },
+          "tangential_rms_jump_V_per_m": {
+            "Ex": 2.0322716738477643e-05,
+            "Ez": 1.869930058812908e-05
+          },
+          "tangential_max_jump_V_per_m": {
+            "Ex": 0.0002942009932329917,
+            "Ez": 0.0004902548697349296
+          }
+        }
+      },
+      "raw_scalar_file": "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\coarse\\raw_output_sweep_0.json",
+      "mean_field_diagnostic": {
+        "scope": "coherent surface-average x-polarized zeroth mode; no averaged Ey/Hx outputs available",
+        "coherent_R_x": 1.0069202528160076e-05,
+        "coherent_T_x": 1.0001370444521909,
+        "reported_local_R": 1.122051620544302e-05,
+        "reported_local_T": 1.0001369699600062,
+        "measured_transmission_phase_rad": -1.0463192318987313,
+        "expected_transmission_phase_rad_wrapped": -1.0471975511965972,
+        "transmission_phase_error_rad": 0.0008783192978662806,
+        "local_minus_coherent_power_diagnostic": {
+          "entrance": {
+            "forward_excess_local_power_over_specified": 1.1553083731228703e-06,
+            "backward_excess_local_power_over_specified": 1.1586127747039998e-06
+          },
+          "exit": {
+            "forward_excess_local_power_over_specified": 1.0805030042573673e-06,
+            "backward_excess_local_power_over_specified": 1.0690421971726767e-06
+          }
+        },
+        "limitation": "Excess local split power contains x-field spatial variance plus the y channel; it is not all propagating power"
+      }
+    },
+    {
+      "sweep_index": 1,
+      "field_files": [
+        {
+          "path": "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\coarse\\Yfo6lrDoKUV19EaRjT\\fields\\sweep_1\\E cosine_nostep_0.hdf",
+          "size_bytes": 5573667,
+          "sha256": "d90fd20a6b93417a8a19c8ddfcaddbf0d3bac98e624c4ccd375aba59a4f0572e"
+        },
+        {
+          "path": "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\coarse\\Yfo6lrDoKUV19EaRjT\\fields\\sweep_1\\E sine_nostep_0.hdf",
+          "size_bytes": 5573667,
+          "sha256": "bc905aa9dcd132baa566248d19419e5d2d4ff702401bc74b44227571c1d1fd87"
+        }
+      ],
+      "cell_count": 9779,
+      "export_sample_count": 97790,
+      "geometry_measured_SI": {
+        "minimum_m": [
+          0.0,
+          0.0,
+          -5e-07
+        ],
+        "maximum_m": [
+          5e-07,
+          5e-07,
+          6.66666666666667e-07
+        ],
+        "span_m": [
+          5e-07,
+          5e-07,
+          1.166666666666667e-06
+        ],
+        "maximum_bound_error_m": 4.235164736271502e-22
+      },
+      "interfaces": {
+        "left_slab_interface": {
+          "z_m": 0.0,
+          "left_facet_count": 230,
+          "right_facet_count": 230,
+          "matched_facet_count": 230,
+          "matched_sample_pair_count": 1380,
+          "unmatched_left_facet_count": 0,
+          "unmatched_right_facet_count": 0,
+          "normal_component": "Ez",
+          "tangential_components": [
+            "Ex",
+            "Ey"
+          ],
+          "sample_weighting": "unweighted corresponding nodal samples, six per matched facet",
+          "component_rms_jump_V_per_m": {
+            "Ex": 1.2935549241068704e-16,
+            "Ey": 7.524802524812448e-17,
+            "Ez": 0.00036731111042456375
+          },
+          "component_max_jump_V_per_m": {
+            "Ex": 5.564330285769961e-16,
+            "Ey": 3.8670051266285443e-16,
+            "Ez": 0.006079279214013833
+          },
+          "tangential_rms_jump_V_per_m": {
+            "Ex": 1.2935549241068704e-16,
+            "Ey": 7.524802524812448e-17
+          },
+          "tangential_max_jump_V_per_m": {
+            "Ex": 5.564330285769961e-16,
+            "Ey": 3.8670051266285443e-16
+          }
+        },
+        "right_slab_interface": {
+          "z_m": 1.6666666666666665e-07,
+          "left_facet_count": 230,
+          "right_facet_count": 230,
+          "matched_facet_count": 230,
+          "matched_sample_pair_count": 1380,
+          "unmatched_left_facet_count": 0,
+          "unmatched_right_facet_count": 0,
+          "normal_component": "Ez",
+          "tangential_components": [
+            "Ex",
+            "Ey"
+          ],
+          "sample_weighting": "unweighted corresponding nodal samples, six per matched facet",
+          "component_rms_jump_V_per_m": {
+            "Ex": 1.7574898231805986e-16,
+            "Ey": 1.2099574924432464e-16,
+            "Ez": 0.000523313623014638
+          },
+          "component_max_jump_V_per_m": {
+            "Ex": 6.702326396201944e-16,
+            "Ey": 6.575969813799044e-16,
+            "Ez": 0.007514446003209913
+          },
+          "tangential_rms_jump_V_per_m": {
+            "Ex": 1.7574898231805986e-16,
+            "Ey": 1.2099574924432464e-16
+          },
+          "tangential_max_jump_V_per_m": {
+            "Ex": 6.702326396201944e-16,
+            "Ey": 6.575969813799044e-16
+          }
+        }
+      },
+      "periodic_faces": {
+        "x": {
+          "translation_m": 5e-07,
+          "left_facet_count": 360,
+          "right_facet_count": 360,
+          "matched_facet_count": 311,
+          "matched_sample_pair_count": 1866,
+          "unmatched_left_facet_count": 49,
+          "unmatched_right_facet_count": 49,
+          "normal_component": "Ex",
+          "tangential_components": [
+            "Ey",
+            "Ez"
+          ],
+          "sample_weighting": "unweighted corresponding nodal samples, six per matched facet",
+          "component_rms_jump_V_per_m": {
+            "Ex": 0.0009965599867298406,
+            "Ey": 5.090976740554249e-05,
+            "Ez": 5.5591255723637975e-05
+          },
+          "component_max_jump_V_per_m": {
+            "Ex": 0.016534375407031544,
+            "Ey": 0.0009692626970468196,
+            "Ez": 0.0016772290955031678
+          },
+          "tangential_rms_jump_V_per_m": {
+            "Ey": 5.090976740554249e-05,
+            "Ez": 5.5591255723637975e-05
+          },
+          "tangential_max_jump_V_per_m": {
+            "Ey": 0.0009692626970468196,
+            "Ez": 0.0016772290955031678
+          }
+        },
+        "y": {
+          "translation_m": 5e-07,
+          "left_facet_count": 360,
+          "right_facet_count": 360,
+          "matched_facet_count": 229,
+          "matched_sample_pair_count": 1374,
+          "unmatched_left_facet_count": 131,
+          "unmatched_right_facet_count": 131,
+          "normal_component": "Ey",
+          "tangential_components": [
+            "Ex",
+            "Ez"
+          ],
+          "sample_weighting": "unweighted corresponding nodal samples, six per matched facet",
+          "component_rms_jump_V_per_m": {
+            "Ex": 7.10284962418371e-05,
+            "Ey": 0.0018233974623699887,
+            "Ez": 3.81264632799188e-05
+          },
+          "component_max_jump_V_per_m": {
+            "Ex": 0.0014505241005979732,
+            "Ey": 0.03821166471097114,
+            "Ez": 0.0005631076436789848
+          },
+          "tangential_rms_jump_V_per_m": {
+            "Ex": 7.10284962418371e-05,
+            "Ez": 3.81264632799188e-05
+          },
+          "tangential_max_jump_V_per_m": {
+            "Ex": 0.0014505241005979732,
+            "Ez": 0.0005631076436789848
+          }
+        }
+      },
+      "raw_scalar_file": "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\coarse\\raw_output_sweep_1.json",
+      "mean_field_diagnostic": {
+        "scope": "coherent surface-average x-polarized zeroth mode; no averaged Ey/Hx outputs available",
+        "coherent_R_x": 0.15000789487001698,
+        "coherent_T_x": 0.8501658888026551,
+        "reported_local_R": 0.15000971196827811,
+        "reported_local_T": 0.8501649940812087,
+        "measured_transmission_phase_rad": -1.5700633802335289,
+        "expected_transmission_phase_rad_wrapped": -1.5707963267948966,
+        "transmission_phase_error_rad": 0.0007329465613676867,
+        "local_minus_coherent_power_diagnostic": {
+          "entrance": {
+            "forward_excess_local_power_over_specified": 2.1482526925067266e-06,
+            "backward_excess_local_power_over_specified": 2.1552856220441263e-06
+          },
+          "exit": {
+            "forward_excess_local_power_over_specified": 9.238047074044975e-07,
+            "backward_excess_local_power_over_specified": 9.119599321040533e-07
+          }
+        },
+        "limitation": "Excess local split power contains x-field spatial variance plus the y channel; it is not all propagating power"
+      }
+    }
+  ]
+}

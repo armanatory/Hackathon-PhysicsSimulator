@@ -1,0 +1,78 @@
+{
+  "status": "pass",
+  "passed": true,
+  "created_utc": "2026-10-03T10:33:50.651518+00:00",
+  "coarse_source": {
+    "project_id": "v9VwC8kVbhAPWb6QXI",
+    "project_url": "https://allsolve.quanscient.com/#/projects/v9VwC8kVbhAPWb6QXI/model",
+    "mesh_id": "Z6MdsOccPsUoff-qER",
+    "mesh_job_id": "ngKVgGDfZPyuC77vH5",
+    "flow_simulation_id": "yA6cvW7IfW2A-qfKDf",
+    "flow_job_id": "ypBj2gI-K1b7bPlzaW",
+    "electric_simulation_id": "v8in5WRBB9qfuIbZQt",
+    "electric_job_id": "rSs_iVRUzKpn8pIbD7",
+    "file_sha256": {
+      "state.json": "1f1528519d3c6f82484c3afe26bc80f33ba7e83fec0202aea04d22af25c9ca47",
+      "flow_samples.json": "a85b75d8a77778fe87667718f1d016eb9f2c9b1d254b20bcaf23fd12f699073f",
+      "electric_samples.json": "cc108ccb5b5130a5281c44d35d95852cd367ae34a03dc34677bd3d7fb1f00044"
+    }
+  },
+  "fine_source": {
+    "project_id": "K0pjyYL9U2mAYvdVRv",
+    "project_url": "https://allsolve.quanscient.com/#/projects/K0pjyYL9U2mAYvdVRv/model",
+    "mesh_id": "vWeUpPjjE0uET4J1WE",
+    "mesh_job_id": "DI33vSdnzPUdpN4JtO",
+    "flow_simulation_id": "m0rBORnnI9jboCye16",
+    "flow_job_id": "QFI2S1jojrS9kdpYbP",
+    "electric_simulation_id": "OEz40p9E1zHA9GkXhN",
+    "electric_job_id": "B3UlGF0moygbBZsGic",
+    "file_sha256": {
+      "state.json": "be3c2ca0789ee468f752ae92fac0c5dbb6bae0d5c129cd9b577d1ef576b127e6",
+      "flow_samples.json": "a599f9484cfd942a29eeb8e64c2acef0b34b3dba258eb3f1edcdc55aa7f6b875",
+      "electric_samples.json": "578082bfb991c176588ee52d40a4731bcbc5d79e228c7a3d194a01a91b640de0"
+    }
+  },
+  "coarse_mesh_size_max_m": 0.0015,
+  "fine_mesh_size_max_m": 0.001,
+  "coarse_grid_shape": [
+    25,
+    17,
+    9
+  ],
+  "fine_grid_shape": [
+    49,
+    33,
+    17
+  ],
+  "checks": {
+    "developed_pressure_drop_relative_change": {
+      "value": 3.497121954359795e-05,
+      "limit": 0.03,
+      "comparison": "<=",
+      "pass": true
+    },
+    "velocity_field_relative_l2_change_at_common_samples": {
+      "value": 0.0007829835361769792,
+      "limit": 0.03,
+      "comparison": "<=",
+      "pass": true
+    },
+    "surface_mean_pressure_drop_relative_change": {
+      "value": 5.6786219512725916e-05,
+      "limit": 0.05,
+      "comparison": "<=",
+      "pass": true
+    },
+    "direct_fe_outlet_flux_relative_change": {
+      "value": 0.00026999511336659615,
+      "limit": 0.01,
+      "comparison": "<=",
+      "pass": true
+    }
+  },
+  "coarse_developed_pressure_drop_pa": 0.01240040738109911,
+  "fine_developed_pressure_drop_pa": 0.012399973738895152,
+  "coarse_analytic_profile_relative_l2_error": 0.000742321223448992,
+  "fine_analytic_profile_relative_l2_error": 0.00039314041097561676,
+  "interpretation": "Agreement between two meshes for this straight-channel benchmark; this is not a general discretization error bound or validation of other exhaust physics."
+}

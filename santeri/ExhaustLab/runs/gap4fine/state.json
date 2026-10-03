@@ -1,0 +1,50 @@
+{
+  "case": "gap4fine",
+  "project_id": "zGDsVITicdtGPhAAbR",
+  "project_url": "https://allsolve.quanscient.com/#/projects/zGDsVITicdtGPhAAbR/model",
+  "gap_m": 0.004,
+  "length_m": 0.06,
+  "span_m": 0.02,
+  "flow_m3_s": 3.3333333333333333e-06,
+  "voltage_v": 200.0,
+  "mu_pa_s": 1.81e-05,
+  "rho_kg_m3": 1.2,
+  "mesh_size_max_m": 0.0008,
+  "grid_shape": [
+    49,
+    33,
+    17
+  ],
+  "created_utc": "2026-10-03T10:32:36.011901+00:00",
+  "reference": {
+    "pressure_gradient_pa_m": 0.6472095041955764,
+    "pressure_drop_pa": 0.03883257025173458,
+    "mean_velocity_m_s": 0.041666666666666664,
+    "reynolds": 18.41620626151013,
+    "inlet_expression": "0.07380684944992744*((1-(exp(785.3981633974482*(z-0.02))+exp(-785.3981633974482*z))/1.000000150701728)*sin(785.3981633974482*y)/1+(1-(exp(2356.194490192345*(z-0.02))+exp(-2356.194490192345*z))/1)*sin(2356.194490192345*y)/27+(1-(exp(3926.990816987241*(z-0.02))+exp(-3926.990816987241*z))/1)*sin(3926.990816987241*y)/125+(1-(exp(5497.787143782138*(z-0.02))+exp(-5497.787143782138*z))/1)*sin(5497.787143782138*y)/343+(1-(exp(7068.583470577034*(z-0.02))+exp(-7068.583470577034*z))/1)*sin(7068.583470577034*y)/729+(1-(exp(8639.37979737193*(z-0.02))+exp(-8639.37979737193*z))/1)*sin(8639.37979737193*y)/1331+(1-(exp(10210.17612416683*(z-0.02))+exp(-10210.17612416683*z))/1)*sin(10210.17612416683*y)/2197+(1-(exp(11780.97245096172*(z-0.02))+exp(-11780.97245096172*z))/1)*sin(11780.97245096172*y)/3375+(1-(exp(13351.76877775662*(z-0.02))+exp(-13351.76877775662*z))/1)*sin(13351.76877775662*y)/4913+(1-(exp(14922.56510455152*(z-0.02))+exp(-14922.56510455152*z))/1)*sin(14922.56510455152*y)/6859+(1-(exp(16493.36143134641*(z-0.02))+exp(-16493.36143134641*z))/1)*sin(16493.36143134641*y)/9261+(1-(exp(18064.15775814131*(z-0.02))+exp(-18064.15775814131*z))/1)*sin(18064.15775814131*y)/12167+(1-(exp(19634.95408493621*(z-0.02))+exp(-19634.95408493621*z))/1)*sin(19634.95408493621*y)/15625+(1-(exp(21205.7504117311*(z-0.02))+exp(-21205.7504117311*z))/1)*sin(21205.7504117311*y)/19683+(1-(exp(22776.546738526*(z-0.02))+exp(-22776.546738526*z))/1)*sin(22776.546738526*y)/24389)",
+    "series_terms": 15
+  },
+  "geometry_configured": true,
+  "geometry_built": true,
+  "region_entity_counts": {
+    "gas": 1,
+    "boundary": 6,
+    "inlet": 1,
+    "outlet": 1,
+    "ground": 1,
+    "high_voltage": 1,
+    "ends": 2,
+    "walls": 4
+  },
+  "inlet_version": 2,
+  "mesh_id": "NDnHiZlBXzgDbeeND7",
+  "flow_simulation_id": "RPJ9R6pNJZCtUY_0ed",
+  "electric_simulation_id": "9sNVYkVAtKWUMqp18J",
+  "mesh_status": "JobStatusType.SUCCESS",
+  "mesh_job_id": "8ysfT6yujVv23eQXRh",
+  "flow_status": "JobStatusType.SUCCESS",
+  "flow_job_id": "bU5dPgHc4hbVubAZWx",
+  "electric_status": "JobStatusType.SUCCESS",
+  "electric_job_id": "1KsubZl8R7ty0B9JVr",
+  "harvested_utc": "2026-10-03T10:33:38.788282+00:00"
+}

@@ -1,0 +1,34 @@
+{
+  "passed": true,
+  "gates": {
+    "pressure_relative_error": true,
+    "flux_relative_error": true,
+    "inlet_geometric_area_relative_error": true,
+    "pressure_profile_relative_l2": true,
+    "velocity_profile_relative_l2": true,
+    "cylinder_volume_relative_error": true,
+    "thermal_exact_error_k": true,
+    "temperature_bounds": true,
+    "thermal_physical_plug_relative_excess_error": true
+  },
+  "pressure_relative_error": 0.00109806638937604,
+  "flux_relative_error": 0.0010398056049800708,
+  "inlet_geometric_area_relative_error": 0.004550379324166576,
+  "analytic_curved_cylinder_flow_relative_error": 0.005585453419220454,
+  "prescribed_fe_flow_m3_s": 0.0509833799199817,
+  "pressure_profile_relative_l2": 0.0010764498488910915,
+  "velocity_profile_relative_l2": 0.001305765730194432,
+  "cylinder_volume_relative_error": 0.003448421033769744,
+  "thermal_exact_error_k": 0.00034235304713092773,
+  "pressure_factor": 0.998901933610624,
+  "thermal_factor": 0.9640160490712009,
+  "plug_outlet_error_k": 0.6111635533204662,
+  "plug_relative_excess_error": 0.0014809824718503034,
+  "source_hashes": {
+    "state.json": "3c8c73a91026727f0e2e4c95fe47e07dc5d527ce4a16c2166cde0c01abc6f7ac",
+    "samples.json": "605ff2a037fe659215bc000acfc1e67861ed53a834b04e0e3a6f34c5d742e523",
+    "darcy_thermal.py": "766567b2269a74046a91cd51e968129590ac61b2b90bc5c8372eb6a60ff83d50",
+    "sample_dpf.py": "f223bd050e2e6ea9181f4667c02c9c3d8f76fab648f1fba596739c3b7e28e409"
+  },
+  "checked_utc": "2026-10-03T11:18:25.038511+00:00"
+}

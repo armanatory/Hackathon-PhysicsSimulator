@@ -1,0 +1,99 @@
+{
+  "label": "allsolve_liquid_discriminator",
+  "synthetic": false,
+  "status": "failed",
+  "stage": "Initialization failed",
+  "updated_at": "2026-10-03T12:20:10.143162+00:00",
+  "model": {
+    "geometry": "1D rectangular Si3N4 ridges on a continuous Si3N4 film and fused silica",
+    "liquids": "Explicit constant real refractive indices; no concentration inference",
+    "illumination": "Normal incidence, TE electric field parallel to ridges, propagation +z",
+    "materials": "Luke 2015 Si3N4 and Malitson 1965 fused-silica Sellmeier; zero absorption",
+    "period_y_nm": 100,
+    "clearance_nm": 1000,
+    "method": "Allsolve harmonic Maxwell FEM, E order 2, explicit periodic multiplier order 2"
+  },
+  "objective": {
+    "formula": "max_geometry,max_sampled_wavelength |R_A(lambda)-R_B(lambda)|",
+    "optimized_variables": [
+      "period_nm",
+      "fill_factor",
+      "ridge_height_nm"
+    ],
+    "selection": "Seeded Latin hypercube candidates; paired wavelength sweep; best sampled design"
+  },
+  "progress": {
+    "planned_solve_count": 6,
+    "completed_solve_count": 0,
+    "failed_solve_count": 0,
+    "queued_solve_count": 0,
+    "running_solve_count": 0,
+    "planned_candidates": 1,
+    "completed_candidates": 0,
+    "valid_candidates": 0,
+    "batches_completed": 0,
+    "batches_total": 1,
+    "core_budget": 64,
+    "effective_parallel_cores": 18
+  },
+  "candidates": [
+    {
+      "id": 0,
+      "geometry": {
+        "period_nm": 513.9426798457883,
+        "fill_factor": 0.31000430208906676,
+        "ridge_height_nm": 118.50410457167669,
+        "film_thickness_nm": 100.0,
+        "width_nm": 159.3244417793783,
+        "gap_nm": 354.61823806641
+      },
+      "status": "queued",
+      "score": null,
+      "wavelength_nm": null,
+      "R_A": null,
+      "R_B": null,
+      "valid": false,
+      "verified": false,
+      "completed_solves": 0,
+      "total_solves": 6,
+      "error": null
+    }
+  ],
+  "best_design": null,
+  "spectra": [],
+  "batches": [
+    {
+      "name": "search 1",
+      "stage": "search",
+      "project_id": "H6WZ8I40PvysBKh_Dy",
+      "physics_set_id": "_BQJp7aFUXPMioQ4Jt",
+      "sweep_id": "1R0BEYt8swL55nsryr",
+      "mesh_id": "LXtdadtt3Gb6u_rPR_",
+      "mesh_instance_id": "g82kKaKaNtYcJElXd2",
+      "simulation_id": "hcxw3lwwPU8eqDyQkG",
+      "point_count": 6,
+      "resolution_per_material_wavelength": 12,
+      "mesh_size_max_m": 5.166164675525664e-08,
+      "ridge_mesh_size_max_m": 3.715948787622645e-08,
+      "film_mesh_size_max_m": 3.3333333333333334e-08,
+      "clearance_nm": 1000,
+      "write_fields": false,
+      "source_sha256": "18c15ee5c2d3bc844cc08a390faf8bbdef83b0cf00b4b67f7e13f79541feeb6f",
+      "node_type": "lambda",
+      "mesh_cores": 3,
+      "simulation_cores": 3,
+      "mesh_status": null,
+      "simulation_status": null,
+      "mesh_job_id": "n8SpC1yhGFNDCGZr49",
+      "simulation_job_id": "qLbpZkTAeoi8abCXYR",
+      "project_url": "https://allsolve.quanscient.com/#/projects/H6WZ8I40PvysBKh_Dy/model",
+      "cores_per_child": 3,
+      "status": "running",
+      "mesh_count": 1,
+      "cloud_status": "starting"
+    }
+  ],
+  "errors": [
+    "The Allsolve worker could not initialize. See its private log."
+  ]
+}

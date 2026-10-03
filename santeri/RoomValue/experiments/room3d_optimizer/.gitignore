@@ -1,0 +1,8 @@
+sdk-cache/
+state.json
+mesh.msh
+field_geometry.npz
+fields/
+scenarios/
+*.tmp
+__pycache__/

@@ -1,0 +1,33 @@
+[
+  {
+    "path": "/api/health",
+    "http_status": 200,
+    "offline": true,
+    "snapshot": true
+  },
+  {
+    "path": "/api/optimization/config",
+    "http_status": 200,
+    "offline": true,
+    "snapshot": true,
+    "available": false
+  },
+  {
+    "path": "/api/optimization/jobs/latest",
+    "http_status": 200,
+    "offline": true,
+    "snapshot": true,
+    "validated": true
+  },
+  {
+    "path": "/api/optimization/jobs/5caa299a62fb450da3c57baa1eec3e36",
+    "http_status": 200,
+    "offline": true,
+    "snapshot": true,
+    "validated": true
+  },
+  {
+    "path": "POST while offline",
+    "http_status": 503
+  }
+]

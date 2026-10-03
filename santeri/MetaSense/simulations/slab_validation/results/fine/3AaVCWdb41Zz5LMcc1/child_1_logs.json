@@ -1,0 +1,70 @@
+{
+  "job_id": "acjEueJv45Aq8IjFdE-1",
+  "events": [
+    {
+      "id": 360005471600,
+      "level": "info",
+      "message": "Reserving resources...",
+      "timestamp": "2026-10-03T10:46:32.838477Z",
+      "additional_properties": {}
+    },
+    {
+      "id": 360007685000,
+      "level": "info",
+      "message": "Downloading inputs...",
+      "timestamp": "2026-10-03T10:46:32.860611Z",
+      "additional_properties": {}
+    },
+    {
+      "id": 360016090300,
+      "level": "info",
+      "message": "Downloading done",
+      "timestamp": "2026-10-03T10:46:32.944664Z",
+      "additional_properties": {}
+    },
+    {
+      "id": 360039549700,
+      "level": "info",
+      "message": "Quanscient Allsolve 484 int64/float64\n",
+      "timestamp": "2026-10-03T10:46:33.179258Z",
+      "additional_properties": {}
+    },
+    {
+      "id": 360039552300,
+      "level": "info",
+      "message": "Physical RAM is 11.2356 GB for 1 rank\n",
+      "timestamp": "2026-10-03T10:46:33.179284Z",
+      "additional_properties": {}
+    },
+    {
+      "id": 360040251700,
+      "level": "info",
+      "message": "Loading mesh from 'simulation.msh'\n",
+      "timestamp": "2026-10-03T10:46:33.186278Z",
+      "additional_properties": {}
+    },
+    {
+      "id": 360046588400,
+      "level": "info",
+      "message": "Detected curvature order 1\nExtracted 5967 nodes\nExtracted 37802 lines\nExtracted 61932 triangles\nExtracted 30096 tetrahedra\n",
+      "timestamp": "2026-10-03T10:46:33.249645Z",
+      "additional_properties": {}
+    },
+    {
+      "id": 360049315300,
+      "level": "info",
+      "message": "Time to load the mesh:\n90.5354 ms\n",
+      "timestamp": "2026-10-03T10:46:33.276914Z",
+      "additional_properties": {}
+    },
+    {
+      "id": 360050765900,
+      "level": "info",
+      "message": "DDM solve for 603088 dofs:\n",
+      "timestamp": "2026-10-03T10:46:33.291420Z",
+      "additional_properties": {
+        "dofcount": 603088
+      }
+    }
+  ]
+}

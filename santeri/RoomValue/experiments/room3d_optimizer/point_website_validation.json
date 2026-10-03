@@ -1,0 +1,463 @@
+{
+  "generated_at_utc": "2026-10-03T11:56:28.035428+00:00",
+  "passed": true,
+  "website_url": "http://127.0.0.1:5175/",
+  "cases": {
+    "default_one_panel_cap": {
+      "job_id": "ee5010aa-7b90-45fb-b3d1-f6b4fa4abb28",
+      "project_id": "wplkBNw5wTUbgLDuPI",
+      "project_url": "https://allsolve.quanscient.com/#/projects/wplkBNw5wTUbgLDuPI/model",
+      "model_sha256": "8db251f48410990f72e6f0937cfcf6f4f2c83db0179bba381547d39e16a44989",
+      "source_geometry": "dataset_positions",
+      "sources": [
+        {
+          "id": "src1",
+          "position_m": [
+            1.89407487,
+            4.52190448,
+            1.4481839
+          ],
+          "level_db": 90.96910013008056
+        }
+      ],
+      "listener_m": [
+        0.80316092,
+        3.83141445,
+        1.04391528
+      ],
+      "mesh": {
+        "mesh_id": "WnnAHZPdRz508Z_UMG",
+        "dimension": 3,
+        "status": "SUCCESS",
+        "bounds_m": [
+          [
+            0.0,
+            5.705
+          ],
+          [
+            0.0,
+            5.965
+          ],
+          [
+            0.0,
+            2.355
+          ]
+        ],
+        "tetrahedron_count": 332020,
+        "volume_m3": 80.14141537500001,
+        "max_edge_m": 0.3631316798915856,
+        "min_elements_per_wavelength": 7.644169191816968,
+        "field_interpolation_order": 2
+      },
+      "layouts": 7,
+      "baseline_db": 66.59664528111783,
+      "optimal_layout": {
+        "slot_ids": [
+          "ceiling_b"
+        ],
+        "object_count": 1,
+        "pressure_rms_pa": 0.01297444764387161,
+        "noise_db": 56.24117764398993,
+        "reduction_db": 10.355467637127902,
+        "simulation_ids": [
+          "n74505QJ9nlwFN4Mi_"
+        ],
+        "status": "SUCCESS"
+      }
+    },
+    "moved_source_new_geometry": {
+      "job_id": "3997dc77-3a40-4cde-8797-56381833c3a0",
+      "project_id": "IAeg6z_rpMEQNfnDNg",
+      "project_url": "https://allsolve.quanscient.com/#/projects/IAeg6z_rpMEQNfnDNg/model",
+      "model_sha256": "9f67db53269a698187793c8f539c6bbad035450f3238c35ed2fcf3667009307c",
+      "source_geometry": "user_positions",
+      "sources": [
+        {
+          "id": "src1",
+          "position_m": [
+            2.09407487,
+            4.52190448,
+            1.4481839
+          ],
+          "level_db": 90.96910013008056
+        }
+      ],
+      "listener_m": [
+        0.80316092,
+        3.83141445,
+        1.04391528
+      ],
+      "mesh": {
+        "mesh_id": "Ss9lpb4mTfmXe1vpbJ",
+        "dimension": 3,
+        "status": "SUCCESS",
+        "bounds_m": [
+          [
+            0.0,
+            5.705
+          ],
+          [
+            0.0,
+            5.965
+          ],
+          [
+            0.0,
+            2.355
+          ]
+        ],
+        "tetrahedron_count": 191292,
+        "volume_m3": 80.14141537500001,
+        "max_edge_m": 0.3789015607467777,
+        "min_elements_per_wavelength": 7.32601891248242,
+        "field_interpolation_order": 2
+      },
+      "layouts": 1,
+      "baseline_db": 64.21192214976546,
+      "optimal_layout": {
+        "slot_ids": [],
+        "object_count": 0,
+        "pressure_rms_pa": 0.03248075406461449,
+        "noise_db": 64.21192214976546,
+        "reduction_db": 0.0,
+        "simulation_ids": [
+          "jhulmZfEM45jP_YPlk"
+        ],
+        "status": "SUCCESS"
+      }
+    },
+    "source_level_reuses_field": {
+      "job_id": "4fa65203-f298-4417-9bca-8d5281023669",
+      "project_id": "IAeg6z_rpMEQNfnDNg",
+      "project_url": "https://allsolve.quanscient.com/#/projects/IAeg6z_rpMEQNfnDNg/model",
+      "model_sha256": "9f67db53269a698187793c8f539c6bbad035450f3238c35ed2fcf3667009307c",
+      "source_geometry": "user_positions",
+      "sources": [
+        {
+          "id": "src1",
+          "position_m": [
+            2.09407487,
+            4.52190448,
+            1.4481839
+          ],
+          "level_db": 80.96910013008056
+        }
+      ],
+      "listener_m": [
+        0.80316092,
+        3.83141445,
+        1.04391528
+      ],
+      "mesh": {
+        "mesh_id": "Ss9lpb4mTfmXe1vpbJ",
+        "dimension": 3,
+        "status": "SUCCESS",
+        "bounds_m": [
+          [
+            0.0,
+            5.705
+          ],
+          [
+            0.0,
+            5.965
+          ],
+          [
+            0.0,
+            2.355
+          ]
+        ],
+        "tetrahedron_count": 191292,
+        "volume_m3": 80.14141537500001,
+        "max_edge_m": 0.3789015607467777,
+        "min_elements_per_wavelength": 7.32601891248242,
+        "field_interpolation_order": 2
+      },
+      "layouts": 1,
+      "baseline_db": 54.21192214976546,
+      "optimal_layout": {
+        "slot_ids": [],
+        "object_count": 0,
+        "pressure_rms_pa": 0.010271316296395367,
+        "noise_db": 54.21192214976546,
+        "reduction_db": 0.0,
+        "simulation_ids": [
+          "jhulmZfEM45jP_YPlk"
+        ],
+        "status": "SUCCESS"
+      }
+    },
+    "listener_position_reuses_full_field": {
+      "job_id": "d6feeef2-5de4-4d05-8cf2-4b66649688e1",
+      "project_id": "IAeg6z_rpMEQNfnDNg",
+      "project_url": "https://allsolve.quanscient.com/#/projects/IAeg6z_rpMEQNfnDNg/model",
+      "model_sha256": "9f67db53269a698187793c8f539c6bbad035450f3238c35ed2fcf3667009307c",
+      "source_geometry": "user_positions",
+      "sources": [
+        {
+          "id": "src1",
+          "position_m": [
+            2.09407487,
+            4.52190448,
+            1.4481839
+          ],
+          "level_db": 90.96910013008056
+        }
+      ],
+      "listener_m": [
+        1.1031609199999999,
+        3.83141445,
+        1.04391528
+      ],
+      "mesh": {
+        "mesh_id": "Ss9lpb4mTfmXe1vpbJ",
+        "dimension": 3,
+        "status": "SUCCESS",
+        "bounds_m": [
+          [
+            0.0,
+            5.705
+          ],
+          [
+            0.0,
+            5.965
+          ],
+          [
+            0.0,
+            2.355
+          ]
+        ],
+        "tetrahedron_count": 191292,
+        "volume_m3": 80.14141537500001,
+        "max_edge_m": 0.3789015607467777,
+        "min_elements_per_wavelength": 7.32601891248242,
+        "field_interpolation_order": 2
+      },
+      "layouts": 1,
+      "baseline_db": 75.72038971089002,
+      "optimal_layout": {
+        "slot_ids": [],
+        "object_count": 0,
+        "pressure_rms_pa": 0.12219388734645636,
+        "noise_db": 75.72038971089002,
+        "reduction_db": 0.0,
+        "simulation_ids": [
+          "jhulmZfEM45jP_YPlk"
+        ],
+        "status": "SUCCESS"
+      }
+    },
+    "two_independent_sources": {
+      "job_id": "9b7cedfb-8e17-481a-b20b-46ef45c79700",
+      "project_id": "wplkBNw5wTUbgLDuPI",
+      "project_url": "https://allsolve.quanscient.com/#/projects/wplkBNw5wTUbgLDuPI/model",
+      "model_sha256": "8db251f48410990f72e6f0937cfcf6f4f2c83db0179bba381547d39e16a44989",
+      "source_geometry": "dataset_positions",
+      "sources": [
+        {
+          "id": "src1",
+          "position_m": [
+            1.89407487,
+            4.52190448,
+            1.4481839
+          ],
+          "level_db": 90.96910013008056
+        },
+        {
+          "id": "src2",
+          "position_m": [
+            1.6330509,
+            0.8420041,
+            1.02493109
+          ],
+          "level_db": 84.9485002168
+        }
+      ],
+      "listener_m": [
+        0.80316092,
+        3.83141445,
+        1.04391528
+      ],
+      "mesh": {
+        "mesh_id": "WnnAHZPdRz508Z_UMG",
+        "dimension": 3,
+        "status": "SUCCESS",
+        "bounds_m": [
+          [
+            0.0,
+            5.705
+          ],
+          [
+            0.0,
+            5.965
+          ],
+          [
+            0.0,
+            2.355
+          ]
+        ],
+        "tetrahedron_count": 332020,
+        "volume_m3": 80.14141537500001,
+        "max_edge_m": 0.3631316798915856,
+        "min_elements_per_wavelength": 7.644169191816968,
+        "field_interpolation_order": 2
+      },
+      "layouts": 1,
+      "baseline_db": 68.76426515801658,
+      "optimal_layout": {
+        "slot_ids": [],
+        "object_count": 0,
+        "pressure_rms_pa": 0.05485841474661459,
+        "noise_db": 68.76426515801658,
+        "reduction_db": 0.0,
+        "simulation_ids": [
+          "ROY0ZBA4DLHEv3KqPe",
+          "ywGJYWPA5RZoya-xgx"
+        ],
+        "status": "SUCCESS"
+      }
+    },
+    "two_panel_cap_all_subsets": {
+      "job_id": "705396fa-402b-4387-ac33-8e84ea2cf979",
+      "project_id": "wplkBNw5wTUbgLDuPI",
+      "project_url": "https://allsolve.quanscient.com/#/projects/wplkBNw5wTUbgLDuPI/model",
+      "model_sha256": "8db251f48410990f72e6f0937cfcf6f4f2c83db0179bba381547d39e16a44989",
+      "source_geometry": "dataset_positions",
+      "sources": [
+        {
+          "id": "src1",
+          "position_m": [
+            1.89407487,
+            4.52190448,
+            1.4481839
+          ],
+          "level_db": 90.96910013008056
+        }
+      ],
+      "listener_m": [
+        0.80316092,
+        3.83141445,
+        1.04391528
+      ],
+      "mesh": {
+        "mesh_id": "WnnAHZPdRz508Z_UMG",
+        "dimension": 3,
+        "status": "SUCCESS",
+        "bounds_m": [
+          [
+            0.0,
+            5.705
+          ],
+          [
+            0.0,
+            5.965
+          ],
+          [
+            0.0,
+            2.355
+          ]
+        ],
+        "tetrahedron_count": 332020,
+        "volume_m3": 80.14141537500001,
+        "max_edge_m": 0.3631316798915856,
+        "min_elements_per_wavelength": 7.644169191816968,
+        "field_interpolation_order": 2
+      },
+      "layouts": 4,
+      "baseline_db": 66.59664528111783,
+      "optimal_layout": {
+        "slot_ids": [
+          "ceiling_b"
+        ],
+        "object_count": 1,
+        "pressure_rms_pa": 0.01297444764387161,
+        "noise_db": 56.24117764398993,
+        "reduction_db": 10.355467637127902,
+        "simulation_ids": [
+          "n74505QJ9nlwFN4Mi_"
+        ],
+        "status": "SUCCESS"
+      }
+    },
+    "restored_default": {
+      "job_id": "e2c5c2f1-a1d4-430c-9453-4ffaff5cf4e8",
+      "project_id": "wplkBNw5wTUbgLDuPI",
+      "project_url": "https://allsolve.quanscient.com/#/projects/wplkBNw5wTUbgLDuPI/model",
+      "model_sha256": "8db251f48410990f72e6f0937cfcf6f4f2c83db0179bba381547d39e16a44989",
+      "source_geometry": "dataset_positions",
+      "sources": [
+        {
+          "id": "src1",
+          "position_m": [
+            1.89407487,
+            4.52190448,
+            1.4481839
+          ],
+          "level_db": 90.96910013008056
+        }
+      ],
+      "listener_m": [
+        0.80316092,
+        3.83141445,
+        1.04391528
+      ],
+      "mesh": {
+        "mesh_id": "WnnAHZPdRz508Z_UMG",
+        "dimension": 3,
+        "status": "SUCCESS",
+        "bounds_m": [
+          [
+            0.0,
+            5.705
+          ],
+          [
+            0.0,
+            5.965
+          ],
+          [
+            0.0,
+            2.355
+          ]
+        ],
+        "tetrahedron_count": 332020,
+        "volume_m3": 80.14141537500001,
+        "max_edge_m": 0.3631316798915856,
+        "min_elements_per_wavelength": 7.644169191816968,
+        "field_interpolation_order": 2
+      },
+      "layouts": 7,
+      "baseline_db": 66.59664528111783,
+      "optimal_layout": {
+        "slot_ids": [
+          "ceiling_b"
+        ],
+        "object_count": 1,
+        "pressure_rms_pa": 0.01297444764387161,
+        "noise_db": 56.24117764398993,
+        "reduction_db": 10.355467637127902,
+        "simulation_ids": [
+          "n74505QJ9nlwFN4Mi_"
+        ],
+        "status": "SUCCESS"
+      }
+    }
+  },
+  "browser_validation": {
+    "passed": true,
+    "generated_at_utc": "2026-10-03T12:01:33.142659+00:00",
+    "checks": [
+      "source dB editing and stale result",
+      "source XYZ editing and room-boundary validation",
+      "source dataset reset",
+      "listener height editing and stale result",
+      "panel count and allowed placement toggles",
+      "two-panel-cap search: four layouts, one-panel minimum",
+      "default search: seven layouts",
+      "3D orbit and zoom"
+    ],
+    "latest_ui_job_id": "d680a479-b403-420f-a4db-a4ae8984554a",
+    "screenshot": "point-planner.jpg",
+    "screenshot_size": [
+      809,
+      2083
+    ]
+  }
+}

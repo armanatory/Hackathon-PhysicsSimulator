@@ -1,0 +1,578 @@
+{
+  "name": "RoomValue dEchorate 3D placement optimizer",
+  "dimension": 3,
+  "description": "Normalized 125 Hz discrete absorber placement search; actual measured room geometry",
+  "labels": [
+    "roomvalue",
+    "dechorate",
+    "3d-optimizer"
+  ],
+  "verbose": false,
+  "geometries": [
+    {
+      "type": "box",
+      "name": "room",
+      "position": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "size": {
+        "x": 5.705,
+        "y": 5.965,
+        "z": 2.355
+      },
+      "alignment": "corner"
+    },
+    {
+      "type": "sphere",
+      "name": "src1",
+      "position": {
+        "x": 1.89407487,
+        "y": 4.52190448,
+        "z": 1.4481839
+      },
+      "radius": 0.08
+    },
+    {
+      "type": "sphere",
+      "name": "src2",
+      "position": {
+        "x": 1.6330509,
+        "y": 0.8420041,
+        "z": 1.02493109
+      },
+      "radius": 0.08
+    },
+    {
+      "type": "sphere",
+      "name": "src3",
+      "position": {
+        "x": 4.30997826,
+        "y": 2.1408947,
+        "z": 1.09632443
+      },
+      "radius": 0.08
+    },
+    {
+      "type": "sphere",
+      "name": "src4",
+      "position": {
+        "x": 4.61104211,
+        "y": 3.7451399,
+        "z": 1.50903224
+      },
+      "radius": 0.08
+    },
+    {
+      "type": "sphere",
+      "name": "src5",
+      "position": {
+        "x": 1.6330509,
+        "y": 0.6820041,
+        "z": 1.16493109
+      },
+      "radius": 0.08
+    },
+    {
+      "type": "sphere",
+      "name": "src6",
+      "position": {
+        "x": 4.46997826,
+        "y": 2.1408947,
+        "z": 1.23632443
+      },
+      "radius": 0.08
+    },
+    {
+      "type": "sphere",
+      "name": "src7",
+      "position": {
+        "x": 3.651,
+        "y": 1.004,
+        "z": 1.38
+      },
+      "radius": 0.08
+    },
+    {
+      "type": "sphere",
+      "name": "src8",
+      "position": {
+        "x": 2.958,
+        "y": 4.558,
+        "z": 1.486
+      },
+      "radius": 0.08
+    },
+    {
+      "type": "sphere",
+      "name": "src9",
+      "position": {
+        "x": 0.892,
+        "y": 3.013,
+        "z": 1.403
+      },
+      "radius": 0.08
+    },
+    {
+      "type": "box",
+      "name": "east_a",
+      "position": {
+        "x": 5.505,
+        "y": 1,
+        "z": 0.6
+      },
+      "size": {
+        "x": 0.2,
+        "y": 2,
+        "z": 1
+      },
+      "alignment": "corner"
+    },
+    {
+      "type": "box",
+      "name": "east_b",
+      "position": {
+        "x": 5.505,
+        "y": 3.5,
+        "z": 0.6
+      },
+      "size": {
+        "x": 0.2,
+        "y": 2,
+        "z": 1
+      },
+      "alignment": "corner"
+    },
+    {
+      "type": "box",
+      "name": "west",
+      "position": {
+        "x": 0,
+        "y": 1,
+        "z": 0.6
+      },
+      "size": {
+        "x": 0.2,
+        "y": 2,
+        "z": 1
+      },
+      "alignment": "corner"
+    },
+    {
+      "type": "box",
+      "name": "south",
+      "position": {
+        "x": 2,
+        "y": 0,
+        "z": 0.6
+      },
+      "size": {
+        "x": 2,
+        "y": 0.2,
+        "z": 1
+      },
+      "alignment": "corner"
+    },
+    {
+      "type": "box",
+      "name": "ceiling_a",
+      "position": {
+        "x": 0.8,
+        "y": 2,
+        "z": 2.155
+      },
+      "size": {
+        "x": 2,
+        "y": 1,
+        "z": 0.2
+      },
+      "alignment": "corner"
+    },
+    {
+      "type": "box",
+      "name": "ceiling_b",
+      "position": {
+        "x": 3,
+        "y": 2,
+        "z": 2.155
+      },
+      "size": {
+        "x": 2,
+        "y": 1,
+        "z": 0.2
+      },
+      "alignment": "corner"
+    },
+    {
+      "type": "fragmentAll",
+      "name": "partition_room"
+    }
+  ],
+  "regions": [
+    {
+      "name": "room",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "room"
+        }
+      ]
+    },
+    {
+      "name": "src1",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "src1"
+        }
+      ]
+    },
+    {
+      "name": "src2",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "src2"
+        }
+      ]
+    },
+    {
+      "name": "src3",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "src3"
+        }
+      ]
+    },
+    {
+      "name": "src4",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "src4"
+        }
+      ]
+    },
+    {
+      "name": "src5",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "src5"
+        }
+      ]
+    },
+    {
+      "name": "src6",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "src6"
+        }
+      ]
+    },
+    {
+      "name": "src7",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "src7"
+        }
+      ]
+    },
+    {
+      "name": "src8",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "src8"
+        }
+      ]
+    },
+    {
+      "name": "src9",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "src9"
+        }
+      ]
+    },
+    {
+      "name": "east_a",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "east_a"
+        }
+      ]
+    },
+    {
+      "name": "east_b",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "east_b"
+        }
+      ]
+    },
+    {
+      "name": "west",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "west"
+        }
+      ]
+    },
+    {
+      "name": "south",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "south"
+        }
+      ]
+    },
+    {
+      "name": "ceiling_a",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "ceiling_a"
+        }
+      ]
+    },
+    {
+      "name": "ceiling_b",
+      "type": "regionRule",
+      "entityType": "volume",
+      "attributePath": [
+        {
+          "key": "name",
+          "value": "ceiling_b"
+        }
+      ]
+    },
+    {
+      "name": "all_volumes",
+      "type": "computed",
+      "entityType": "volume",
+      "operation": "union",
+      "regions": [
+        "room",
+        "src1",
+        "src2",
+        "src3",
+        "src4",
+        "src5",
+        "src6",
+        "src7",
+        "src8",
+        "src9",
+        "east_a",
+        "east_b",
+        "west",
+        "south",
+        "ceiling_a",
+        "ceiling_b"
+      ]
+    },
+    {
+      "name": "src1_boundary",
+      "type": "computed",
+      "entityType": "surface",
+      "operation": "boundary",
+      "regions": [
+        "src1"
+      ]
+    },
+    {
+      "name": "src2_boundary",
+      "type": "computed",
+      "entityType": "surface",
+      "operation": "boundary",
+      "regions": [
+        "src2"
+      ]
+    },
+    {
+      "name": "src3_boundary",
+      "type": "computed",
+      "entityType": "surface",
+      "operation": "boundary",
+      "regions": [
+        "src3"
+      ]
+    },
+    {
+      "name": "src4_boundary",
+      "type": "computed",
+      "entityType": "surface",
+      "operation": "boundary",
+      "regions": [
+        "src4"
+      ]
+    },
+    {
+      "name": "src5_boundary",
+      "type": "computed",
+      "entityType": "surface",
+      "operation": "boundary",
+      "regions": [
+        "src5"
+      ]
+    },
+    {
+      "name": "src6_boundary",
+      "type": "computed",
+      "entityType": "surface",
+      "operation": "boundary",
+      "regions": [
+        "src6"
+      ]
+    },
+    {
+      "name": "src7_boundary",
+      "type": "computed",
+      "entityType": "surface",
+      "operation": "boundary",
+      "regions": [
+        "src7"
+      ]
+    },
+    {
+      "name": "src8_boundary",
+      "type": "computed",
+      "entityType": "surface",
+      "operation": "boundary",
+      "regions": [
+        "src8"
+      ]
+    },
+    {
+      "name": "src9_boundary",
+      "type": "computed",
+      "entityType": "surface",
+      "operation": "boundary",
+      "regions": [
+        "src9"
+      ]
+    }
+  ],
+  "materials": [
+    {
+      "name": "Assumed air",
+      "target": "all_volumes",
+      "density": 1.2,
+      "speedOfSound": 346.98
+    }
+  ],
+  "meshes": [
+    {
+      "name": "optimizer_3d",
+      "nodeType": "lambda",
+      "scaleFactor": 1,
+      "useMeshRefiner": false,
+      "curvedMesh": false,
+      "curvatureEnhancement": 6,
+      "maxRunTimeMinutes": 10,
+      "meshSizeMin": 0.025,
+      "meshSizeMax": 0.24,
+      "refinements": [
+        {
+          "region": "src1_boundary",
+          "maxSize": 0.04
+        },
+        {
+          "region": "src2_boundary",
+          "maxSize": 0.04
+        },
+        {
+          "region": "src3_boundary",
+          "maxSize": 0.04
+        },
+        {
+          "region": "src4_boundary",
+          "maxSize": 0.04
+        },
+        {
+          "region": "src5_boundary",
+          "maxSize": 0.04
+        },
+        {
+          "region": "src6_boundary",
+          "maxSize": 0.04
+        },
+        {
+          "region": "src7_boundary",
+          "maxSize": 0.04
+        },
+        {
+          "region": "src8_boundary",
+          "maxSize": 0.04
+        },
+        {
+          "region": "src9_boundary",
+          "maxSize": 0.04
+        },
+        {
+          "region": "east_a",
+          "maxSize": 0.1
+        },
+        {
+          "region": "east_b",
+          "maxSize": 0.1
+        },
+        {
+          "region": "west",
+          "maxSize": 0.1
+        },
+        {
+          "region": "south",
+          "maxSize": 0.1
+        },
+        {
+          "region": "ceiling_a",
+          "maxSize": 0.1
+        },
+        {
+          "region": "ceiling_b",
+          "maxSize": 0.1
+        }
+      ]
+    }
+  ]
+}

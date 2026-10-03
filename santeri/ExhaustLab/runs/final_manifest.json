@@ -1,0 +1,193 @@
+{
+  "sdk_version": "0.5.2",
+  "observed_cloud_solver_banner": "Quanscient Allsolve 484 int64/float64",
+  "solver_ranks": 1,
+  "field_source": "Allsolve cloud finite element solves and interpolation",
+  "trajectory_source": "Local NumPy midpoint integration of exported fields",
+  "cases": [
+    {
+      "case": "gap4fine",
+      "state": {
+        "case": "gap4fine",
+        "project_id": "zGDsVITicdtGPhAAbR",
+        "project_url": "https://allsolve.quanscient.com/#/projects/zGDsVITicdtGPhAAbR/model",
+        "gap_m": 0.004,
+        "length_m": 0.06,
+        "span_m": 0.02,
+        "flow_m3_s": 3.3333333333333333e-06,
+        "voltage_v": 200.0,
+        "mu_pa_s": 1.81e-05,
+        "rho_kg_m3": 1.2,
+        "mesh_size_max_m": 0.0008,
+        "grid_shape": [
+          49,
+          33,
+          17
+        ],
+        "created_utc": "2026-10-03T10:32:36.011901+00:00",
+        "reference": {
+          "pressure_gradient_pa_m": 0.6472095041955764,
+          "pressure_drop_pa": 0.03883257025173458,
+          "mean_velocity_m_s": 0.041666666666666664,
+          "reynolds": 18.41620626151013,
+          "inlet_expression": "0.07380684944992744*((1-(exp(785.3981633974482*(z-0.02))+exp(-785.3981633974482*z))/1.000000150701728)*sin(785.3981633974482*y)/1+(1-(exp(2356.194490192345*(z-0.02))+exp(-2356.194490192345*z))/1)*sin(2356.194490192345*y)/27+(1-(exp(3926.990816987241*(z-0.02))+exp(-3926.990816987241*z))/1)*sin(3926.990816987241*y)/125+(1-(exp(5497.787143782138*(z-0.02))+exp(-5497.787143782138*z))/1)*sin(5497.787143782138*y)/343+(1-(exp(7068.583470577034*(z-0.02))+exp(-7068.583470577034*z))/1)*sin(7068.583470577034*y)/729+(1-(exp(8639.37979737193*(z-0.02))+exp(-8639.37979737193*z))/1)*sin(8639.37979737193*y)/1331+(1-(exp(10210.17612416683*(z-0.02))+exp(-10210.17612416683*z))/1)*sin(10210.17612416683*y)/2197+(1-(exp(11780.97245096172*(z-0.02))+exp(-11780.97245096172*z))/1)*sin(11780.97245096172*y)/3375+(1-(exp(13351.76877775662*(z-0.02))+exp(-13351.76877775662*z))/1)*sin(13351.76877775662*y)/4913+(1-(exp(14922.56510455152*(z-0.02))+exp(-14922.56510455152*z))/1)*sin(14922.56510455152*y)/6859+(1-(exp(16493.36143134641*(z-0.02))+exp(-16493.36143134641*z))/1)*sin(16493.36143134641*y)/9261+(1-(exp(18064.15775814131*(z-0.02))+exp(-18064.15775814131*z))/1)*sin(18064.15775814131*y)/12167+(1-(exp(19634.95408493621*(z-0.02))+exp(-19634.95408493621*z))/1)*sin(19634.95408493621*y)/15625+(1-(exp(21205.7504117311*(z-0.02))+exp(-21205.7504117311*z))/1)*sin(21205.7504117311*y)/19683+(1-(exp(22776.546738526*(z-0.02))+exp(-22776.546738526*z))/1)*sin(22776.546738526*y)/24389)",
+          "series_terms": 15
+        },
+        "geometry_configured": true,
+        "geometry_built": true,
+        "region_entity_counts": {
+          "gas": 1,
+          "boundary": 6,
+          "inlet": 1,
+          "outlet": 1,
+          "ground": 1,
+          "high_voltage": 1,
+          "ends": 2,
+          "walls": 4
+        },
+        "inlet_version": 2,
+        "mesh_id": "NDnHiZlBXzgDbeeND7",
+        "flow_simulation_id": "RPJ9R6pNJZCtUY_0ed",
+        "electric_simulation_id": "9sNVYkVAtKWUMqp18J",
+        "mesh_status": "JobStatusType.SUCCESS",
+        "mesh_job_id": "8ysfT6yujVv23eQXRh",
+        "flow_status": "JobStatusType.SUCCESS",
+        "flow_job_id": "bU5dPgHc4hbVubAZWx",
+        "electric_status": "JobStatusType.SUCCESS",
+        "electric_job_id": "1KsubZl8R7ty0B9JVr",
+        "harvested_utc": "2026-10-03T10:33:38.788282+00:00"
+      },
+      "validated_source_sha256": {
+        "state.json": "37004d8c118a028a5cbf9d07e8372ef663946d19932ddfcadac0001592c7c51e",
+        "flow_samples.json": "b7d2719c9e65a1c3a6ef6054f05decf5c4aa1b747dabfcac5917e07f2395d1e8",
+        "electric_samples.json": "409895757833b1fbcbcc60475592b338f53f43693b2b4b264a77fb93d26a180a"
+      },
+      "validation_file": "gap4fine/validation.json",
+      "particle_file": "gap4fine/particles.json",
+      "convergence_file": "gap4fine/convergence_report.json"
+    },
+    {
+      "case": "gap6fine",
+      "state": {
+        "case": "gap6fine",
+        "project_id": "K0pjyYL9U2mAYvdVRv",
+        "project_url": "https://allsolve.quanscient.com/#/projects/K0pjyYL9U2mAYvdVRv/model",
+        "gap_m": 0.006,
+        "length_m": 0.06,
+        "span_m": 0.02,
+        "flow_m3_s": 3.3333333333333333e-06,
+        "voltage_v": 200.0,
+        "mu_pa_s": 1.81e-05,
+        "rho_kg_m3": 1.2,
+        "mesh_size_max_m": 0.001,
+        "grid_shape": [
+          49,
+          33,
+          17
+        ],
+        "created_utc": "2026-10-03T10:29:36.652384+00:00",
+        "reference": {
+          "pressure_gradient_pa_m": 0.20666716193477466,
+          "pressure_drop_pa": 0.01240002971608648,
+          "mean_velocity_m_s": 0.027777777777777776,
+          "reynolds": 16.99957501062473,
+          "inlet_expression": "0.05302806435726762*((1-(exp(523.5987755982989*(z-0.02))+exp(-523.5987755982989*z))/1.000028319059145)*sin(523.5987755982989*y)/1+(1-(exp(1570.796326794896*(z-0.02))+exp(-1570.796326794896*z))/1.000000000000023)*sin(1570.796326794896*y)/27+(1-(exp(2617.993877991494*(z-0.02))+exp(-2617.993877991494*z))/1)*sin(2617.993877991494*y)/125+(1-(exp(3665.191429188092*(z-0.02))+exp(-3665.191429188092*z))/1)*sin(3665.191429188092*y)/343+(1-(exp(4712.38898038469*(z-0.02))+exp(-4712.38898038469*z))/1)*sin(4712.38898038469*y)/729+(1-(exp(5759.586531581287*(z-0.02))+exp(-5759.586531581287*z))/1)*sin(5759.586531581287*y)/1331+(1-(exp(6806.784082777885*(z-0.02))+exp(-6806.784082777885*z))/1)*sin(6806.784082777885*y)/2197+(1-(exp(7853.981633974482*(z-0.02))+exp(-7853.981633974482*z))/1)*sin(7853.981633974482*y)/3375+(1-(exp(8901.17918517108*(z-0.02))+exp(-8901.17918517108*z))/1)*sin(8901.17918517108*y)/4913+(1-(exp(9948.376736367678*(z-0.02))+exp(-9948.376736367678*z))/1)*sin(9948.376736367678*y)/6859+(1-(exp(10995.57428756428*(z-0.02))+exp(-10995.57428756428*z))/1)*sin(10995.57428756428*y)/9261+(1-(exp(12042.77183876087*(z-0.02))+exp(-12042.77183876087*z))/1)*sin(12042.77183876087*y)/12167+(1-(exp(13089.96938995747*(z-0.02))+exp(-13089.96938995747*z))/1)*sin(13089.96938995747*y)/15625+(1-(exp(14137.16694115407*(z-0.02))+exp(-14137.16694115407*z))/1)*sin(14137.16694115407*y)/19683+(1-(exp(15184.36449235067*(z-0.02))+exp(-15184.36449235067*z))/1)*sin(15184.36449235067*y)/24389)",
+          "series_terms": 15
+        },
+        "geometry_configured": true,
+        "geometry_built": true,
+        "region_entity_counts": {
+          "gas": 1,
+          "boundary": 6,
+          "inlet": 1,
+          "outlet": 1,
+          "ground": 1,
+          "high_voltage": 1,
+          "ends": 2,
+          "walls": 4
+        },
+        "inlet_version": 2,
+        "mesh_id": "vWeUpPjjE0uET4J1WE",
+        "flow_simulation_id": "m0rBORnnI9jboCye16",
+        "electric_simulation_id": "OEz40p9E1zHA9GkXhN",
+        "mesh_status": "JobStatusType.SUCCESS",
+        "mesh_job_id": "DI33vSdnzPUdpN4JtO",
+        "original_flow_simulation_id": "FO2eDwN64ni8_MKUtc",
+        "flow_status": "JobStatusType.SUCCESS",
+        "flow_job_id": "QFI2S1jojrS9kdpYbP",
+        "electric_status": "JobStatusType.SUCCESS",
+        "electric_job_id": "B3UlGF0moygbBZsGic",
+        "harvested_utc": "2026-10-03T10:33:05.859150+00:00"
+      },
+      "validated_source_sha256": {
+        "state.json": "be3c2ca0789ee468f752ae92fac0c5dbb6bae0d5c129cd9b577d1ef576b127e6",
+        "flow_samples.json": "a599f9484cfd942a29eeb8e64c2acef0b34b3dba258eb3f1edcdc55aa7f6b875",
+        "electric_samples.json": "578082bfb991c176588ee52d40a4731bcbc5d79e228c7a3d194a01a91b640de0"
+      },
+      "validation_file": "gap6fine/validation.json",
+      "particle_file": "gap6fine/particles.json",
+      "convergence_file": "gap6fine/convergence_report.json"
+    },
+    {
+      "case": "gap8fine",
+      "state": {
+        "case": "gap8fine",
+        "project_id": "Asw8FbQLHL-sei8Opb",
+        "project_url": "https://allsolve.quanscient.com/#/projects/Asw8FbQLHL-sei8Opb/model",
+        "gap_m": 0.008,
+        "length_m": 0.06,
+        "span_m": 0.02,
+        "flow_m3_s": 3.3333333333333333e-06,
+        "voltage_v": 200.0,
+        "mu_pa_s": 1.81e-05,
+        "rho_kg_m3": 1.2,
+        "mesh_size_max_m": 0.001,
+        "grid_shape": [
+          49,
+          33,
+          17
+        ],
+        "created_utc": "2026-10-03T10:32:50.343847+00:00",
+        "reference": {
+          "pressure_gradient_pa_m": 0.09451162467831276,
+          "pressure_drop_pa": 0.005670697480698765,
+          "mean_velocity_m_s": 0.020833333333333332,
+          "reynolds": 15.785319652722967,
+          "inlet_expression": "0.04311188391814691*((1-(exp(392.6990816987241*(z-0.02))+exp(-392.6990816987241*z))/1.000388203203927)*sin(392.6990816987241*y)/1+(1-(exp(1178.097245096172*(z-0.02))+exp(-1178.097245096172*z))/1.000000000058503)*sin(1178.097245096172*y)/27+(1-(exp(1963.495408493621*(z-0.02))+exp(-1963.495408493621*z))/1)*sin(1963.495408493621*y)/125+(1-(exp(2748.893571891069*(z-0.02))+exp(-2748.893571891069*z))/1)*sin(2748.893571891069*y)/343+(1-(exp(3534.291735288517*(z-0.02))+exp(-3534.291735288517*z))/1)*sin(3534.291735288517*y)/729+(1-(exp(4319.689898685965*(z-0.02))+exp(-4319.689898685965*z))/1)*sin(4319.689898685965*y)/1331+(1-(exp(5105.088062083414*(z-0.02))+exp(-5105.088062083414*z))/1)*sin(5105.088062083414*y)/2197+(1-(exp(5890.486225480861*(z-0.02))+exp(-5890.486225480861*z))/1)*sin(5890.486225480861*y)/3375+(1-(exp(6675.88438887831*(z-0.02))+exp(-6675.88438887831*z))/1)*sin(6675.88438887831*y)/4913+(1-(exp(7461.282552275758*(z-0.02))+exp(-7461.282552275758*z))/1)*sin(7461.282552275758*y)/6859+(1-(exp(8246.680715673207*(z-0.02))+exp(-8246.680715673207*z))/1)*sin(8246.680715673207*y)/9261+(1-(exp(9032.078879070654*(z-0.02))+exp(-9032.078879070654*z))/1)*sin(9032.078879070654*y)/12167+(1-(exp(9817.477042468105*(z-0.02))+exp(-9817.477042468105*z))/1)*sin(9817.477042468105*y)/15625+(1-(exp(10602.87520586555*(z-0.02))+exp(-10602.87520586555*z))/1)*sin(10602.87520586555*y)/19683+(1-(exp(11388.273369263*(z-0.02))+exp(-11388.273369263*z))/1)*sin(11388.273369263*y)/24389)",
+          "series_terms": 15
+        },
+        "geometry_configured": true,
+        "geometry_built": true,
+        "region_entity_counts": {
+          "gas": 1,
+          "boundary": 6,
+          "inlet": 1,
+          "outlet": 1,
+          "ground": 1,
+          "high_voltage": 1,
+          "ends": 2,
+          "walls": 4
+        },
+        "inlet_version": 2,
+        "mesh_id": "yCP_e3uOVJK0iX5T9B",
+        "flow_simulation_id": "Szrb0E-euamEXRbVsG",
+        "electric_simulation_id": "4iCAhmoxLeXDcUr9TZ",
+        "mesh_status": "JobStatusType.SUCCESS",
+        "mesh_job_id": "rrJpiIgGdfZS8NxY-S",
+        "flow_status": "JobStatusType.SUCCESS",
+        "flow_job_id": "sQmILm9lomnjh_IqRc",
+        "electric_status": "JobStatusType.SUCCESS",
+        "electric_job_id": "Sklt61eJzlcK3jOQS1",
+        "harvested_utc": "2026-10-03T10:34:14.549037+00:00"
+      },
+      "validated_source_sha256": {
+        "state.json": "7476cba8651ed881872a57bcf4249c09258fc783209e51d71cbba2cbedb788c9",
+        "flow_samples.json": "a0993eca32efffc2c5a7a4c48d019cb6207d23531c6be1723518110f2b744320",
+        "electric_samples.json": "0477629f75990a3de098d0c2386d46a0da456f21ce9ee3a1cb8a3525dae1cbcd"
+      },
+      "validation_file": "gap8fine/validation.json",
+      "particle_file": "gap8fine/particles.json",
+      "convergence_file": "gap8fine/convergence_report.json"
+    }
+  ]
+}

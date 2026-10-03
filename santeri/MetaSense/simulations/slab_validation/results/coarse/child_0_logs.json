@@ -1,0 +1,107 @@
+[
+  {
+    "id": 360004416900,
+    "level": "info",
+    "message": "Reserving resources...",
+    "timestamp": "2026-10-03T10:38:01.017365Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360006708700,
+    "level": "info",
+    "message": "Downloading inputs...",
+    "timestamp": "2026-10-03T10:38:01.040283Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360013157600,
+    "level": "info",
+    "message": "Downloading done",
+    "timestamp": "2026-10-03T10:38:01.104772Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360082150200,
+    "level": "info",
+    "message": "Quanscient Allsolve 484 int64/float64\n",
+    "timestamp": "2026-10-03T10:38:01.794698Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360082166900,
+    "level": "info",
+    "message": "Physical RAM is 11.2356 GB for 1 rank\n",
+    "timestamp": "2026-10-03T10:38:01.794865Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360084935600,
+    "level": "info",
+    "message": "Loading mesh from 'simulation.msh'\n",
+    "timestamp": "2026-10-03T10:38:01.822552Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360087869000,
+    "level": "info",
+    "message": "Detected curvature order 1\nExtracted 2098 nodes\nExtracted 12700 lines\nExtracted 20382 triangles\nExtracted 9779 tetrahedra\n",
+    "timestamp": "2026-10-03T10:38:01.851886Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360088850500,
+    "level": "info",
+    "message": "Time to load the mesh:\n39.0837 ms\n",
+    "timestamp": "2026-10-03T10:38:01.861701Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360090810900,
+    "level": "fatal",
+    "message": "Error in 'operation' object: cannot copy the operation\nOperation was:\ncos(1.88365e+15 * t)\n",
+    "timestamp": "2026-10-03T10:38:01.881305Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360091392300,
+    "level": "error",
+    "message": "Traceback (most recent call last):\n  File \"main.py\", line 60, in <module>\n    import simulation\n  File \"simulation.py\", line 64, in <module>\n    form += qs.integral(reg.entrance, -2 * Y0 * expr.E0 * qs.dt(qs.cn(1)) * qs.compx(qs.tf(fld.E)))\n                                                          ^^^^^^^^^^^^^^^\nRuntimeError: Error in 'operation' object: cannot copy the operation\nOperation was:\ncos(1.88365e+15 * t)",
+    "timestamp": "2026-10-03T10:38:01.887119Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360093122500,
+    "level": "error",
+    "message": "Simulation failed",
+    "timestamp": "2026-10-03T10:38:01.904421Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360093127300,
+    "level": "info",
+    "message": "Uploading results...",
+    "timestamp": "2026-10-03T10:38:01.904469Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360096369500,
+    "level": "info",
+    "message": "100% of results uploaded",
+    "timestamp": "2026-10-03T10:38:01.936891Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360099799100,
+    "level": "info",
+    "message": "Uploading done",
+    "timestamp": "2026-10-03T10:38:01.971187Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360099853000,
+    "level": "error",
+    "message": "Job failed",
+    "timestamp": "2026-10-03T10:38:01.971726Z",
+    "additional_properties": {}
+  }
+]

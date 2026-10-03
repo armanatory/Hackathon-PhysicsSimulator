@@ -1,0 +1,577 @@
+{
+  "job_id": "af49c019-f751-44f3-9db4-b0623e8d976b",
+  "kind": "room3d",
+  "status": "completed",
+  "request": {
+    "quietness_metric": "relative_pressure_reduction_db",
+    "sources": [
+      {
+        "id": "src1",
+        "strength": 1.0
+      }
+    ],
+    "quiet_zones": [
+      {
+        "id": "zone1",
+        "center_m": [
+          0.80316092,
+          3.83141445,
+          1.04391528
+        ],
+        "size_m": [
+          0.4,
+          0.4
+        ],
+        "target_reduction_db": 6.0,
+        "target_pressure_pa": 0.05
+      },
+      {
+        "id": "zone2",
+        "center_m": [
+          3.08212703,
+          3.42108318,
+          1.49048013
+        ],
+        "size_m": [
+          0.4,
+          0.4
+        ],
+        "target_reduction_db": 6.0,
+        "target_pressure_pa": 0.05
+      }
+    ],
+    "budget_eur": 600.0,
+    "max_objects": 3,
+    "allowed_slot_ids": [
+      "east_a",
+      "east_b",
+      "west",
+      "south",
+      "ceiling_a",
+      "ceiling_b"
+    ],
+    "object_cost_eur": 120.0
+  },
+  "progress": {
+    "stage": "completed",
+    "message": "Minimum object count found",
+    "project_url": "https://allsolve.quanscient.com/#/projects/wplkBNw5wTUbgLDuPI/model",
+    "evaluated": 7,
+    "total": 42,
+    "best_count": 1,
+    "latest_simulation_id": "CMa3NQv5-vtgO1Prlr"
+  },
+  "attempt": 1,
+  "created_at": "2026-10-03T11:45:47.598827+00:00",
+  "updated_at": "2026-10-03T11:45:52.682653+00:00",
+  "error": null,
+  "result": {
+    "dimension": 3,
+    "frequency_hz": 125.0,
+    "quietness_metric": "relative_pressure_reduction_db",
+    "model_label": "3D Allsolve constrained placement search",
+    "sources": [
+      {
+        "id": "src1",
+        "strength": 1.0
+      }
+    ],
+    "quiet_zones": [
+      {
+        "id": "zone1",
+        "center_m": [
+          0.80316092,
+          3.83141445,
+          1.04391528
+        ],
+        "size_m": [
+          0.4,
+          0.4
+        ],
+        "target_reduction_db": 6.0,
+        "target_pressure_pa": 0.05
+      },
+      {
+        "id": "zone2",
+        "center_m": [
+          3.08212703,
+          3.42108318,
+          1.49048013
+        ],
+        "size_m": [
+          0.4,
+          0.4
+        ],
+        "target_reduction_db": 6.0,
+        "target_pressure_pa": 0.05
+      }
+    ],
+    "search": {
+      "evaluated_layouts": 7,
+      "total_layouts": 42,
+      "candidate_slots": [
+        "east_a",
+        "east_b",
+        "west",
+        "south",
+        "ceiling_a",
+        "ceiling_b"
+      ],
+      "exhaustive_through_count": 1,
+      "optimality_scope": "Fewest affordable objects within the allowed fixed placements and maximum count; tie broken by greatest minimum margin in the selected metric. All lower counts and layouts at the winning count were evaluated.",
+      "source_combination": "incoherent_power_sum"
+    },
+    "feasible": true,
+    "optimal_layout": {
+      "slot_ids": [
+        "ceiling_a"
+      ],
+      "object_count": 1,
+      "cost_eur": 120.0,
+      "zones": [
+        {
+          "id": "zone1",
+          "target_pressure_pa": 0.13589729231671815,
+          "target_reduction_db": 6.0,
+          "baseline_peak_pa": 0.2711507460658576,
+          "treated_peak_pa": 0.06828295750882625,
+          "reduction_db": 11.977969609506937,
+          "met_target": true,
+          "sample_count": 81,
+          "worst_point_m": [
+            0.6031609199999999,
+            4.03141445,
+            1.04391528
+          ]
+        },
+        {
+          "id": "zone2",
+          "target_pressure_pa": 0.15922516913091259,
+          "target_reduction_db": 6.0,
+          "baseline_peak_pa": 0.31769597956145607,
+          "treated_peak_pa": 0.0412969551700615,
+          "reduction_db": 17.72187373246678,
+          "met_target": true,
+          "sample_count": 81,
+          "worst_point_m": [
+            2.88212703,
+            3.6210831800000003,
+            1.49048013
+          ]
+        }
+      ],
+      "simulation_ids": [
+        "gHy-13ONDf6xJtGlZK"
+      ],
+      "feasible": true,
+      "status": "SUCCESS",
+      "minimum_margin_pa": 0.0676143348078919,
+      "selection_score": 5.977969609506937
+    },
+    "best_available_layout": {
+      "slot_ids": [
+        "ceiling_a"
+      ],
+      "object_count": 1,
+      "cost_eur": 120.0,
+      "zones": [
+        {
+          "id": "zone1",
+          "target_pressure_pa": 0.13589729231671815,
+          "target_reduction_db": 6.0,
+          "baseline_peak_pa": 0.2711507460658576,
+          "treated_peak_pa": 0.06828295750882625,
+          "reduction_db": 11.977969609506937,
+          "met_target": true,
+          "sample_count": 81,
+          "worst_point_m": [
+            0.6031609199999999,
+            4.03141445,
+            1.04391528
+          ]
+        },
+        {
+          "id": "zone2",
+          "target_pressure_pa": 0.15922516913091259,
+          "target_reduction_db": 6.0,
+          "baseline_peak_pa": 0.31769597956145607,
+          "treated_peak_pa": 0.0412969551700615,
+          "reduction_db": 17.72187373246678,
+          "met_target": true,
+          "sample_count": 81,
+          "worst_point_m": [
+            2.88212703,
+            3.6210831800000003,
+            1.49048013
+          ]
+        }
+      ],
+      "simulation_ids": [
+        "gHy-13ONDf6xJtGlZK"
+      ],
+      "feasible": true,
+      "status": "SUCCESS",
+      "minimum_margin_pa": 0.0676143348078919,
+      "selection_score": 5.977969609506937
+    },
+    "evaluations": [
+      {
+        "slot_ids": [],
+        "object_count": 0,
+        "cost_eur": 0.0,
+        "zones": [
+          {
+            "id": "zone1",
+            "target_pressure_pa": 0.13589729231671815,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.2711507460658576,
+            "treated_peak_pa": 0.2711507460658576,
+            "reduction_db": 0.0,
+            "met_target": false,
+            "sample_count": 81,
+            "worst_point_m": [
+              1.00316092,
+              4.03141445,
+              1.04391528
+            ]
+          },
+          {
+            "id": "zone2",
+            "target_pressure_pa": 0.15922516913091259,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.31769597956145607,
+            "treated_peak_pa": 0.31769597956145607,
+            "reduction_db": 0.0,
+            "met_target": false,
+            "sample_count": 81,
+            "worst_point_m": [
+              2.93212703,
+              3.6210831800000003,
+              1.49048013
+            ]
+          }
+        ],
+        "simulation_ids": [
+          "ROY0ZBA4DLHEv3KqPe"
+        ],
+        "feasible": false,
+        "status": "SUCCESS",
+        "minimum_margin_pa": -0.15847081043054348,
+        "selection_score": -6.0
+      },
+      {
+        "slot_ids": [
+          "ceiling_a"
+        ],
+        "object_count": 1,
+        "cost_eur": 120.0,
+        "zones": [
+          {
+            "id": "zone1",
+            "target_pressure_pa": 0.13589729231671815,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.2711507460658576,
+            "treated_peak_pa": 0.06828295750882625,
+            "reduction_db": 11.977969609506937,
+            "met_target": true,
+            "sample_count": 81,
+            "worst_point_m": [
+              0.6031609199999999,
+              4.03141445,
+              1.04391528
+            ]
+          },
+          {
+            "id": "zone2",
+            "target_pressure_pa": 0.15922516913091259,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.31769597956145607,
+            "treated_peak_pa": 0.0412969551700615,
+            "reduction_db": 17.72187373246678,
+            "met_target": true,
+            "sample_count": 81,
+            "worst_point_m": [
+              2.88212703,
+              3.6210831800000003,
+              1.49048013
+            ]
+          }
+        ],
+        "simulation_ids": [
+          "gHy-13ONDf6xJtGlZK"
+        ],
+        "feasible": true,
+        "status": "SUCCESS",
+        "minimum_margin_pa": 0.0676143348078919,
+        "selection_score": 5.977969609506937
+      },
+      {
+        "slot_ids": [
+          "ceiling_b"
+        ],
+        "object_count": 1,
+        "cost_eur": 120.0,
+        "zones": [
+          {
+            "id": "zone1",
+            "target_pressure_pa": 0.13589729231671815,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.2711507460658576,
+            "treated_peak_pa": 0.12806926941638494,
+            "reduction_db": 6.515317433403574,
+            "met_target": true,
+            "sample_count": 81,
+            "worst_point_m": [
+              0.6031609199999999,
+              4.03141445,
+              1.04391528
+            ]
+          },
+          {
+            "id": "zone2",
+            "target_pressure_pa": 0.15922516913091259,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.31769597956145607,
+            "treated_peak_pa": 0.08076398818492446,
+            "reduction_db": 11.895879245798323,
+            "met_target": true,
+            "sample_count": 81,
+            "worst_point_m": [
+              3.23212703,
+              3.6210831800000003,
+              1.49048013
+            ]
+          }
+        ],
+        "simulation_ids": [
+          "n74505QJ9nlwFN4Mi_"
+        ],
+        "feasible": true,
+        "status": "SUCCESS",
+        "minimum_margin_pa": 0.007828022900333215,
+        "selection_score": 0.5153174334035739
+      },
+      {
+        "slot_ids": [
+          "east_a"
+        ],
+        "object_count": 1,
+        "cost_eur": 120.0,
+        "zones": [
+          {
+            "id": "zone1",
+            "target_pressure_pa": 0.13589729231671815,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.2711507460658576,
+            "treated_peak_pa": 0.15476538023134745,
+            "reduction_db": 4.870739693828387,
+            "met_target": false,
+            "sample_count": 81,
+            "worst_point_m": [
+              0.6031609199999999,
+              4.03141445,
+              1.04391528
+            ]
+          },
+          {
+            "id": "zone2",
+            "target_pressure_pa": 0.15922516913091259,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.31769597956145607,
+            "treated_peak_pa": 0.09757480061694801,
+            "reduction_db": 10.253480926964265,
+            "met_target": true,
+            "sample_count": 81,
+            "worst_point_m": [
+              3.2821270300000003,
+              3.6210831800000003,
+              1.49048013
+            ]
+          }
+        ],
+        "simulation_ids": [
+          "cJAE2hFIQUN351_TaA"
+        ],
+        "feasible": false,
+        "status": "SUCCESS",
+        "minimum_margin_pa": -0.018868087914629295,
+        "selection_score": -1.1292603061716129
+      },
+      {
+        "slot_ids": [
+          "east_b"
+        ],
+        "object_count": 1,
+        "cost_eur": 120.0,
+        "zones": [
+          {
+            "id": "zone1",
+            "target_pressure_pa": 0.13589729231671815,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.2711507460658576,
+            "treated_peak_pa": 0.1123033875330383,
+            "reduction_db": 7.656358943102002,
+            "met_target": true,
+            "sample_count": 81,
+            "worst_point_m": [
+              0.6031609199999999,
+              4.03141445,
+              1.04391528
+            ]
+          },
+          {
+            "id": "zone2",
+            "target_pressure_pa": 0.15922516913091259,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.31769597956145607,
+            "treated_peak_pa": 0.08919677643113903,
+            "reduction_db": 11.033251192016447,
+            "met_target": true,
+            "sample_count": 81,
+            "worst_point_m": [
+              2.93212703,
+              3.6210831800000003,
+              1.49048013
+            ]
+          }
+        ],
+        "simulation_ids": [
+          "ulIaIols5xFdYaJCfP"
+        ],
+        "feasible": true,
+        "status": "SUCCESS",
+        "minimum_margin_pa": 0.023593904783679856,
+        "selection_score": 1.6563589431020018
+      },
+      {
+        "slot_ids": [
+          "south"
+        ],
+        "object_count": 1,
+        "cost_eur": 120.0,
+        "zones": [
+          {
+            "id": "zone1",
+            "target_pressure_pa": 0.13589729231671815,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.2711507460658576,
+            "treated_peak_pa": 0.10672026549363685,
+            "reduction_db": 8.099278134691646,
+            "met_target": true,
+            "sample_count": 81,
+            "worst_point_m": [
+              1.00316092,
+              4.03141445,
+              1.04391528
+            ]
+          },
+          {
+            "id": "zone2",
+            "target_pressure_pa": 0.15922516913091259,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.31769597956145607,
+            "treated_peak_pa": 0.046634350069860775,
+            "reduction_db": 16.666115807455824,
+            "met_target": true,
+            "sample_count": 81,
+            "worst_point_m": [
+              2.98212703,
+              3.22108318,
+              1.49048013
+            ]
+          }
+        ],
+        "simulation_ids": [
+          "TCWN6jzs8jfc4KnSKF"
+        ],
+        "feasible": true,
+        "status": "SUCCESS",
+        "minimum_margin_pa": 0.029177026823081306,
+        "selection_score": 2.0992781346916463
+      },
+      {
+        "slot_ids": [
+          "west"
+        ],
+        "object_count": 1,
+        "cost_eur": 120.0,
+        "zones": [
+          {
+            "id": "zone1",
+            "target_pressure_pa": 0.13589729231671815,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.2711507460658576,
+            "treated_peak_pa": 0.3733738835548581,
+            "reduction_db": -2.7786626656270825,
+            "met_target": false,
+            "sample_count": 81,
+            "worst_point_m": [
+              1.00316092,
+              4.03141445,
+              1.04391528
+            ]
+          },
+          {
+            "id": "zone2",
+            "target_pressure_pa": 0.15922516913091259,
+            "target_reduction_db": 6.0,
+            "baseline_peak_pa": 0.31769597956145607,
+            "treated_peak_pa": 0.34462745779822734,
+            "reduction_db": -0.7067631507085083,
+            "met_target": false,
+            "sample_count": 81,
+            "worst_point_m": [
+              3.03212703,
+              3.22108318,
+              1.49048013
+            ]
+          }
+        ],
+        "simulation_ids": [
+          "CMa3NQv5-vtgO1Prlr"
+        ],
+        "feasible": false,
+        "status": "SUCCESS",
+        "minimum_margin_pa": -0.23747659123813997,
+        "selection_score": -8.778662665627083
+      }
+    ],
+    "assumptions": [
+      "Room dimensions and source coordinates come from the dEchorate laboratory dataset.",
+      "125 Hz harmonic model; rigid room boundaries and omnidirectional 0.08 m spherical sources.",
+      "Source strength 1 imposes 1 Pa peak at its sphere; optional absolute area ceilings are normalized RMS pressure.",
+      "Independent source powers are summed; coherent phase relationships are not modeled.",
+      "Each object is a 0.4 m3 air region with illustrative volumetric damping 0.5, not a calibrated commercial absorber.",
+      "Optimum means fewest affordable objects among six fixed placements, then greatest minimum margin in the selected metric.",
+      "Quietness is checked at 81 samples per horizontal area; unsampled positions and other frequencies are not guaranteed.",
+      "Prices are editable planning inputs; absolute pressure is not calibrated to recorded sound power or dB(A)."
+    ],
+    "project_id": "wplkBNw5wTUbgLDuPI",
+    "project_url": "https://allsolve.quanscient.com/#/projects/wplkBNw5wTUbgLDuPI/model",
+    "mesh": {
+      "mesh_id": "WnnAHZPdRz508Z_UMG",
+      "dimension": 3,
+      "status": "SUCCESS",
+      "bounds_m": [
+        [
+          0.0,
+          5.705
+        ],
+        [
+          0.0,
+          5.965
+        ],
+        [
+          0.0,
+          2.355
+        ]
+      ],
+      "tetrahedron_count": 332020,
+      "volume_m3": 80.14141537500001,
+      "max_edge_m": 0.3631316798915856,
+      "min_elements_per_wavelength": 7.644169191816968,
+      "field_interpolation_order": 2
+    },
+    "model_sha256": "8db251f48410990f72e6f0937cfcf6f4f2c83db0179bba381547d39e16a44989"
+  }
+}

@@ -1,0 +1,123 @@
+[
+  {
+    "id": 360004846000,
+    "level": "info",
+    "message": "Reserving resources...",
+    "timestamp": "2026-10-03T12:19:17.486637Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360006740900,
+    "level": "info",
+    "message": "Downloading inputs...",
+    "timestamp": "2026-10-03T12:19:17.505586Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360011383900,
+    "level": "info",
+    "message": "Downloading done",
+    "timestamp": "2026-10-03T12:19:17.552016Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360037135600,
+    "level": "info",
+    "message": "Quanscient Allsolve 484 int64/float64\n",
+    "timestamp": "2026-10-03T12:19:17.809533Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360037138100,
+    "level": "info",
+    "message": "Physical RAM is 11.2356 GB for 1 rank\n",
+    "timestamp": "2026-10-03T12:19:17.809558Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360038055500,
+    "level": "info",
+    "message": "Loading mesh from 'simulation.msh'\n",
+    "timestamp": "2026-10-03T12:19:17.818732Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360040779700,
+    "level": "info",
+    "message": "Detected curvature order 1\nExtracted 2838 nodes\nExtracted 15961 lines\nExtracted 24572 triangles\nExtracted 11448 tetrahedra\n",
+    "timestamp": "2026-10-03T12:19:17.845974Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360042019500,
+    "level": "info",
+    "message": "Time to load the mesh:\n39.5736 ms\n",
+    "timestamp": "2026-10-03T12:19:17.858372Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360043083500,
+    "level": "info",
+    "message": "DDM solve for 268272 dofs:\n",
+    "timestamp": "2026-10-03T12:19:17.869012Z",
+    "additional_properties": {
+      "dofcount": 268272
+    }
+  },
+  {
+    "id": 361208563400,
+    "level": "warn",
+    "message": "Warning: 10 null pivots detected (INFOG(28))\n",
+    "timestamp": "2026-10-03T12:19:29.523811Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 361208909100,
+    "level": "info",
+    "message": "11.6583 s\n",
+    "timestamp": "2026-10-03T12:19:29.527268Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 361302202400,
+    "level": "info",
+    "message": "Total execution time:\n12.6502 s\n",
+    "timestamp": "2026-10-03T12:19:30.460201Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 361306412800,
+    "level": "info",
+    "message": "Simulation finished successfully",
+    "timestamp": "2026-10-03T12:19:30.502305Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 361306417100,
+    "level": "info",
+    "message": "Uploading results...",
+    "timestamp": "2026-10-03T12:19:30.502348Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 361306775300,
+    "level": "info",
+    "message": "42% of results uploaded",
+    "timestamp": "2026-10-03T12:19:30.505930Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 361313424300,
+    "level": "info",
+    "message": "100% of results uploaded",
+    "timestamp": "2026-10-03T12:19:30.572420Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 361316845300,
+    "level": "info",
+    "message": "Uploading done",
+    "timestamp": "2026-10-03T12:19:30.606630Z",
+    "additional_properties": {}
+  }
+]

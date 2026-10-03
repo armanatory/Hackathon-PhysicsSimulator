@@ -1,0 +1,158 @@
+{
+  "project_id": "jgeSELslGe3PYqB2N9",
+  "project_url": "https://allsolve.quanscient.com/#/projects/jgeSELslGe3PYqB2N9/model",
+  "created_at": "2026-10-03T10:35:41.856427+00:00",
+  "sdk_version": "0.5.2",
+  "stage": "configured",
+  "runs": [
+    {
+      "name": "coarse",
+      "mesh_id": "P3a2wli2Jyv4TkrHmL",
+      "simulation_id": "Yfo6lrDoKUV19EaRjT",
+      "resolution_per_vacuum_wavelength": 12,
+      "mesh_size_max_m": 8.333333333333333e-08,
+      "slab_mesh_size_max_m": 5.5555555555555555e-08,
+      "source_sha256": "113bba747bb1960a7c05ab5cb82d7aafb01cdd59dc939bf2b7f4c959aab4f121",
+      "mesh_status": "success",
+      "simulation_status": "success",
+      "mesh_job_id": "bubeWA3dH5BmG0cuBY",
+      "simulation_job_id": "I1p0JlMwR1DDeRZLuv",
+      "node_type": "lambda",
+      "field_output_files": [
+        "results/coarse/Yfo6lrDoKUV19EaRjT/fields/sweep_0/E cosine_nostep_0.hdf",
+        "results/coarse/Yfo6lrDoKUV19EaRjT/fields/sweep_0/E sine_nostep_0.hdf",
+        "results/coarse/Yfo6lrDoKUV19EaRjT/fields/sweep_1/E cosine_nostep_0.hdf",
+        "results/coarse/Yfo6lrDoKUV19EaRjT/fields/sweep_1/E sine_nostep_0.hdf"
+      ]
+    },
+    {
+      "name": "fine",
+      "mesh_id": "LIWIpNm_Yjs-nMZILk",
+      "simulation_id": "ZIcIMoFe_imveYQxwx",
+      "resolution_per_vacuum_wavelength": 18,
+      "mesh_size_max_m": 5.5555555555555555e-08,
+      "slab_mesh_size_max_m": 3.7037037037037036e-08,
+      "source_sha256": "113bba747bb1960a7c05ab5cb82d7aafb01cdd59dc939bf2b7f4c959aab4f121",
+      "mesh_status": "success",
+      "simulation_status": "success",
+      "mesh_job_id": "NnNhr0Joe8QE_vipd4",
+      "simulation_job_id": "ZYkAcgxrr36V2syamT",
+      "node_type": "2xlarge-new",
+      "field_output_files": [
+        "results/fine/ZIcIMoFe_imveYQxwx/fields/sweep_0/E cosine_nostep_0.hdf",
+        "results/fine/ZIcIMoFe_imveYQxwx/fields/sweep_0/E sine_nostep_0.hdf",
+        "results/fine/ZIcIMoFe_imveYQxwx/fields/sweep_1/E cosine_nostep_0.hdf",
+        "results/fine/ZIcIMoFe_imveYQxwx/fields/sweep_1/E sine_nostep_0.hdf"
+      ]
+    }
+  ],
+  "physics_set_id": "bTea_E7kEbIsjFWvKk",
+  "sweep_id": "CjO1U4bgeAmALEc7uK",
+  "inputs": {
+    "wavelength_m": 1e-06,
+    "period_m": 5e-07,
+    "slab_thickness_m": 1.6666666666666665e-07,
+    "clearance_m": 5e-07,
+    "indices": [
+      1,
+      1.5
+    ],
+    "exterior_index": 1,
+    "E0_V_per_m": 1,
+    "field_order": 2,
+    "polarization": "x",
+    "propagation": "+z",
+    "phase_convention": "exp(+i omega t); harmonic 2=sin, 3=cos",
+    "boundary": "zero phase lateral periodicity; normal incidence first order absorbing ends",
+    "periodic_multiplier_order": 2
+  },
+  "failed_attempts": [
+    {
+      "name": "coarse",
+      "mesh_id": "P3a2wli2Jyv4TkrHmL",
+      "simulation_id": "y8IVIeXHt3oI_SQEvX",
+      "resolution_per_vacuum_wavelength": 12,
+      "mesh_size_max_m": 8.333333333333333e-08,
+      "slab_mesh_size_max_m": 5.5555555555555555e-08,
+      "source_sha256": "4c846370915f8544ae10cc45d56c330d2635c51d07e52d5aecd5c7ccfef84672",
+      "mesh_status": "success",
+      "simulation_status": "error",
+      "mesh_job_id": "bubeWA3dH5BmG0cuBY",
+      "simulation_job_id": "ZA2zkcvtJasNnTYFCf"
+    },
+    {
+      "name": "coarse",
+      "mesh_id": "P3a2wli2Jyv4TkrHmL",
+      "simulation_id": "_ELs9lv3RzxmpK6qGz",
+      "resolution_per_vacuum_wavelength": 12,
+      "mesh_size_max_m": 8.333333333333333e-08,
+      "slab_mesh_size_max_m": 5.5555555555555555e-08,
+      "source_sha256": "d2f40df1f388dcc72e65be63580f03bbe38a9f92c5e097a65ec7ae5053889b8b",
+      "mesh_status": "success",
+      "simulation_status": "error",
+      "mesh_job_id": "bubeWA3dH5BmG0cuBY",
+      "simulation_job_id": "gECQ-dL-03aCtP9nR1"
+    },
+    {
+      "name": "coarse",
+      "mesh_id": "P3a2wli2Jyv4TkrHmL",
+      "simulation_id": "NzHu6UEgETncnMtZZC",
+      "resolution_per_vacuum_wavelength": 12,
+      "mesh_size_max_m": 8.333333333333333e-08,
+      "slab_mesh_size_max_m": 5.5555555555555555e-08,
+      "source_sha256": "e0518e54548e7e56c7cfa1e00eaae5f58920ad457b1b9bf0dc580f20413b513e",
+      "mesh_status": "success",
+      "simulation_status": "error",
+      "mesh_job_id": "bubeWA3dH5BmG0cuBY",
+      "simulation_job_id": "VoC5Iqw9_lK9lhsWWV"
+    },
+    {
+      "name": "fine",
+      "mesh_id": "LIWIpNm_Yjs-nMZILk",
+      "simulation_id": "3AaVCWdb41Zz5LMcc1",
+      "resolution_per_vacuum_wavelength": 18,
+      "mesh_size_max_m": 5.5555555555555555e-08,
+      "slab_mesh_size_max_m": 3.7037037037037036e-08,
+      "source_sha256": "ad2f825da5b181ff961eaac6f8e1921601d8a30f17cbc597cfe27f50b8550d96",
+      "mesh_status": "success",
+      "simulation_status": "error",
+      "mesh_job_id": "NnNhr0Joe8QE_vipd4",
+      "simulation_job_id": "acjEueJv45Aq8IjFdE"
+    }
+  ],
+  "default_periodicity_runs": [
+    {
+      "name": "coarse",
+      "mesh_id": "P3a2wli2Jyv4TkrHmL",
+      "simulation_id": "ZZGQpwIZW3aZVkHAFE",
+      "resolution_per_vacuum_wavelength": 12,
+      "mesh_size_max_m": 8.333333333333333e-08,
+      "slab_mesh_size_max_m": 5.5555555555555555e-08,
+      "source_sha256": "ad2f825da5b181ff961eaac6f8e1921601d8a30f17cbc597cfe27f50b8550d96",
+      "mesh_status": "success",
+      "simulation_status": "success",
+      "mesh_job_id": "bubeWA3dH5BmG0cuBY",
+      "simulation_job_id": "pgIBnSLNWj5KeMvuNd",
+      "field_output_files": [
+        "results/coarse/fields/sweep_0/E cosine_nostep_0.hdf",
+        "results/coarse/fields/sweep_0/E sine_nostep_0.hdf",
+        "results/coarse/fields/sweep_1/E cosine_nostep_0.hdf",
+        "results/coarse/fields/sweep_1/E sine_nostep_0.hdf"
+      ]
+    },
+    {
+      "name": "fine",
+      "mesh_id": "LIWIpNm_Yjs-nMZILk",
+      "simulation_id": "34GjOP1C8AJUlJwRUb",
+      "resolution_per_vacuum_wavelength": 18,
+      "mesh_size_max_m": 5.5555555555555555e-08,
+      "slab_mesh_size_max_m": 3.7037037037037036e-08,
+      "source_sha256": "ad2f825da5b181ff961eaac6f8e1921601d8a30f17cbc597cfe27f50b8550d96",
+      "mesh_status": "success",
+      "simulation_status": "success",
+      "mesh_job_id": "NnNhr0Joe8QE_vipd4",
+      "simulation_job_id": "Qi0SupLsV_Bfb2FKHM",
+      "node_type": "2xlarge-new"
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "url": "https://metasense.santerihukari.com/",
+  "public_launches_authorized": true,
+  "checks": [
+    {
+      "path": "/",
+      "http_status": 200,
+      "content_type": "text/html",
+      "correct_title": true
+    },
+    {
+      "path": "/api/health",
+      "http_status": 200,
+      "content_type": "application/json",
+      "deployment": "worker-pc",
+      "offline": false,
+      "snapshot": false,
+      "job_or_health_status": "ok"
+    },
+    {
+      "path": "/api/optimization/config",
+      "http_status": 200,
+      "content_type": "application/json",
+      "available": true,
+      "deployment": "worker-pc",
+      "offline": false,
+      "snapshot": false,
+      "synthetic": false
+    },
+    {
+      "path": "/api/optimization/jobs/latest",
+      "http_status": 200,
+      "content_type": "application/json",
+      "deployment": "worker-pc",
+      "offline": false,
+      "snapshot": false,
+      "synthetic": false,
+      "id": "5caa299a62fb450da3c57baa1eec3e36",
+      "job_or_health_status": "completed",
+      "validated": true,
+      "contrast": 0.1611119861417305
+    },
+    {
+      "path": "/api/optimization/jobs/5caa299a62fb450da3c57baa1eec3e36",
+      "http_status": 200,
+      "content_type": "application/json",
+      "deployment": "worker-pc",
+      "offline": false,
+      "snapshot": false,
+      "synthetic": false,
+      "id": "5caa299a62fb450da3c57baa1eec3e36",
+      "job_or_health_status": "completed",
+      "validated": true,
+      "contrast": 0.1611119861417305
+    },
+    {
+      "path": "/api/unknown",
+      "http_status": 404
+    },
+    {
+      "path": "POST invalid zero candidate request",
+      "http_status": 422,
+      "backend_validation": true
+    }
+  ],
+  "offline_checks": [
+    {
+      "path": "/api/health",
+      "http_status": 200,
+      "offline": true,
+      "snapshot": true
+    },
+    {
+      "path": "/api/optimization/config",
+      "http_status": 200,
+      "offline": true,
+      "snapshot": true,
+      "available": false
+    },
+    {
+      "path": "/api/optimization/jobs/latest",
+      "http_status": 200,
+      "offline": true,
+      "snapshot": true,
+      "validated": true
+    },
+    {
+      "path": "/api/optimization/jobs/5caa299a62fb450da3c57baa1eec3e36",
+      "http_status": 200,
+      "offline": true,
+      "snapshot": true,
+      "validated": true
+    },
+    {
+      "path": "POST while offline",
+      "http_status": 503
+    }
+  ],
+  "saved_job_id": "5caa299a62fb450da3c57baa1eec3e36",
+  "backend_restored_online": true,
+  "actual_submission_check": {
+    "http_status": 202,
+    "job_id": "9ed72772a0e44aa4971d7161341c9a34",
+    "empty_request_accepted_as_defaults": true,
+    "local_worker_stopped": true,
+    "no_active_cloud_jobs_verified": true,
+    "evidence_preserved_privately": true
+  },
+  "browser_verified": true,
+  "proof": "hosted-app.jpg",
+  "checks_passed": true
+}

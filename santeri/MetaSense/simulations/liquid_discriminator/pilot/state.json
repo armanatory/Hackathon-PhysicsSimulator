@@ -1,0 +1,140 @@
+{
+  "source_sha256": "dffd45a2e14742e77dd00075a2842520ed6d5848463c89fcf22b2d3bb5804099",
+  "request_sha256": "82cf0431f02ace66b61a0b6b96082a7256d7c2fd94149eee534da8e206883142",
+  "batches": [
+    {
+      "name": "search 1",
+      "stage": "search",
+      "project_id": "H6WZ8I40PvysBKh_Dy",
+      "physics_set_id": "_BQJp7aFUXPMioQ4Jt",
+      "sweep_id": "1R0BEYt8swL55nsryr",
+      "mesh_id": "LXtdadtt3Gb6u_rPR_",
+      "mesh_instance_id": "g82kKaKaNtYcJElXd2",
+      "simulation_id": "hcxw3lwwPU8eqDyQkG",
+      "points": [
+        {
+          "candidate_id": 0,
+          "input_index": 0,
+          "wavelength_nm": 900.0,
+          "n_liquid": 1.33,
+          "period_nm": 513.9426798457883,
+          "fill_factor": 0.31000430208906676,
+          "ridge_height_nm": 118.50410457167669,
+          "film_thickness_nm": 100.0
+        },
+        {
+          "candidate_id": 0,
+          "input_index": 1,
+          "wavelength_nm": 900.0,
+          "n_liquid": 1.38,
+          "period_nm": 513.9426798457883,
+          "fill_factor": 0.31000430208906676,
+          "ridge_height_nm": 118.50410457167669,
+          "film_thickness_nm": 100.0
+        },
+        {
+          "candidate_id": 0,
+          "input_index": 0,
+          "wavelength_nm": 1000.0,
+          "n_liquid": 1.33,
+          "period_nm": 513.9426798457883,
+          "fill_factor": 0.31000430208906676,
+          "ridge_height_nm": 118.50410457167669,
+          "film_thickness_nm": 100.0
+        },
+        {
+          "candidate_id": 0,
+          "input_index": 1,
+          "wavelength_nm": 1000.0,
+          "n_liquid": 1.38,
+          "period_nm": 513.9426798457883,
+          "fill_factor": 0.31000430208906676,
+          "ridge_height_nm": 118.50410457167669,
+          "film_thickness_nm": 100.0
+        },
+        {
+          "candidate_id": 0,
+          "input_index": 0,
+          "wavelength_nm": 1100.0,
+          "n_liquid": 1.33,
+          "period_nm": 513.9426798457883,
+          "fill_factor": 0.31000430208906676,
+          "ridge_height_nm": 118.50410457167669,
+          "film_thickness_nm": 100.0
+        },
+        {
+          "candidate_id": 0,
+          "input_index": 1,
+          "wavelength_nm": 1100.0,
+          "n_liquid": 1.38,
+          "period_nm": 513.9426798457883,
+          "fill_factor": 0.31000430208906676,
+          "ridge_height_nm": 118.50410457167669,
+          "film_thickness_nm": 100.0
+        }
+      ],
+      "point_count": 6,
+      "resolution_per_material_wavelength": 12,
+      "mesh_size_max_m": 5.166164675525664e-08,
+      "ridge_mesh_size_max_m": 3.715948787622645e-08,
+      "film_mesh_size_max_m": 3.3333333333333334e-08,
+      "clearance_nm": 1000,
+      "write_fields": false,
+      "source_sha256": "18c15ee5c2d3bc844cc08a390faf8bbdef83b0cf00b4b67f7e13f79541feeb6f",
+      "node_type": "lambda",
+      "mesh_cores": 3,
+      "simulation_cores": 3,
+      "mesh_status": null,
+      "simulation_status": null,
+      "mesh_job_id": "n8SpC1yhGFNDCGZr49",
+      "simulation_job_id": "qLbpZkTAeoi8abCXYR",
+      "project_url": "https://allsolve.quanscient.com/#/projects/H6WZ8I40PvysBKh_Dy/model",
+      "cores_per_child": 3,
+      "status": "running",
+      "mesh_count": 1,
+      "cloud_status": "starting"
+    }
+  ],
+  "results": [],
+  "phase": "search",
+  "project_id": "H6WZ8I40PvysBKh_Dy",
+  "project_url": "https://allsolve.quanscient.com/#/projects/H6WZ8I40PvysBKh_Dy/model",
+  "physics_set_id": "_BQJp7aFUXPMioQ4Jt",
+  "created_at": "2026-10-03T12:18:22.541984+00:00",
+  "sdk_version": "0.5.2",
+  "source_path": "F:\\H4H quanscient\\MetaSense\\simulations\\liquid_discriminator\\source_readout.py",
+  "region_ids": {
+    "top_liquid": "MXADqBtEbKAP1BCeno",
+    "left_groove": "oFRjH0LMgJSWw9-uuw",
+    "ridge": "IbdleL4Au70PdSCVP1",
+    "right_groove": "yxUWKrzX7JAsOY4tCF",
+    "film": "0nfYAfJO95Gl8GftR7",
+    "substrate": "qCuuYrNUblyiWMlzJN",
+    "domain": "e0vmvd2R6gV7Vzd0op",
+    "entrance": "slLPkMvwqzwnZxVXF2",
+    "exit": "HpmxW3umuyR86kv3SA",
+    "xmin": "AorOa3dIO6SWZvePtm",
+    "xmax": "jAN4Qz-CLxoJHMJthA",
+    "ymin": "Kgq2yp_HfvWNLcNnDz",
+    "ymax": "8GmFl4jVhekvhhG13r",
+    "liquid": "LHjzosYeZIDF4vuM2R",
+    "silicon_nitride": "UsdHi9x03SEYXKPsaE"
+  },
+  "field_order": 2,
+  "harmonics": [
+    2,
+    3
+  ],
+  "periodic_multiplier_order": 2,
+  "polarization": "Ey (TE)",
+  "period_y_nm": 100,
+  "clearance_nm": 1000,
+  "materials": {
+    "silicon_nitride": "Luke 2015 lossless Sellmeier",
+    "substrate": "Malitson 1965 lossless fused silica",
+    "liquids": "Explicit constant real indices"
+  },
+  "stage_plans": {
+    "search": 6
+  }
+}

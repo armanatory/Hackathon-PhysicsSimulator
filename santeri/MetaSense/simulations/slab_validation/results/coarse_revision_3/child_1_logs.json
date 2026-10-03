@@ -1,0 +1,123 @@
+[
+  {
+    "id": 360005195200,
+    "level": "info",
+    "message": "Reserving resources...",
+    "timestamp": "2026-10-03T10:42:05.632274Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360007085500,
+    "level": "info",
+    "message": "Downloading inputs...",
+    "timestamp": "2026-10-03T10:42:05.651177Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360013989000,
+    "level": "info",
+    "message": "Downloading done",
+    "timestamp": "2026-10-03T10:42:05.720212Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360038414200,
+    "level": "info",
+    "message": "Quanscient Allsolve 484 int64/float64\n",
+    "timestamp": "2026-10-03T10:42:05.964464Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360038417200,
+    "level": "info",
+    "message": "Physical RAM is 11.2356 GB for 1 rank\n",
+    "timestamp": "2026-10-03T10:42:05.964494Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360039072900,
+    "level": "info",
+    "message": "Loading mesh from 'simulation.msh'\n",
+    "timestamp": "2026-10-03T10:42:05.971051Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360041157500,
+    "level": "info",
+    "message": "Detected curvature order 1\nExtracted 2098 nodes\nExtracted 12700 lines\nExtracted 20382 triangles\nExtracted 9779 tetrahedra\n",
+    "timestamp": "2026-10-03T10:42:05.991897Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360042061500,
+    "level": "info",
+    "message": "Time to load the mesh:\n29.8153 ms\n",
+    "timestamp": "2026-10-03T10:42:06.000937Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360042913900,
+    "level": "info",
+    "message": "DDM solve for 200744 dofs:\n",
+    "timestamp": "2026-10-03T10:42:06.009461Z",
+    "additional_properties": {
+      "dofcount": 200744
+    }
+  },
+  {
+    "id": 360979220500,
+    "level": "info",
+    "message": "9.36305 s\n",
+    "timestamp": "2026-10-03T10:42:15.372527Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360979720000,
+    "level": "fatal",
+    "message": "Error in 'operation' object: can only apply time derivatives to ports, fields, dof() and tf()\nOperation was:\n(jac00 * (detacompzfield + dphicompyfield * -1) + jac10 * (dphicompxfield + dkicompzfield * -1) + jac20 * (dkicompyfield + detacompxfield * -1)) * 1 * invert(detjac)\n",
+    "timestamp": "2026-10-03T10:42:15.377522Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360980296600,
+    "level": "error",
+    "message": "Traceback (most recent call last):\n  File \"main.py\", line 60, in <module>\n    import simulation\n  File \"simulation.py\", line 72, in <module>\n    Htime = qs.dt(curlE) / (qs.getmu0() * omega**2)\n            ^^^^^^^^^^^^\nRuntimeError: Error in 'operation' object: can only apply time derivatives to ports, fields, dof() and tf()\nOperation was:\n(jac00 * (detacompzfield + dphicompyfield * -1) + jac10 * (dphicompxfield + dkicompzfield * -1) + jac20 * (dkicompyfield + detacompxfield * -1)) * 1 * invert(detjac)",
+    "timestamp": "2026-10-03T10:42:15.383288Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360982386300,
+    "level": "error",
+    "message": "Simulation failed",
+    "timestamp": "2026-10-03T10:42:15.404185Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360982392200,
+    "level": "info",
+    "message": "Uploading results...",
+    "timestamp": "2026-10-03T10:42:15.404244Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360982428100,
+    "level": "info",
+    "message": "100% of results uploaded",
+    "timestamp": "2026-10-03T10:42:15.404603Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360990150600,
+    "level": "info",
+    "message": "Uploading done",
+    "timestamp": "2026-10-03T10:42:15.481828Z",
+    "additional_properties": {}
+  },
+  {
+    "id": 360990200000,
+    "level": "error",
+    "message": "Job failed",
+    "timestamp": "2026-10-03T10:42:15.482322Z",
+    "additional_properties": {}
+  }
+]

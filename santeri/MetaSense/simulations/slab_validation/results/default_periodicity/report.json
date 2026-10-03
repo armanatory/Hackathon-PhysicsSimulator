@@ -1,0 +1,599 @@
+{
+  "label": "allsolve_slab_validation",
+  "purpose": "optical_slab_benchmark",
+  "synthetic": false,
+  "status": "completed",
+  "validated": false,
+  "generated_at": "2026-10-03T10:55:43.144014+00:00",
+  "inputs": {
+    "wavelength_m": 1e-06,
+    "period_m": 5e-07,
+    "slab_thickness_m": 1.6666666666666665e-07,
+    "clearance_m": 5e-07,
+    "indices": [
+      1,
+      1.5
+    ],
+    "exterior_index": 1,
+    "E0_V_per_m": 1,
+    "field_order": 2,
+    "polarization": "x",
+    "propagation": "+z",
+    "phase_convention": "exp(+i omega t); harmonic 2=sin, 3=cos",
+    "boundary": "zero phase lateral periodicity; normal incidence first order absorbing ends",
+    "periodic_multiplier_order": 0
+  },
+  "state_provenance": {
+    "project_id": "jgeSELslGe3PYqB2N9",
+    "project_url": "https://allsolve.quanscient.com/#/projects/jgeSELslGe3PYqB2N9/model",
+    "created_at": "2026-10-03T10:35:41.856427+00:00",
+    "sdk_version": "0.5.2",
+    "stage": "configured",
+    "runs": [
+      {
+        "name": "coarse",
+        "mesh_id": "P3a2wli2Jyv4TkrHmL",
+        "simulation_id": "ZZGQpwIZW3aZVkHAFE",
+        "resolution_per_vacuum_wavelength": 12,
+        "mesh_size_max_m": 8.333333333333333e-08,
+        "slab_mesh_size_max_m": 5.5555555555555555e-08,
+        "source_sha256": "ad2f825da5b181ff961eaac6f8e1921601d8a30f17cbc597cfe27f50b8550d96",
+        "mesh_status": "success",
+        "simulation_status": "success",
+        "mesh_job_id": "bubeWA3dH5BmG0cuBY",
+        "simulation_job_id": "pgIBnSLNWj5KeMvuNd",
+        "field_output_files": [
+          "results/coarse/fields/sweep_0/E cosine_nostep_0.hdf",
+          "results/coarse/fields/sweep_0/E sine_nostep_0.hdf",
+          "results/coarse/fields/sweep_1/E cosine_nostep_0.hdf",
+          "results/coarse/fields/sweep_1/E sine_nostep_0.hdf"
+        ]
+      },
+      {
+        "name": "fine",
+        "mesh_id": "LIWIpNm_Yjs-nMZILk",
+        "simulation_id": "34GjOP1C8AJUlJwRUb",
+        "resolution_per_vacuum_wavelength": 18,
+        "mesh_size_max_m": 5.5555555555555555e-08,
+        "slab_mesh_size_max_m": 3.7037037037037036e-08,
+        "source_sha256": "ad2f825da5b181ff961eaac6f8e1921601d8a30f17cbc597cfe27f50b8550d96",
+        "mesh_status": "success",
+        "simulation_status": "success",
+        "mesh_job_id": "NnNhr0Joe8QE_vipd4",
+        "simulation_job_id": "Qi0SupLsV_Bfb2FKHM",
+        "node_type": "2xlarge-new"
+      }
+    ],
+    "physics_set_id": "bTea_E7kEbIsjFWvKk",
+    "sweep_id": "CjO1U4bgeAmALEc7uK",
+    "inputs": {
+      "wavelength_m": 1e-06,
+      "period_m": 5e-07,
+      "slab_thickness_m": 1.6666666666666665e-07,
+      "clearance_m": 5e-07,
+      "indices": [
+        1,
+        1.5
+      ],
+      "exterior_index": 1,
+      "E0_V_per_m": 1,
+      "field_order": 2,
+      "polarization": "x",
+      "propagation": "+z",
+      "phase_convention": "exp(+i omega t); harmonic 2=sin, 3=cos",
+      "boundary": "zero phase lateral periodicity; normal incidence first order absorbing ends",
+      "periodic_multiplier_order": 0
+    },
+    "failed_attempts": [
+      {
+        "name": "coarse",
+        "mesh_id": "P3a2wli2Jyv4TkrHmL",
+        "simulation_id": "y8IVIeXHt3oI_SQEvX",
+        "resolution_per_vacuum_wavelength": 12,
+        "mesh_size_max_m": 8.333333333333333e-08,
+        "slab_mesh_size_max_m": 5.5555555555555555e-08,
+        "source_sha256": "4c846370915f8544ae10cc45d56c330d2635c51d07e52d5aecd5c7ccfef84672",
+        "mesh_status": "success",
+        "simulation_status": "error",
+        "mesh_job_id": "bubeWA3dH5BmG0cuBY",
+        "simulation_job_id": "ZA2zkcvtJasNnTYFCf"
+      },
+      {
+        "name": "coarse",
+        "mesh_id": "P3a2wli2Jyv4TkrHmL",
+        "simulation_id": "_ELs9lv3RzxmpK6qGz",
+        "resolution_per_vacuum_wavelength": 12,
+        "mesh_size_max_m": 8.333333333333333e-08,
+        "slab_mesh_size_max_m": 5.5555555555555555e-08,
+        "source_sha256": "d2f40df1f388dcc72e65be63580f03bbe38a9f92c5e097a65ec7ae5053889b8b",
+        "mesh_status": "success",
+        "simulation_status": "error",
+        "mesh_job_id": "bubeWA3dH5BmG0cuBY",
+        "simulation_job_id": "gECQ-dL-03aCtP9nR1"
+      },
+      {
+        "name": "coarse",
+        "mesh_id": "P3a2wli2Jyv4TkrHmL",
+        "simulation_id": "NzHu6UEgETncnMtZZC",
+        "resolution_per_vacuum_wavelength": 12,
+        "mesh_size_max_m": 8.333333333333333e-08,
+        "slab_mesh_size_max_m": 5.5555555555555555e-08,
+        "source_sha256": "e0518e54548e7e56c7cfa1e00eaae5f58920ad457b1b9bf0dc580f20413b513e",
+        "mesh_status": "success",
+        "simulation_status": "error",
+        "mesh_job_id": "bubeWA3dH5BmG0cuBY",
+        "simulation_job_id": "VoC5Iqw9_lK9lhsWWV"
+      },
+      {
+        "name": "fine",
+        "mesh_id": "LIWIpNm_Yjs-nMZILk",
+        "simulation_id": "3AaVCWdb41Zz5LMcc1",
+        "resolution_per_vacuum_wavelength": 18,
+        "mesh_size_max_m": 5.5555555555555555e-08,
+        "slab_mesh_size_max_m": 3.7037037037037036e-08,
+        "source_sha256": "ad2f825da5b181ff961eaac6f8e1921601d8a30f17cbc597cfe27f50b8550d96",
+        "mesh_status": "success",
+        "simulation_status": "error",
+        "mesh_job_id": "NnNhr0Joe8QE_vipd4",
+        "simulation_job_id": "acjEueJv45Aq8IjFdE"
+      }
+    ]
+  },
+  "tolerances": {
+    "reflectance_transmittance_absolute": 0.01,
+    "energy_absolute": 0.01,
+    "incident_normalization_absolute": 0.02,
+    "exit_backward_fraction_max": 0.001,
+    "crosspolarized_fraction_max": 0.0001,
+    "convergence_absolute": 0.005,
+    "reported_scalar_consistency_absolute": 1e-08,
+    "poynting_directional_consistency_fraction": 1e-06
+  },
+  "analytical_reference": {
+    "vacuum_control": {
+      "label": "analytic_fresnel_reference",
+      "wavelength_m": 1e-06,
+      "thickness_m": 1.6666666666666665e-07,
+      "n_slab": 1.0,
+      "n_left": 1.0,
+      "n_right": 1.0,
+      "r": {
+        "real": 0.0,
+        "imag": 0.0
+      },
+      "t": {
+        "real": 0.5000000000000001,
+        "imag": -0.8660254037844386
+      },
+      "R": 0.0,
+      "T": 1.0,
+      "energy_residual": 0.0,
+      "phasor_convention": "exp(+i omega t); E = E_cos - i E_sin",
+      "amplitude_planes": "incident/reflected at left slab face; transmitted at right slab face"
+    },
+    "dielectric_slab": {
+      "label": "analytic_fresnel_reference",
+      "wavelength_m": 1e-06,
+      "thickness_m": 1.6666666666666665e-07,
+      "n_slab": 1.5,
+      "n_left": 1.0,
+      "n_right": 1.0,
+      "r": {
+        "real": -0.3846153846153847,
+        "imag": -2.1739292292556567e-17
+      },
+      "t": {
+        "real": 5.217430150213576e-17,
+        "imag": -0.9230769230769232
+      },
+      "R": 0.1479289940828403,
+      "T": 0.8520710059171601,
+      "energy_residual": -4.440892098500626e-16,
+      "phasor_convention": "exp(+i omega t); E = E_cos - i E_sin",
+      "amplitude_planes": "incident/reflected at left slab face; transmitted at right slab face"
+    }
+  },
+  "runs": [
+    {
+      "name": "coarse",
+      "metadata": {
+        "name": "coarse",
+        "mesh_id": "P3a2wli2Jyv4TkrHmL",
+        "simulation_id": "ZZGQpwIZW3aZVkHAFE",
+        "resolution_per_vacuum_wavelength": 12,
+        "mesh_size_max_m": 8.333333333333333e-08,
+        "slab_mesh_size_max_m": 5.5555555555555555e-08,
+        "source_sha256": "ad2f825da5b181ff961eaac6f8e1921601d8a30f17cbc597cfe27f50b8550d96",
+        "mesh_status": "success",
+        "simulation_status": "success",
+        "mesh_job_id": "bubeWA3dH5BmG0cuBY",
+        "simulation_job_id": "pgIBnSLNWj5KeMvuNd",
+        "field_output_files": [
+          "results/coarse/fields/sweep_0/E cosine_nostep_0.hdf",
+          "results/coarse/fields/sweep_0/E sine_nostep_0.hdf",
+          "results/coarse/fields/sweep_1/E cosine_nostep_0.hdf",
+          "results/coarse/fields/sweep_1/E sine_nostep_0.hdf"
+        ]
+      },
+      "status": "completed",
+      "simulation_status": "success",
+      "cases": {
+        "vacuum_control": {
+          "n_slab": 1.0,
+          "sweep_index": 0,
+          "numerical": {
+            "R": 0.009249736915193553,
+            "T": 0.9825417851278417,
+            "energy_residual": 0.008208477956964666,
+            "incident_normalization_ratio": 1.0057328476861018,
+            "exit_backward_fraction": 3.469243005876841e-05,
+            "entrance_crosspolarized_fraction": 0.0019944583351524225,
+            "exit_crosspolarized_fraction": 0.0009173298319502198,
+            "incident_power_W": 3.337045132819594e-16,
+            "specified_incident_power_W": 3.318023409991194e-16,
+            "reflected_power_W": 3.0866789552708373e-18,
+            "transmitted_power_W": 3.2787862818527397e-16,
+            "exit_backward_power_W": 1.157702048732973e-20,
+            "entrance_net_flux_W": 3.3061783432668856e-16,
+            "exit_net_flux_W": 3.2786705116478663e-16,
+            "entrance_poynting_flux_W": 3.3061783432668856e-16,
+            "exit_poynting_flux_W": 3.2786705116478673e-16,
+            "reflectance_error": 0.009249736915193553,
+            "transmittance_error": 0.017458214872158262
+          },
+          "checks": {
+            "all_required_outputs_finite": true,
+            "nonnegative_powers": true,
+            "positive_incident_power": true,
+            "normalized_outputs_finite": true,
+            "reflectance_reference": true,
+            "transmittance_reference": false,
+            "energy_balance": true,
+            "incident_normalization": true,
+            "exit_incoming_wave": true,
+            "entrance_polarization": false,
+            "exit_polarization": false,
+            "reported_scalar_consistency": true,
+            "entrance_flux_consistency": true,
+            "exit_flux_consistency": true
+          },
+          "passed": false,
+          "errors": [
+            "Acceptance check failed: transmittance_reference",
+            "Acceptance check failed: entrance_polarization",
+            "Acceptance check failed: exit_polarization"
+          ],
+          "reported_outputs": {
+            "specified_incident_power_W": 3.318023409991194e-16,
+            "entrance_forward_power_W": 3.337045132819594e-16,
+            "entrance_backward_power_W": 3.0866789552708373e-18,
+            "exit_forward_power_W": 3.2787862818527397e-16,
+            "exit_backward_power_W": 1.157702048732973e-20,
+            "entrance_crosspolarized_power_W": 6.655597479931862e-19,
+            "exit_crosspolarized_power_W": 3.0611710508996973e-19,
+            "slab_index": 1.0,
+            "reflectance": 0.009249736915193553,
+            "transmittance": 0.9825417851278417,
+            "energy_residual": 0.008208477956964666,
+            "incident_normalization_ratio": 1.0057328476861018,
+            "exit_backward_fraction": 3.469243005876841e-05,
+            "entrance_net_flux_W": 3.3061783432668856e-16,
+            "exit_net_flux_W": 3.2786705116478663e-16,
+            "entrance_poynting_flux_W": 3.3061783432668856e-16,
+            "exit_poynting_flux_W": 3.2786705116478673e-16,
+            "entrance_Ex_cos": 1.0201591368012275,
+            "entrance_Ex_sin": -0.020873786112450006,
+            "entrance_Hy_cos": 0.0026159559829814823,
+            "entrance_Hy_sin": 5.967873144164817e-05,
+            "exit_Ex_cos": 0.7518448452148878,
+            "exit_Ex_sin": 0.6409603635201153,
+            "exit_Hy_cos": 0.0020093696775125296,
+            "exit_Hy_sin": 0.0017086310193905156
+          }
+        },
+        "dielectric_slab": {
+          "n_slab": 1.5,
+          "sweep_index": 1,
+          "numerical": {
+            "R": 0.11975745671733451,
+            "T": 0.8736687534047824,
+            "energy_residual": 0.006573789877883041,
+            "incident_normalization_ratio": 1.0075377320666223,
+            "exit_backward_fraction": 3.5161832963914136e-05,
+            "entrance_crosspolarized_fraction": 0.0010002356769447638,
+            "exit_crosspolarized_fraction": 0.00020203820830369347,
+            "incident_power_W": 3.3430337814464886e-16,
+            "specified_incident_power_W": 3.318023409991194e-16,
+            "reflected_power_W": 4.00353223386165e-17,
+            "transmitted_power_W": 2.92070415642643e-16,
+            "exit_backward_power_W": 1.1754719541594367e-20,
+            "entrance_net_flux_W": 2.9426805580603234e-16,
+            "exit_net_flux_W": 2.9205866092310137e-16,
+            "entrance_poynting_flux_W": 2.942680558060324e-16,
+            "exit_poynting_flux_W": 2.9205866092310137e-16,
+            "reflectance_error": 0.02817153736550579,
+            "transmittance_error": 0.021597747487622332
+          },
+          "checks": {
+            "all_required_outputs_finite": true,
+            "nonnegative_powers": true,
+            "positive_incident_power": true,
+            "normalized_outputs_finite": true,
+            "reflectance_reference": false,
+            "transmittance_reference": false,
+            "energy_balance": true,
+            "incident_normalization": true,
+            "exit_incoming_wave": true,
+            "entrance_polarization": false,
+            "exit_polarization": false,
+            "reported_scalar_consistency": true,
+            "entrance_flux_consistency": true,
+            "exit_flux_consistency": true
+          },
+          "passed": false,
+          "errors": [
+            "Acceptance check failed: reflectance_reference",
+            "Acceptance check failed: transmittance_reference",
+            "Acceptance check failed: entrance_polarization",
+            "Acceptance check failed: exit_polarization"
+          ],
+          "reported_outputs": {
+            "specified_incident_power_W": 3.318023409991194e-16,
+            "entrance_forward_power_W": 3.3430337814464886e-16,
+            "entrance_backward_power_W": 4.00353223386165e-17,
+            "exit_forward_power_W": 2.92070415642643e-16,
+            "exit_backward_power_W": 1.1754719541594367e-20,
+            "entrance_crosspolarized_power_W": 3.343821657434342e-19,
+            "exit_crosspolarized_power_W": 6.754205555021698e-20,
+            "slab_index": 1.5,
+            "reflectance": 0.11975745671733451,
+            "transmittance": 0.8736687534047824,
+            "energy_residual": 0.006573789877883041,
+            "incident_normalization_ratio": 1.0075377320666223,
+            "exit_backward_fraction": 3.5161832963914136e-05,
+            "entrance_net_flux_W": 2.9426805580603234e-16,
+            "exit_net_flux_W": 2.9205866092310137e-16,
+            "entrance_poynting_flux_W": 2.942680558060324e-16,
+            "exit_poynting_flux_W": 2.9205866092310137e-16,
+            "entrance_Ex_cos": 0.6886019542047762,
+            "entrance_Ex_sin": 0.11870278905579065,
+            "entrance_Hy_cos": 0.0035008616569329088,
+            "entrance_Hy_sin": -0.00031469312151980746,
+            "exit_Ex_cos": 0.33508450358436753,
+            "exit_Ex_sin": 0.8706188873755593,
+            "exit_Hy_cos": 0.0008975062212687291,
+            "exit_Hy_sin": 0.002323523959587191
+          }
+        }
+      },
+      "passed": false,
+      "errors": [],
+      "output_files": [
+        "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\default_periodicity\\coarse\\raw_output_sweep_0.json",
+        "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\default_periodicity\\coarse\\raw_output_sweep_1.json",
+        "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\default_periodicity\\coarse\\public_outputs.csv"
+      ]
+    },
+    {
+      "name": "fine",
+      "metadata": {
+        "name": "fine",
+        "mesh_id": "LIWIpNm_Yjs-nMZILk",
+        "simulation_id": "34GjOP1C8AJUlJwRUb",
+        "resolution_per_vacuum_wavelength": 18,
+        "mesh_size_max_m": 5.5555555555555555e-08,
+        "slab_mesh_size_max_m": 3.7037037037037036e-08,
+        "source_sha256": "ad2f825da5b181ff961eaac6f8e1921601d8a30f17cbc597cfe27f50b8550d96",
+        "mesh_status": "success",
+        "simulation_status": "success",
+        "mesh_job_id": "NnNhr0Joe8QE_vipd4",
+        "simulation_job_id": "Qi0SupLsV_Bfb2FKHM",
+        "node_type": "2xlarge-new"
+      },
+      "status": "completed",
+      "simulation_status": "success",
+      "cases": {
+        "vacuum_control": {
+          "n_slab": 1.0,
+          "sweep_index": 0,
+          "numerical": {
+            "R": 0.004082720004506257,
+            "T": 0.9822971682053859,
+            "energy_residual": 0.013620111790107803,
+            "incident_normalization_ratio": 1.002985895267719,
+            "exit_backward_fraction": 1.38283098420293e-05,
+            "entrance_crosspolarized_fraction": 0.0007537419324563795,
+            "exit_crosspolarized_fraction": 0.0010406183870763116,
+            "incident_power_W": 3.3279306803892677e-16,
+            "specified_incident_power_W": 3.318023409991194e-16,
+            "reflected_power_W": 1.3587009162435383e-18,
+            "transmitted_power_W": 3.269016883330201e-16,
+            "exit_backward_power_W": 4.601965658121818e-21,
+            "entrance_net_flux_W": 3.3143436712268324e-16,
+            "exit_net_flux_W": 3.2689708636736197e-16,
+            "entrance_poynting_flux_W": 3.3143436712268324e-16,
+            "exit_poynting_flux_W": 3.2689708636736197e-16,
+            "reflectance_error": 0.004082720004506257,
+            "transmittance_error": 0.01770283179461407
+          },
+          "checks": {
+            "all_required_outputs_finite": true,
+            "nonnegative_powers": true,
+            "positive_incident_power": true,
+            "normalized_outputs_finite": true,
+            "reflectance_reference": true,
+            "transmittance_reference": false,
+            "energy_balance": false,
+            "incident_normalization": true,
+            "exit_incoming_wave": true,
+            "entrance_polarization": false,
+            "exit_polarization": false,
+            "reported_scalar_consistency": true,
+            "entrance_flux_consistency": true,
+            "exit_flux_consistency": true
+          },
+          "passed": false,
+          "errors": [
+            "Acceptance check failed: transmittance_reference",
+            "Acceptance check failed: energy_balance",
+            "Acceptance check failed: entrance_polarization",
+            "Acceptance check failed: exit_polarization"
+          ],
+          "reported_outputs": {
+            "specified_incident_power_W": 3.318023409991194e-16,
+            "entrance_forward_power_W": 3.3279306803892677e-16,
+            "entrance_backward_power_W": 1.3587009162435383e-18,
+            "exit_forward_power_W": 3.269016883330201e-16,
+            "exit_backward_power_W": 4.601965658121818e-21,
+            "entrance_crosspolarized_power_W": 2.5084009021174807e-19,
+            "exit_crosspolarized_power_W": 3.463105856928452e-19,
+            "slab_index": 1.0,
+            "reflectance": 0.004082720004506257,
+            "transmittance": 0.9822971682053859,
+            "energy_residual": 0.013620111790107803,
+            "incident_normalization_ratio": 1.002985895267719,
+            "exit_backward_fraction": 1.38283098420293e-05,
+            "entrance_net_flux_W": 3.3143436712268324e-16,
+            "exit_net_flux_W": 3.2689708636736197e-16,
+            "entrance_poynting_flux_W": 3.3143436712268324e-16,
+            "exit_poynting_flux_W": 3.2689708636736197e-16,
+            "entrance_Ex_cos": 1.008413452458023,
+            "entrance_Ex_sin": -0.0025288539082508068,
+            "entrance_Hy_cos": 0.0026399769676536105,
+            "entrance_Hy_sin": 8.169531357601457e-06,
+            "exit_Ex_cos": 0.698167688219016,
+            "exit_Ex_sin": 0.7002679413972848,
+            "exit_Hy_cos": 0.0018598346472833943,
+            "exit_Hy_sin": 0.001863298457454264
+          }
+        },
+        "dielectric_slab": {
+          "n_slab": 1.5,
+          "sweep_index": 1,
+          "numerical": {
+            "R": 0.13349363887670015,
+            "T": 0.8565867368180128,
+            "energy_residual": 0.009919624305287034,
+            "incident_normalization_ratio": 1.0039621306950046,
+            "exit_backward_fraction": 1.6239510920731827e-05,
+            "entrance_crosspolarized_fraction": 0.0004294440571688234,
+            "exit_crosspolarized_fraction": 0.001500736529263616,
+            "incident_power_W": 3.331169852390664e-16,
+            "specified_incident_power_W": 3.318023409991194e-16,
+            "reflected_power_W": 4.446899853119899e-17,
+            "transmitted_power_W": 2.85343591364586e-16,
+            "exit_backward_power_W": 5.409656919671082e-21,
+            "entrance_net_flux_W": 2.8864798670786743e-16,
+            "exit_net_flux_W": 2.8533818170766633e-16,
+            "entrance_poynting_flux_W": 2.8864798670786743e-16,
+            "exit_poynting_flux_W": 2.853381817076663e-16,
+            "reflectance_error": 0.014435355206140144,
+            "transmittance_error": 0.004515730900852666
+          },
+          "checks": {
+            "all_required_outputs_finite": true,
+            "nonnegative_powers": true,
+            "positive_incident_power": true,
+            "normalized_outputs_finite": true,
+            "reflectance_reference": false,
+            "transmittance_reference": true,
+            "energy_balance": true,
+            "incident_normalization": true,
+            "exit_incoming_wave": true,
+            "entrance_polarization": false,
+            "exit_polarization": false,
+            "reported_scalar_consistency": true,
+            "entrance_flux_consistency": true,
+            "exit_flux_consistency": true
+          },
+          "passed": false,
+          "errors": [
+            "Acceptance check failed: reflectance_reference",
+            "Acceptance check failed: entrance_polarization",
+            "Acceptance check failed: exit_polarization"
+          ],
+          "reported_outputs": {
+            "specified_incident_power_W": 3.318023409991194e-16,
+            "entrance_forward_power_W": 3.331169852390664e-16,
+            "entrance_backward_power_W": 4.446899853119899e-17,
+            "exit_forward_power_W": 2.85343591364586e-16,
+            "exit_backward_power_W": 5.409656919671082e-21,
+            "entrance_crosspolarized_power_W": 1.4305510965291173e-19,
+            "exit_crosspolarized_power_W": 4.999208282664357e-19,
+            "slab_index": 1.5,
+            "reflectance": 0.13349363887670015,
+            "transmittance": 0.8565867368180128,
+            "energy_residual": 0.009919624305287145,
+            "incident_normalization_ratio": 1.0039621306950046,
+            "exit_backward_fraction": 1.6239510920731827e-05,
+            "entrance_net_flux_W": 2.8864798670786743e-16,
+            "exit_net_flux_W": 2.8533818170766633e-16,
+            "entrance_poynting_flux_W": 2.8864798670786743e-16,
+            "exit_poynting_flux_W": 2.853381817076663e-16,
+            "entrance_Ex_cos": 0.6550476892453111,
+            "entrance_Ex_sin": 0.10081540133034843,
+            "entrance_Hy_cos": 0.003580557013016543,
+            "entrance_Hy_sin": -0.00026738758641917364,
+            "exit_Ex_cos": 0.25676080774673865,
+            "exit_Ex_sin": 0.8869546176902875,
+            "exit_Hy_cos": 0.0006849287945295098,
+            "exit_Hy_sin": 0.0023608800275934172
+          }
+        }
+      },
+      "passed": false,
+      "errors": [],
+      "output_files": [
+        "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\default_periodicity\\fine\\raw_output_sweep_0.json",
+        "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\default_periodicity\\fine\\raw_output_sweep_1.json",
+        "F:\\H4H quanscient\\MetaSense\\simulations\\slab_validation\\results\\default_periodicity\\fine\\public_outputs.csv"
+      ]
+    }
+  ],
+  "convergence": {
+    "same_source": true,
+    "passed": false,
+    "errors": [
+      "Mesh convergence failed: vacuum_control",
+      "Mesh convergence failed: dielectric_slab"
+    ],
+    "vacuum_control": {
+      "delta_R": 0.0051670169106872955,
+      "delta_T": 0.00024461692245580924,
+      "checks": {
+        "reflectance": false,
+        "transmittance": true
+      },
+      "passed": false
+    },
+    "dielectric_slab": {
+      "delta_R": 0.013736182159365645,
+      "delta_T": 0.017082016586769666,
+      "checks": {
+        "reflectance": false,
+        "transmittance": false
+      },
+      "passed": false
+    }
+  },
+  "errors": [
+    "Mesh convergence failed: vacuum_control",
+    "Mesh convergence failed: dielectric_slab",
+    "coarse/vacuum_control: Acceptance check failed: transmittance_reference",
+    "coarse/vacuum_control: Acceptance check failed: entrance_polarization",
+    "coarse/vacuum_control: Acceptance check failed: exit_polarization",
+    "coarse/dielectric_slab: Acceptance check failed: reflectance_reference",
+    "coarse/dielectric_slab: Acceptance check failed: transmittance_reference",
+    "coarse/dielectric_slab: Acceptance check failed: entrance_polarization",
+    "coarse/dielectric_slab: Acceptance check failed: exit_polarization",
+    "fine/vacuum_control: Acceptance check failed: transmittance_reference",
+    "fine/vacuum_control: Acceptance check failed: energy_balance",
+    "fine/vacuum_control: Acceptance check failed: entrance_polarization",
+    "fine/vacuum_control: Acceptance check failed: exit_polarization",
+    "fine/dielectric_slab: Acceptance check failed: reflectance_reference",
+    "fine/dielectric_slab: Acceptance check failed: entrance_polarization",
+    "fine/dielectric_slab: Acceptance check failed: exit_polarization"
+  ],
+  "energy_residual_convention": "1 - R - T",
+  "nonfinite_raw_encoding": "Nonfinite raw numbers are preserved as {'nonfinite': 'nan'|'inf'|'-inf'}"
+}

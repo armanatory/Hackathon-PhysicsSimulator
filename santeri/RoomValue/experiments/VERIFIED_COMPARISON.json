@@ -1,0 +1,21 @@
+{
+  "frequency_hz": 250,
+  "room": {"width_m": 6, "length_m": 4},
+  "source": {"x_m": 1, "y_m": 2},
+  "listeners": [
+    {"id": "near", "x_m": 2.5, "y_m": 2},
+    {"id": "far", "x_m": 5, "y_m": 2}
+  ],
+  "treatments": [
+    {"id": "east", "x_m": 5.85, "y_m": 2},
+    {"id": "north", "x_m": 3, "y_m": 3.85},
+    {"id": "south", "x_m": 3, "y_m": 0.15}
+  ],
+  "baseline_simulation_id": "C8YvtzB9QcvsFptFHL",
+  "candidate_simulation_ids": {
+    "east": "1VY0uRfVPoYUZS2FcV",
+    "north": "oCCj9EKKfKpQGAG2J5",
+    "south": "ZSTO0FuO6r4atRTxOf"
+  },
+  "project_id": "Ke0NxZUDzJut7hktW1"
+}

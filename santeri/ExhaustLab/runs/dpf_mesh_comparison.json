@@ -1,0 +1,21 @@
+{
+  "coarse_case": "dpf_d160_l200",
+  "fine_case": "dpf_d160_l200_refined",
+  "coarse_mesh_m": 0.01,
+  "fine_mesh_m": 0.007,
+  "passed": true,
+  "pressure_relative_change": 0.0002711874009231341,
+  "outlet_temperature_change_k": 0.23354526145783439,
+  "thermal_factor_change": 0.007977656198602245,
+  "pressure_field_relative_l2_change": 0.00025798980241849664,
+  "temperature_field_rms_change_k": 0.05138225616718424,
+  "scope": "Central geometry only; mesh-dependent upwind diffusion explicitly included, bounded vs physical plug-flow and exact stabilized PDE.",
+  "source_hashes": {
+    "runs/dpf_d160_l200/state.json": "c376188423563b0492c32e6ea5c2fbc21d21304366df20198e88c2022711ffb4",
+    "runs/dpf_d160_l200/samples.json": "55177f63dd9d6201a49d22edbc2de1503c12579a5691abfd16b5fe958aa33bf9",
+    "runs/dpf_d160_l200/validation.json": "2feee629879e83578104e8d8b83ec51ddea605d9d175c0defa4f6e02c79e0e06",
+    "runs/dpf_d160_l200_refined/state.json": "df7fb9e245975fa9ae205d876f8809a501e6ea2db73e50676ecc9aadda43555b",
+    "runs/dpf_d160_l200_refined/samples.json": "da5fc7276f42ca4fd98bcdc0829e6566f904da188871902889befba1324b571a",
+    "runs/dpf_d160_l200_refined/validation.json": "daad8c2186c7cdeb954d5f5d09a3b287c3e833ebef7ab774bd63ee8f5416ad55"
+  }
+}

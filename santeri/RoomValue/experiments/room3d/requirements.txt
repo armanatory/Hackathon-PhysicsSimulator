@@ -1,0 +1,8 @@
+allsolve==0.5.2
+python-dotenv>=1.0
+numpy>=2.0
+scipy>=1.14
+h5py>=3.11
+meshio==5.3.5
+matplotlib>=3.9
+requests>=2.32

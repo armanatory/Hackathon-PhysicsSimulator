@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "generated_utc": "2026-10-03T10:36:28.434336+00:00",
+  "fine_case": "gap8fine",
+  "trajectory_inputs": {
+    "diameter_um": 1,
+    "charge_e": 30,
+    "voltage_v": 200.0,
+    "n_y": 96,
+    "n_z": 64,
+    "max_step_s": 0.005,
+    "max_time_s": 30
+  },
+  "entered_capture_absolute_tolerance": 0.01,
+  "source_snapshots": {
+    "gap8fine": {
+      "identifiers": {
+        "case": "gap8fine",
+        "project_id": "Asw8FbQLHL-sei8Opb",
+        "project_url": "https://allsolve.quanscient.com/#/projects/Asw8FbQLHL-sei8Opb/model",
+        "mesh_id": "yCP_e3uOVJK0iX5T9B",
+        "mesh_job_id": "rrJpiIgGdfZS8NxY-S",
+        "flow_simulation_id": "Szrb0E-euamEXRbVsG",
+        "flow_job_id": "sQmILm9lomnjh_IqRc",
+        "electric_simulation_id": "4iCAhmoxLeXDcUr9TZ",
+        "electric_job_id": "Sklt61eJzlcK3jOQS1",
+        "mesh_status": "JobStatusType.SUCCESS",
+        "flow_status": "JobStatusType.SUCCESS",
+        "electric_status": "JobStatusType.SUCCESS",
+        "grid_shape": [
+          49,
+          33,
+          17
+        ],
+        "field_origin": "Allsolve finite-element cloud interpolation outputs",
+        "vector_fields": {
+          "flow": "velocity [ux,uy,uz], m/s",
+          "electric": "-grad(potential) [Ex,Ey,Ez], V/m"
+        },
+        "scalar_fields": {
+          "flow": "gauge pressure, Pa",
+          "electric": "potential, V"
+        }
+      },
+      "file_sha256": {
+        "state.json": "7476cba8651ed881872a57bcf4249c09258fc783209e51d71cbba2cbedb788c9",
+        "flow_samples.json": "a0993eca32efffc2c5a7a4c48d019cb6207d23531c6be1723518110f2b744320",
+        "electric_samples.json": "0477629f75990a3de098d0c2386d46a0da456f21ce9ee3a1cb8a3525dae1cbcd",
+        "validation.json": "3791a3eea7f5a5a59cd6a4df5f18ef692596b8837536ab571d2c4911e801707a"
+      }
+    },
+    "gap8": {
+      "identifiers": {
+        "case": "gap8",
+        "project_id": "cgs4_kDoAB6KDTuDdZ",
+        "project_url": "https://allsolve.quanscient.com/#/projects/cgs4_kDoAB6KDTuDdZ/model",
+        "mesh_id": "DZH6q3c1Brb4HjgCJ2",
+        "mesh_job_id": "a1Ppf4k8c-sQZcbV9O",
+        "flow_simulation_id": "PKqOADnaC2ssZ3apOW",
+        "flow_job_id": "0Fx7woYJmELHSWbvDO",
+        "electric_simulation_id": "TBIw7cJKPvbtwRw6Qo",
+        "electric_job_id": "jzNAqp7Wv7CetKrwVM",
+        "mesh_status": "JobStatusType.SUCCESS",
+        "flow_status": "JobStatusType.SUCCESS",
+        "electric_status": "JobStatusType.SUCCESS",
+        "grid_shape": [
+          25,
+          17,
+          9
+        ],
+        "field_origin": "Allsolve finite-element cloud interpolation outputs",
+        "vector_fields": {
+          "flow": "velocity [ux,uy,uz], m/s",
+          "electric": "-grad(potential) [Ex,Ey,Ez], V/m"
+        },
+        "scalar_fields": {
+          "flow": "gauge pressure, Pa",
+          "electric": "potential, V"
+        }
+      },
+      "file_sha256": {
+        "state.json": "b11b47aaee4fdebfd6ac110ff54e278538f148e074aabb2091fa71d928667bdc",
+        "flow_samples.json": "c044899aed1968a4813d1b33364b4ee0df6a8d02f4dcd5e31233f013ffbf5411",
+        "electric_samples.json": "747f25e7757b0ac6356ccdf45fc8fdc5fd0874d136d9ce406bddc5acc3f45a67",
+        "validation.json": "6fdcba9e7577a968f9b3c69f0cd3e80673a8720dcc1dda578ca964cc32c724e3"
+      }
+    }
+  },
+  "same_mesh_export_grid": {
+    "definition": "Compare original real field samples with every-second-node samples from that same finite-element solve; interpolate both independently, with identical particle integration inputs.",
+    "coarse_grid_shape": [
+      25,
+      17,
+      9
+    ],
+    "fine_grid_shape": [
+      49,
+      33,
+      17
+    ],
+    "coarse": {
+      "particle_count": 6144,
+      "inlet_flux_m3_s": 3.228129558590773e-06,
+      "max_step_s": 0.005,
+      "max_time_s": 30,
+      "captured_count": 2626,
+      "captured_fraction": 0.29169112490680515,
+      "outlet_count": 3518,
+      "outlet_fraction": 0.7083088750931951,
+      "unresolved_count": 0,
+      "unresolved_fraction": 0.0,
+      "capture_upper_bound": 0.29169112490680515,
+      "unresolved_reasons": {},
+      "captured_by_wall": {
+        "wall_y_min": {
+          "count": 2626,
+          "fraction": 0.29169112490680515
+        },
+        "wall_y_max": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "wall_z_min": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "wall_z_max": {
+          "count": 0,
+          "fraction": 0.0
+        }
+      }
+    },
+    "fine": {
+      "particle_count": 6144,
+      "inlet_flux_m3_s": 3.3064979613046626e-06,
+      "max_step_s": 0.005,
+      "max_time_s": 30,
+      "captured_count": 2526,
+      "captured_fraction": 0.2866529482439601,
+      "outlet_count": 3618,
+      "outlet_fraction": 0.7133470517560399,
+      "unresolved_count": 0,
+      "unresolved_fraction": 0.0,
+      "capture_upper_bound": 0.2866529482439601,
+      "unresolved_reasons": {},
+      "captured_by_wall": {
+        "wall_y_min": {
+          "count": 2526,
+          "fraction": 0.2866529482439601
+        },
+        "wall_y_max": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "wall_z_min": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "wall_z_max": {
+          "count": 0,
+          "fraction": 0.0
+        }
+      }
+    },
+    "capture_fraction_absolute_change": 0.005038176662845062,
+    "outlet_fraction_absolute_change": 0.005038176662844784,
+    "unresolved_fraction_absolute_change": 0.0,
+    "inlet_flux_relative_change": 0.024276721640658527,
+    "capture_within_entered_tolerance": true
+  },
+  "mesh_comparison": {
+    "definition": "Coarse and refined finite-element mesh snapshots compared after matching export axes; identical particle integration inputs.",
+    "coarse_case": "gap8",
+    "fine_case": "gap8fine",
+    "coarse_mesh_size_max_m": 0.0015,
+    "fine_mesh_size_max_m": 0.001,
+    "common_export_grid_shape": [
+      25,
+      17,
+      9
+    ],
+    "coarse": {
+      "particle_count": 6144,
+      "inlet_flux_m3_s": 3.2280527268027995e-06,
+      "max_step_s": 0.005,
+      "max_time_s": 30,
+      "captured_count": 2626,
+      "captured_fraction": 0.2916778946368689,
+      "outlet_count": 3518,
+      "outlet_fraction": 0.7083221053631311,
+      "unresolved_count": 0,
+      "unresolved_fraction": 0.0,
+      "capture_upper_bound": 0.2916778946368689,
+      "unresolved_reasons": {},
+      "captured_by_wall": {
+        "wall_y_min": {
+          "count": 2626,
+          "fraction": 0.2916778946368689
+        },
+        "wall_y_max": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "wall_z_min": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "wall_z_max": {
+          "count": 0,
+          "fraction": 0.0
+        }
+      }
+    },
+    "fine": {
+      "particle_count": 6144,
+      "inlet_flux_m3_s": 3.228129558590773e-06,
+      "max_step_s": 0.005,
+      "max_time_s": 30,
+      "captured_count": 2626,
+      "captured_fraction": 0.29169112490680515,
+      "outlet_count": 3518,
+      "outlet_fraction": 0.7083088750931951,
+      "unresolved_count": 0,
+      "unresolved_fraction": 0.0,
+      "capture_upper_bound": 0.29169112490680515,
+      "unresolved_reasons": {},
+      "captured_by_wall": {
+        "wall_y_min": {
+          "count": 2626,
+          "fraction": 0.29169112490680515
+        },
+        "wall_y_max": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "wall_z_min": {
+          "count": 0,
+          "fraction": 0.0
+        },
+        "wall_z_max": {
+          "count": 0,
+          "fraction": 0.0
+        }
+      }
+    },
+    "capture_fraction_absolute_change": 1.3230269936270744e-05,
+    "outlet_fraction_absolute_change": 1.32302699360487e-05,
+    "unresolved_fraction_absolute_change": 0.0,
+    "inlet_flux_relative_change": 2.3801280361723798e-05,
+    "coarse_pressure_drop_pa": 0.005670286673506565,
+    "fine_pressure_drop_pa": 0.0056704571063811195,
+    "pressure_drop_relative_change": 3.0056284944443446e-05,
+    "capture_within_entered_tolerance": true
+  },
+  "limits": [
+    "Observed agreement concerns only these tested refinements and entered particle/charge inputs.",
+    "All outcomes remain conditional on spherical overdamped particles and ideal absorbing walls.",
+    "No validated pressure or velocity field is replaced by an analytic reference.",
+    "Unresolved trajectory weight remains in every denominator."
+  ]
+}

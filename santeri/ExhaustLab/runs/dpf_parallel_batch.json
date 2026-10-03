@@ -1,0 +1,200 @@
+{
+  "max_active_jobs": 3,
+  "peak_active_jobs": 3,
+  "requested_cases": [
+    "dpf_d120_l150",
+    "dpf_d120_l200",
+    "dpf_d120_l250",
+    "dpf_d160_l150",
+    "dpf_d160_l200",
+    "dpf_d160_l250",
+    "dpf_d200_l150",
+    "dpf_d200_l200",
+    "dpf_d200_l250"
+  ],
+  "events": [
+    {
+      "at_utc": "2026-10-03T11:17:06.121627+00:00",
+      "event": "dispatch",
+      "case": "dpf_d120_l150",
+      "stage": "mesh",
+      "active_jobs": 1
+    },
+    {
+      "at_utc": "2026-10-03T11:17:06.260619+00:00",
+      "event": "dispatch",
+      "case": "dpf_d120_l200",
+      "stage": "mesh",
+      "active_jobs": 2
+    },
+    {
+      "at_utc": "2026-10-03T11:17:06.418710+00:00",
+      "event": "dispatch",
+      "case": "dpf_d120_l250",
+      "stage": "mesh",
+      "active_jobs": 3
+    },
+    {
+      "at_utc": "2026-10-03T11:17:09.745391+00:00",
+      "event": "transition",
+      "case": "dpf_d120_l250",
+      "stage": "simulation",
+      "active_jobs": 3
+    },
+    {
+      "at_utc": "2026-10-03T11:17:12.949279+00:00",
+      "event": "transition",
+      "case": "dpf_d120_l150",
+      "stage": "simulation",
+      "active_jobs": 3
+    },
+    {
+      "at_utc": "2026-10-03T11:17:14.144319+00:00",
+      "event": "transition",
+      "case": "dpf_d120_l200",
+      "stage": "simulation",
+      "active_jobs": 3
+    },
+    {
+      "at_utc": "2026-10-03T11:17:15.635710+00:00",
+      "event": "complete",
+      "case": "dpf_d120_l250",
+      "stage": "simulation",
+      "active_jobs": 2
+    },
+    {
+      "at_utc": "2026-10-03T11:17:17.777744+00:00",
+      "event": "dispatch",
+      "case": "dpf_d160_l150",
+      "stage": "mesh",
+      "active_jobs": 3
+    },
+    {
+      "at_utc": "2026-10-03T11:17:19.164353+00:00",
+      "event": "complete",
+      "case": "dpf_d120_l150",
+      "stage": "simulation",
+      "active_jobs": 2
+    },
+    {
+      "at_utc": "2026-10-03T11:17:20.542058+00:00",
+      "event": "complete",
+      "case": "dpf_d120_l200",
+      "stage": "simulation",
+      "active_jobs": 1
+    },
+    {
+      "at_utc": "2026-10-03T11:17:21.748419+00:00",
+      "event": "transition",
+      "case": "dpf_d160_l150",
+      "stage": "simulation",
+      "active_jobs": 1
+    },
+    {
+      "at_utc": "2026-10-03T11:17:23.755518+00:00",
+      "event": "dispatch",
+      "case": "dpf_d160_l200",
+      "stage": "simulation",
+      "active_jobs": 2
+    },
+    {
+      "at_utc": "2026-10-03T11:17:23.903824+00:00",
+      "event": "dispatch",
+      "case": "dpf_d160_l250",
+      "stage": "mesh",
+      "active_jobs": 3
+    },
+    {
+      "at_utc": "2026-10-03T11:17:26.272828+00:00",
+      "event": "complete",
+      "case": "dpf_d160_l200",
+      "stage": "simulation",
+      "active_jobs": 2
+    },
+    {
+      "at_utc": "2026-10-03T11:17:29.490022+00:00",
+      "event": "dispatch",
+      "case": "dpf_d200_l150",
+      "stage": "mesh",
+      "active_jobs": 3
+    },
+    {
+      "at_utc": "2026-10-03T11:17:30.860030+00:00",
+      "event": "complete",
+      "case": "dpf_d160_l150",
+      "stage": "simulation",
+      "active_jobs": 2
+    },
+    {
+      "at_utc": "2026-10-03T11:17:32.064177+00:00",
+      "event": "transition",
+      "case": "dpf_d160_l250",
+      "stage": "simulation",
+      "active_jobs": 2
+    },
+    {
+      "at_utc": "2026-10-03T11:17:33.284339+00:00",
+      "event": "transition",
+      "case": "dpf_d200_l150",
+      "stage": "simulation",
+      "active_jobs": 2
+    },
+    {
+      "at_utc": "2026-10-03T11:17:35.439992+00:00",
+      "event": "dispatch",
+      "case": "dpf_d200_l200",
+      "stage": "mesh",
+      "active_jobs": 3
+    },
+    {
+      "at_utc": "2026-10-03T11:17:42.014257+00:00",
+      "event": "complete",
+      "case": "dpf_d160_l250",
+      "stage": "simulation",
+      "active_jobs": 2
+    },
+    {
+      "at_utc": "2026-10-03T11:17:43.404570+00:00",
+      "event": "complete",
+      "case": "dpf_d200_l150",
+      "stage": "simulation",
+      "active_jobs": 1
+    },
+    {
+      "at_utc": "2026-10-03T11:17:44.635627+00:00",
+      "event": "transition",
+      "case": "dpf_d200_l200",
+      "stage": "simulation",
+      "active_jobs": 1
+    },
+    {
+      "at_utc": "2026-10-03T11:17:46.795066+00:00",
+      "event": "dispatch",
+      "case": "dpf_d200_l250",
+      "stage": "mesh",
+      "active_jobs": 2
+    },
+    {
+      "at_utc": "2026-10-03T11:17:56.422583+00:00",
+      "event": "complete",
+      "case": "dpf_d200_l200",
+      "stage": "simulation",
+      "active_jobs": 1
+    },
+    {
+      "at_utc": "2026-10-03T11:17:57.648101+00:00",
+      "event": "transition",
+      "case": "dpf_d200_l250",
+      "stage": "simulation",
+      "active_jobs": 1
+    },
+    {
+      "at_utc": "2026-10-03T11:18:13.304476+00:00",
+      "event": "complete",
+      "case": "dpf_d200_l250",
+      "stage": "simulation",
+      "active_jobs": 0
+    }
+  ],
+  "note": "Concurrent independent one-rank jobs; client dispatch overlap, not a distributed-solver scaling benchmark."
+}

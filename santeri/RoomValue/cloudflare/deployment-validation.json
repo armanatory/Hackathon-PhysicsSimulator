@@ -1,0 +1,40 @@
+{
+  "url": "https://roomvalue.santerihukari.com/",
+  "job_url": "https://roomvalue.santerihukari.com/?job=e4b02cec-6192-40e3-bd5e-93271c44dbb7",
+  "bridge_port": 8004,
+  "private_backend": true,
+  "public_launches_authorized": true,
+  "verified_checks": {
+    "public_html": 200,
+    "online_health": 200,
+    "catalog": 200,
+    "resume_existing_job": 202,
+    "malformed_minimize_request": 422,
+    "unknown_api_route": 404,
+    "unsigned_origin_health": 403,
+    "signed_origin_health": 200,
+    "offline_health": 200,
+    "offline_snapshot_catalog": 200,
+    "offline_snapshot_result": 200,
+    "offline_submission": 503,
+    "backend_restored_online": true
+  },
+  "simulation": {
+    "status": "completed",
+    "total_layouts": 42,
+    "total_basis": 84,
+    "new_cloud_starts": 66,
+    "cache_hits": 17,
+    "peak_actual_running": 35,
+    "peak_executing_cores": 140,
+    "baseline_normalized_db": 85.85941968580038,
+    "optimal_normalized_db": 60.687566393984056,
+    "slots": [
+      "ceiling_a",
+      "ceiling_b",
+      "east_b"
+    ]
+  },
+  "browser_verified": true,
+  "proof": "hosted-planner.jpg"
+}
