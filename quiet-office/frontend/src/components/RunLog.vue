@@ -31,18 +31,17 @@ function pressure(values: number[][] | undefined): string {
   <div class="panel runlog">
     <h2>Where these numbers come from</h2>
 
-    <p v-if="store.source === 'estimate' && !store.logEntries.length" class="cap" style="margin-top: 0">
-      Everything on this page is the <b>quick estimate</b> calculated in your browser. Nothing has been sent to Allsolve yet. Press
-      <b>Run on Allsolve</b> to simulate it; every request and answer will be listed here.
+    <p v-if="!store.hasResult && !store.logEntries.length" class="cap" style="margin-top: 0">
+      Nothing has been sent to Allsolve yet. Every request and answer of a simulation will be listed here.
     </p>
 
     <template v-else>
       <p class="cap" style="margin-top: 0">
         <template v-if="store.isRunning">Running on Allsolve now. Each line is a request this app sent or an answer it received.</template>
-        <template v-else-if="store.source === 'allsolve'">
-          The desk and zone numbers on this page are calculated from pressures returned by <b>Allsolve</b>. The record below shows every step.
+        <template v-else-if="store.hasResult">
+          The levels on this page are calculated from pressures returned by <b>Allsolve</b>. The record below shows every step.
         </template>
-        <template v-else>The last Allsolve run did not finish, so the page is back on the quick estimate. The record shows how far it got.</template>
+        <template v-else>The last Allsolve run did not finish, so there is no result. The record shows how far it got.</template>
       </p>
 
       <ul v-if="store.evidence" class="facts">
@@ -119,7 +118,7 @@ function pressure(values: number[][] | undefined): string {
       <p v-if="store.explanation" class="cap">Written by an AI model ({{ store.explanationModel }}) from the figures and the record above. It explains; it does not calculate.</p>
       <p v-else-if="store.explainBlockedReason" class="cap">{{ store.explainBlockedReason }}</p>
       <p v-else-if="store.explainsEarlierRun" class="cap">
-        The page now shows the quick estimate, which is not explained. This explains the Allsolve run that finished at
+        This explains the Allsolve run that finished at
         {{ new Date(store.explainsEarlierRun).toLocaleTimeString() }}; the office or the settings have changed since.
       </p>
       <p v-else class="cap">An AI model reads the Allsolve result and the record above and explains them without jargon.</p>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, defineAsyncComponent, onMounted } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
+import type { Step } from '@/types'
 import { useOptimizationStore } from '@/stores/optimizationStore'
 import OfficePlan from '@/components/OfficePlan.vue'
 import OfficeEditor from '@/components/OfficeEditor.vue'
@@ -15,124 +16,175 @@ const Office3D = defineAsyncComponent(() => import('@/components/Office3D.vue'))
 const store = useOptimizationStore()
 onMounted(() => store.init())
 
-const words = ['no screens', 'one screen', 'two screens', 'three screens']
-const improvement = computed(() => (store.best ? Math.round(100 - store.best.score) : 0))
-const tested = computed(() => store.layouts.length)
-const hasResult = computed(() => !!store.best && !!store.baseline)
-const summary = computed(() => {
-  const o = store.office
-  const count = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
-  const parts = [count(o.sources.length, 'noise source', 'noise sources')]
-  if (o.quiet_zones.length) parts.push(count(o.quiet_zones.length, 'quiet zone', 'quiet zones'))
-  if (o.desks.length) parts.push(count(o.desks.length, 'desk', 'desks'))
-  return parts.join(' · ')
+const STEPS: { id: Step; name: string }[] = [
+  { id: 'room', name: 'Room' },
+  { id: 'zones', name: 'Noise and quiet zones' },
+  { id: 'panels', name: 'Panels' },
+  { id: 'result', name: 'Result' },
+]
+const words = ['no panels', 'one panel', 'two panels', 'three panels', 'four panels']
+const show3d = ref(false)
+const scanInput = ref<HTMLInputElement | null>(null)
+
+/** Why a step cannot be opened yet, or null when it can. */
+function blocked(step: Step): string | null {
+  if (store.isRunning) return step === store.step ? null : 'Wait for the simulation to finish, or stop it.'
+  if (step === 'panels') return store.officeBlockedReason
+  if (step === 'result') return store.hasResult ? null : 'Nothing has been simulated yet.'
+  return null
+}
+
+function go(step: Step): void {
+  if (blocked(step)) return
+  store.selection = null
+  store.step = step
+}
+
+/** The 3D view shows only the panels that were chosen, never the places the app considered. */
+const office3d = computed(() => {
+  const chosen = new Set(store.best?.slot_ids ?? [])
+  return { ...store.office, slots: store.office.slots.filter((slot) => chosen.has(slot.id)) }
 })
-const earshotGain = computed(() => store.inEarshot(store.baseline) - store.inEarshot(store.best))
+
+async function importScan(event: Event): Promise<void> {
+  const input = event.target as HTMLInputElement
+  const file = input.files?.[0]
+  input.value = ''
+  if (!file) return
+  store.startJob('blank')
+  await store.loadScan(file)
+}
 </script>
 
 <template>
   <header class="bar">
     <div class="wrap">
       <span class="brand"><i></i>QuietOffice</span>
-      <span class="source" :data-source="store.source">
-        {{ store.source === 'allsolve' ? 'Allsolve simulation' : 'Quick estimate, not yet simulated' }}
-      </span>
+      <button v-if="store.started" type="button" class="btn ghost small" :disabled="store.isRunning" @click="store.newJob()">New job</button>
     </div>
   </header>
 
-  <main class="wrap">
+  <main v-if="!store.started" class="wrap">
     <div class="head">
-      <div class="eyebrow">{{ summary }}</div>
-      <h1 v-if="store.view === 'edit'">Draw <b>your</b> office.</h1>
-      <h1 v-else-if="hasResult">Put the {{ words[store.placedScreens] }} <b>here</b>.</h1>
-      <h1 v-else>Nothing to place <b>yet</b>.</h1>
-      <p v-if="store.view === 'edit'" class="lead">
-        Place the noise sources, mark the areas that should be quiet, and let the app suggest where screens could stand, or mark those places
-        yourself. Open a phone scan to trace a real room. The result updates as you go.
-      </p>
-      <p v-else-if="store.best && store.baseline" class="lead">
-        Out of <b>{{ tested }} layouts</b> {{ store.source === 'allsolve' ? 'simulated on Allsolve' : 'estimated' }}, this one lowers the noise
-        score where it should be quiet by <b>{{ improvement }}%</b
-        ><template v-if="store.office.desks.length"> and takes {{ earshotGain }} of {{ store.inEarshot(store.baseline) }} desks out of earshot</template>.
-      </p>
-      <p v-else class="lead">The office needs somewhere to listen (a desk or a quiet zone) and at least one screen position. Add them in the editor.</p>
+      <h1>Where should the panels <b>go</b>?</h1>
+      <p class="lead">Bring the room, mark where the noise is and where it should be quiet, and say how many panels you have. The app simulates the room and shows where to put them.</p>
     </div>
+    <div class="start">
+      <button type="button" @click="scanInput?.click()">
+        <b>Import a scan</b>
+        <span>A .glb file from a phone scan of the room.</span>
+      </button>
+      <button type="button" @click="store.startJob('blank')">
+        <b>Draw the room</b>
+        <span>Start from a rectangle and drag the walls.</span>
+      </button>
+      <button type="button" @click="store.startJob('demo')">
+        <b>Open the demo office</b>
+        <span>A 16 × 10 m office with a coffee point and two quiet zones.</span>
+      </button>
+      <input ref="scanInput" type="file" accept=".glb,model/gltf-binary" hidden @change="importScan" />
+    </div>
+    <p v-if="store.scanError" class="error" role="alert">{{ store.scanError }}</p>
+  </main>
 
-    <div class="tabs" role="tablist" aria-label="View">
-      <button type="button" role="tab" :aria-selected="store.view === 'result'" @click="store.view = 'result'">Result</button>
-      <button type="button" role="tab" :aria-selected="store.view === '3d'" @click="store.view = '3d'">3D view</button>
-      <button type="button" role="tab" :aria-selected="store.view === 'edit'" :disabled="store.isRunning" @click="store.view = 'edit'">Edit office</button>
+  <main v-else class="wrap">
+    <ol class="steps" aria-label="Steps">
+      <li v-for="(s, i) in STEPS" :key="s.id">
+        <button type="button" :aria-current="store.step === s.id ? 'step' : undefined" :disabled="!!blocked(s.id)" :title="blocked(s.id) ?? undefined" @click="go(s.id)">
+          <i>{{ i + 1 }}</i>{{ s.name }}
+        </button>
+      </li>
+    </ol>
+
+    <div class="head">
+      <template v-if="store.step === 'room'">
+        <h1>Start with the <b>room</b>.</h1>
+        <p class="lead">Open a scan and trace the walls on top of it, or drag the corners until the outline matches the room.</p>
+      </template>
+      <template v-else-if="store.step === 'zones'">
+        <h1>Where is the noise, and where should it be <b>quiet</b>?</h1>
+        <p class="lead">Add each noise source and each area that should be quiet, then drag them into place.</p>
+      </template>
+      <template v-else-if="store.step === 'panels'">
+        <h1>How many <b>panels</b>?</h1>
+        <p class="lead">Choose the panels you have. The app simulates the room with them in different places and keeps the quietest layout.</p>
+      </template>
+      <template v-else>
+        <h1>Put the {{ words[store.placedScreens] }} <b>here</b>.</h1>
+        <p class="lead">
+          Out of <b>{{ store.layouts.length }} layouts</b> simulated on Allsolve, this one leaves
+          {{ store.office.quiet_zones.length ? 'the quiet zones' : 'the desks' }} quietest.
+        </p>
+      </template>
     </div>
 
     <div class="grid">
       <div class="col">
-        <div v-if="store.view === 'edit'" class="panel">
-          <OfficeEditor />
-        </div>
-
-        <div v-else-if="store.view === '3d'" class="panel">
-          <Office3D :office="store.office" :params="store.params" :best="store.best" :scan="store.scan" :scan-placement="store.scanPlacement" />
-          <div class="under">
-            <div class="ramp">
-              <i></i>
-              <div><span>36 dB</span><span>48 dB</span><span>60 dB</span></div>
-            </div>
+        <div class="panel">
+          <div class="seg viewswitch" role="group" aria-label="View">
+            <button type="button" :aria-pressed="!show3d" @click="show3d = false">Plan</button>
+            <button type="button" :aria-pressed="show3d" @click="show3d = true">3D</button>
           </div>
-          <p class="cap">
-            Drag to turn the room, scroll to zoom. Screens stand at the chosen panel height ({{ store.params.screen_height_m.toFixed(1) }} m under a
-            {{ store.office.ceiling_height_m.toFixed(2) }} m ceiling); desk tops are coloured by the speech level left at each desk.
-            <template v-if="store.scan"> The blue shape is your scan, placed as in the editor.</template>
-          </p>
-        </div>
 
-        <template v-else-if="store.best && store.baseline">
-          <div class="panel">
-            <OfficePlan :office="store.office" :params="store.params" :before="store.baseline" :after="store.best" :faded-map="store.source === 'allsolve'" />
-            <div class="under">
-              <div class="ramp">
-                <i></i>
-                <div><span>36 dB</span><span>48 dB</span><span>60 dB</span></div>
-              </div>
-            </div>
+          <template v-if="show3d">
+            <Office3D :office="office3d" :params="store.params" :best="store.best" :scan="store.scan" :scan-placement="store.scanPlacement" />
             <p class="cap">
-              Drag the divider across the room. Dashed lines mark where the screens will stand. The number on each desk is the speech level there;
-              bold means the conversation is still in earshot.
-              <template v-if="store.source === 'allsolve'">
-                <b>The numbers on the desks and zones are from Allsolve.</b> The coloured map behind them is still the quick estimate, faded, because
-                Allsolve returns values at the listening points only.
-              </template>
+              Drag to turn the room, scroll to zoom.
+              <template v-if="store.scan"> The blue shape is your scan.</template>
             </p>
-          </div>
+          </template>
+          <template v-else-if="store.step === 'result' && store.best && store.baseline">
+            <OfficePlan :office="store.office" :params="store.params" :before="store.baseline" :after="store.best" />
+            <p class="cap">Each panel is numbered and measured from its centre to the nearer walls. The levels in the quiet zones are before → after.</p>
+          </template>
+          <OfficeEditor v-else />
+        </div>
 
-          <div class="panel">
+        <details v-if="store.step === 'result' || store.logEntries.length" class="panel more">
+          <summary>Details of the simulation</summary>
+          <template v-if="store.hasResult">
             <h2>Every layout tested</h2>
             <SearchChart :layouts="store.layouts" :n-screens="store.placedScreens" />
             <p class="cap">
-              Each dot is one layout. The line is the best score found so far. Lower is quieter; 100 is the office with no screens.
+              Each dot is one layout. The line is the best noise score found so far. Lower is quieter; 100 is the room with no panels.
               <a v-if="store.projectUrl" :href="store.projectUrl" target="_blank" rel="noopener">Open the project in Allsolve</a>
             </p>
-          </div>
-        </template>
-
-        <RunLog v-if="store.view !== 'edit'" />
-
-        <div v-if="store.view === 'result' && !(store.best && store.baseline)" class="panel">
-          <p class="cap" style="margin: 0">Open <b>Edit office</b> to add desks or quiet zones, and screen positions.</p>
-        </div>
+          </template>
+          <RunLog />
+        </details>
       </div>
 
       <div class="col">
-        <ControlPanel />
-        <template v-if="store.best && store.baseline">
-          <ScoreCard :baseline="store.baseline" :best="store.best" :zones="store.office.quiet_zones" :earshot-before="store.inEarshot(store.baseline)" :earshot-after="store.inEarshot(store.best)" />
+        <div v-if="store.step === 'room'" class="panel">
+          <h2>1. Room</h2>
+          <p class="hint">A scan is drawn to scale under the plan. Choose <b>Trace the room</b> and click each corner in turn.</p>
+          <p class="hint">Without a scan, drag the corners. The length of each wall is shown beside it.</p>
+          <button type="button" class="btn next" @click="go('zones')">Next: noise and quiet zones</button>
+        </div>
+
+        <div v-else-if="store.step === 'zones'" class="panel">
+          <h2>2. Noise and quiet zones</h2>
+          <ul class="facts">
+            <li>Noise sources <b>{{ store.office.sources.length }}</b></li>
+            <li>Quiet zones <b>{{ store.office.quiet_zones.length }}</b></li>
+          </ul>
+          <p class="hint">Select a noise source to set how loud it is. Drag the corner of a quiet zone to resize it.</p>
+          <button type="button" class="btn next" :disabled="!!blocked('panels')" @click="go('panels')">Next: panels</button>
+          <p v-if="store.officeBlockedReason" class="hint">{{ store.officeBlockedReason }}</p>
+        </div>
+
+        <ControlPanel v-else-if="store.step === 'panels'" />
+
+        <template v-else-if="store.best && store.baseline">
+          <ScoreCard :baseline="store.baseline" :best="store.best" :zones="store.office.quiet_zones" />
           <PlacementList :office="store.office" :best="store.best" :screen-length="store.screenLength" />
+          <button type="button" class="btn ghost" @click="go('panels')">Change the panels</button>
         </template>
       </div>
     </div>
 
-    <footer class="note">
-      The score is a relative improvement inside the simulation model, not a certified real-world dB reduction. The quick estimate is a simple
-      geometric model that runs in the browser; only results marked "Allsolve simulation" come from the solver.
+    <footer v-if="store.step === 'result'" class="note">
+      The levels are simulated for this model of the room. They compare layouts with each other and are not a certified measurement of the real room.
     </footer>
   </main>
 </template>

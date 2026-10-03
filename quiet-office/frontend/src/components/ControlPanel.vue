@@ -23,9 +23,9 @@ const sizeHint = computed(() => {
 <template>
   <div class="panel">
     <div class="field">
-      <h2>Screens to place</h2>
-      <div class="seg" role="group" aria-label="Number of screens">
-        <button v-for="n in [1, 2, 3]" :key="n" type="button" :aria-pressed="store.nScreens === n" :disabled="store.isRunning" @click="store.setScreens(n)">
+      <h2>How many panels</h2>
+      <div class="seg" role="group" aria-label="Number of panels">
+        <button v-for="n in [1, 2, 3, 4]" :key="n" type="button" :aria-pressed="store.nScreens === n" :disabled="store.isRunning" @click="store.setScreens(n)">
           {{ n }}
         </button>
       </div>
@@ -52,6 +52,20 @@ const sizeHint = computed(() => {
       <p class="hint">{{ store.panelType.name }}: {{ store.panelType.note }}. Ears are at 1.2 m seated, the talker's mouth at 1.5 m.</p>
     </div>
 
+    <div class="run">
+      <button v-if="!store.isRunning" class="btn" type="button" :disabled="!store.canUseAllsolve" @click="store.runOnAllsolve()">Find the best positions</button>
+      <button v-else class="btn ghost" type="button" @click="store.abort()">Stop</button>
+      <p v-if="!store.isRunning && store.allsolveBlockedReason" class="hint">{{ store.allsolveBlockedReason }}</p>
+    </div>
+
+    <div v-if="store.isRunning" class="progress" role="status">
+      <div class="track"><i :style="{ width: `${store.progress}%` }"></i></div>
+      <p class="hint">{{ store.message }}</p>
+    </div>
+    <p v-if="store.error" class="error" role="alert">{{ store.error }}</p>
+
+    <details class="advanced">
+      <summary>Simulation settings</summary>
     <div class="field">
       <h2>Speech bands</h2>
       <div class="seg" role="group" aria-label="Speech bands to simulate">
@@ -77,7 +91,7 @@ const sizeHint = computed(() => {
       </div>
       <p v-if="store.strategy === 'fast'" class="hint">
         The estimate ranks every combination; Allsolve then simulates the {{ Math.max(0, store.plannedLayouts - 1) }} most promising and the
-        empty office, all at the same time. 2D only.
+        empty office, shared over the machines. 2D only.
       </p>
       <p v-else class="hint">{{ store.plannedLayouts }} layouts to simulate.</p>
     </div>
@@ -94,11 +108,12 @@ const sizeHint = computed(() => {
     <div v-if="store.strategy === 'fast'" class="field">
       <h2>Allsolve machines</h2>
       <template v-if="store.machines">
-        <p class="hint" style="margin-top: 0">Every layout runs on its own cloud machine. Booting them is the slow part: the solve itself takes seconds.</p>
+        <p class="hint" style="margin-top: 0">Each cloud machine solves several layouts one after another. Booting the machines is the slow part.</p>
         <p v-if="store.machines.state === 'ready'" class="hint">
           <b>{{ store.machines.machines }} machines are running.</b> A search now simulates {{ store.machines.plan_now.layouts }} layouts in
           about {{ store.machines.plan_now.seconds }} s. They cost credits while they run, and are given back after
-          {{ Math.round(store.machines.idle_limit_s / 60) }} minutes without a search.
+          {{ Math.round(store.machines.idle_limit_s / 60) }} minutes without a search. A second search of the same room skips the
+          setup and simulates about {{ store.machines.plan_repeat.layouts }}.
         </p>
         <p v-else-if="store.machines.state === 'starting'" class="hint" role="status">
           Booting {{ store.machines.machines }} machines. This takes about half a minute.
@@ -139,16 +154,6 @@ const sizeHint = computed(() => {
       </p>
     </div>
 
-    <div class="run">
-      <button v-if="!store.isRunning" class="btn" type="button" :disabled="!store.canUseAllsolve" @click="store.runOnAllsolve()">Run on Allsolve</button>
-      <button v-else class="btn ghost" type="button" @click="store.abort()">Stop the run</button>
-      <p v-if="!store.isRunning && store.allsolveBlockedReason" class="hint">{{ store.allsolveBlockedReason }}</p>
-    </div>
-
-    <div v-if="store.isRunning" class="progress" role="status">
-      <div class="track"><i :style="{ width: `${store.progress}%` }"></i></div>
-      <p class="hint">{{ store.message }}</p>
-    </div>
-    <p v-if="store.error" class="error" role="alert">{{ store.error }}</p>
+    </details>
   </div>
 </template>

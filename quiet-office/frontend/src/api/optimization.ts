@@ -73,8 +73,8 @@ class OptimizationAPI {
   }
 
   /** The machines held ready for the fast search; action 'warm' boots them, 'release' gives them back */
-  machines(sources: number, bands: number, budgetS: number, action?: 'warm' | 'release'): Promise<Machines> {
-    const query = `sources=${sources}&bands=${bands}&budget_s=${budgetS}`
+  machines(sources: number, bands: number, budgetS: number, areaM2: number, maxHz: number, action?: 'warm' | 'release'): Promise<Machines> {
+    const query = `sources=${sources}&bands=${bands}&budget_s=${budgetS}&area_m2=${areaM2}&max_hz=${maxHz}`
     return request(`/machines${action ? `/${action}` : ''}?${query}`, action ? { method: 'POST' } : undefined)
   }
 

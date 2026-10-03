@@ -99,6 +99,8 @@ export interface Machines {
   warm_size: number
   plan_cold: FastPlan
   plan_warm: FastPlan
+  /** Warm machines and a room that was searched before: its project and mesh are used again. */
+  plan_repeat: FastPlan
   plan_now: FastPlan
 }
 
@@ -179,45 +181,35 @@ export interface Evidence {
   best_pressures_pa: number[][][]
 }
 
-/** Where the numbers on screen came from. */
-export type ResultSource = 'estimate' | 'allsolve'
+/** The four steps of a job, in order. */
+export type Step = 'room' | 'zones' | 'panels' | 'result'
 
 /** A desk counts as "in earshot" of the conversation above this speech level. */
 export const EARSHOT_DB = 45
 
-/** Same demo office as backend default_office(), used when the backend is offline. */
+const RECTANGLE = (width: number, height: number): Point[] => [
+  { x: 0, y: 0 },
+  { x: width, y: 0 },
+  { x: width, y: height },
+  { x: 0, y: height },
+]
+
+/** Demo office: a coffee point at one end, two areas that should be quiet at the other. */
 export function defaultOffice(): Office {
-  const desks: Point[] = []
-  for (const [cx, cy] of [[5, 2], [10.5, 2], [4.4, 7], [10.5, 7]]) {
-    for (const [dx, dy] of [[0, 0], [1.6, 0], [0, 1.4], [1.6, 1.4]]) {
-      desks.push({ x: cx + dx, y: cy + dy })
-    }
-  }
-  const slots: [number, number, 'h' | 'v', string][] = [
-    [3.4, 5.0, 'v', 'Directly in front of the coffee point'],
-    [3.4, 3.2, 'v', 'Beside the coffee point, north side'],
-    [3.4, 6.8, 'v', 'Beside the coffee point, south side'],
-    [5.8, 4.4, 'h', 'Along the aisle edge of the near north desks'],
-    [5.2, 5.9, 'h', 'Along the aisle edge of the near south desks'],
-    [8.4, 2.7, 'v', 'Centre aisle, north end'],
-    [8.4, 5.0, 'v', 'Centre aisle, middle'],
-    [8.4, 7.7, 'v', 'Centre aisle, south end'],
-    [11.3, 4.5, 'h', 'Along the aisle edge of the far north desks'],
-    [11.3, 5.9, 'h', 'Along the aisle edge of the far south desks'],
-    [9.6, 2.7, 'v', 'In front of the far north desks'],
-    [9.6, 7.7, 'v', 'In front of the far south desks'],
-  ]
   return {
-    outline: [
-      { x: 0, y: 0 },
-      { x: 16, y: 0 },
-      { x: 16, y: 10 },
-      { x: 0, y: 10 },
-    ],
+    outline: RECTANGLE(16, 10),
     ceiling_height_m: 2.7,
-    sources: [{ x: 2.2, y: 5, level_db: 60, label: 'Conversation' }],
-    desks,
-    quiet_zones: [],
-    slots: slots.map(([x, y, orientation, label], id) => ({ id, x, y, orientation, label })),
+    sources: [{ x: 2.2, y: 5, level_db: 60, label: 'Coffee point' }],
+    desks: [],
+    quiet_zones: [
+      { x: 9.6, y: 1.2, width: 4, height: 2.8, label: 'Focus desks' },
+      { x: 9.6, y: 6, width: 4, height: 2.8, label: 'Phone booths' },
+    ],
+    slots: [],
   }
+}
+
+/** An empty room to draw or trace into. */
+export function blankOffice(): Office {
+  return { outline: RECTANGLE(8, 6), ceiling_height_m: 2.7, sources: [], desks: [], quiet_zones: [], slots: [] }
 }

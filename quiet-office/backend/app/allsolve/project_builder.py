@@ -32,7 +32,7 @@ except ImportError:  # the API can still start and report that the SDK is missin
     allsolve = None
 
 TALKER_RADIUS_M = 0.15
-MAX_SCREENS = 3  # as many as OptimizationParams.n_screens allows
+MAX_SCREENS = 4  # as many as OptimizationParams.n_screens allows
 WALL_THICKNESS_M = 0.2
 ON_BOUNDS_TOLERANCE_M = 1e-6
 ELEMENTS_PER_WAVELENGTH = 6
@@ -198,6 +198,8 @@ def build_office_project(client: Any, params: OptimizationParams, log: Any = Non
             (w, params.screen_thickness_m, f"Screen {i} size along x [m]"),
             (h, params.screen_length_m, f"Screen {i} size along y [m]"),
         ]
+    if fixed_mesh:
+        variables.append(("batch", 0, "Which share of the layouts a machine solves (see batch_script.py)"))
     project.create_variables(variables)
     sent(
         "variables",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 /**
- * Floor-plan editor: drag room corners, desks, the conversation and the places a screen may
- * stand. A phone scan (.glb) can be opened as a to-scale underlay and traced into a room.
+ * Floor-plan editor: drag room corners, noise sources and quiet zones. A phone scan (.glb) can be
+ * opened as a to-scale underlay and traced into a room. The tools shown follow the step of the job.
  */
 import { computed, ref } from 'vue'
 import type { Point } from '@/types'
@@ -9,7 +9,6 @@ import { useOptimizationStore } from '@/stores/optimizationStore'
 import type { Selection } from '@/stores/optimizationStore'
 import { boundsOf, pointInPolygon, polygonPath, snap } from '@/physics/geometry'
 import type { Bounds } from '@/physics/geometry'
-import { segmentOf } from '@/physics/estimate'
 
 const store = useOptimizationStore()
 const U = 10 // drawing units per metre
@@ -44,7 +43,6 @@ const walls = computed(() =>
     return { index: i, mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2, length: Math.hypot(b.x - a.x, b.y - a.y), ox, oy }
   }),
 )
-const slotLines = computed(() => store.office.slots.map((slot) => segmentOf(slot, store.screenLength)))
 const scanPath = computed(() => {
   const s = store.scanSegments
   if (!s) return ''
@@ -153,8 +151,6 @@ function onKeydown(event: KeyboardEvent): void {
     store.nudgeSelected(...moves[event.key])
   } else if (event.key === 'Delete' || event.key === 'Backspace') {
     store.deleteSelected()
-  } else if (event.key.toLowerCase() === 'r') {
-    store.rotateSelectedSlot()
   }
 }
 
@@ -168,19 +164,10 @@ async function onFile(event: Event): Promise<void> {
 
 <template>
   <div class="editor">
-    <div class="toolbar" role="toolbar" aria-label="Edit the office">
-      <button type="button" :disabled="tracing || store.office.sources.length >= 6" @click="store.addSource()">Add noise source</button>
-      <button type="button" :disabled="tracing || store.office.quiet_zones.length >= 10" @click="store.addZone()">Add quiet zone</button>
-      <button type="button" :disabled="tracing" @click="store.addDesk()">Add desk</button>
-      <button type="button" :disabled="tracing" @click="store.addSlot()">Add screen position</button>
-      <button type="button" :disabled="tracing" @click="store.suggestPositions()">Suggest screen positions</button>
-      <button type="button" :disabled="tracing || store.selection?.kind !== 'slot'" @click="store.rotateSelectedSlot()">Rotate</button>
-      <button type="button" :disabled="tracing || !store.canDeleteSelected" @click="store.deleteSelected()">Delete</button>
-      <span class="gap"></span>
+    <div v-if="store.step === 'room'" class="toolbar" role="toolbar" aria-label="Set the room">
       <template v-if="!tracing">
-        <button type="button" @click="fileInput?.click()">Open 3D model (.glb)</button>
-        <button type="button" @click="startTrace()">Trace room</button>
-        <button type="button" @click="store.resetOffice()">Reset to demo office</button>
+        <button type="button" class="primary" @click="fileInput?.click()">{{ store.scan ? 'Open another scan' : 'Open a scan (.glb)' }}</button>
+        <button type="button" :class="{ primary: !!store.scan }" @click="startTrace()">Trace the room</button>
       </template>
       <template v-else>
         <button type="button" class="primary" :disabled="trace.length < 3" @click="finishTrace()">Finish ({{ trace.length }} corners)</button>
@@ -188,6 +175,12 @@ async function onFile(event: Event): Promise<void> {
         <button type="button" @click="cancelTrace()">Cancel</button>
       </template>
       <input ref="fileInput" type="file" accept=".glb,model/gltf-binary" hidden @change="onFile" />
+    </div>
+    <div v-else-if="store.step === 'zones'" class="toolbar" role="toolbar" aria-label="Mark the noise and the quiet zones">
+      <button type="button" class="primary" :disabled="store.office.sources.length >= 6" @click="store.addSource()">Add noise source</button>
+      <button type="button" class="primary" :disabled="store.office.quiet_zones.length >= 10" @click="store.addZone()">Add quiet zone</button>
+      <span class="gap"></span>
+      <button type="button" :disabled="!store.canDeleteSelected" @click="store.deleteSelected()">Delete</button>
     </div>
 
     <div v-if="selectedSource" class="scanbar">
@@ -209,7 +202,7 @@ async function onFile(event: Event): Promise<void> {
       <span class="file">{{ selectedZone.width.toFixed(1) }} × {{ selectedZone.height.toFixed(1) }} m · drag the corner handle to resize</span>
     </div>
 
-    <div v-if="store.scan" class="scanbar">
+    <div v-if="store.scan && store.step === 'room'" class="scanbar">
       <span class="file">{{ store.scanName }} · {{ Math.round(store.scan.triangles / 1000) }}k triangles</span>
       <label>
         Cut height <output>{{ store.sliceHeight.toFixed(2) }} m</output>
@@ -308,21 +301,6 @@ async function onFile(event: Event): Promise<void> {
         </g>
 
         <g
-          v-for="(slot, i) in store.office.slots"
-          :key="`s${slot.id}`"
-          class="item slot"
-          :class="{ on: isSelected('slot', i), out: isOutside(slot) }"
-          tabindex="0"
-          role="button"
-          :aria-label="`Screen position ${i + 1}`"
-          @focus="store.selection = { kind: 'slot', index: i }"
-          @pointerdown="startDrag($event, { kind: 'slot', index: i }, slot)"
-        >
-          <line :x1="slotLines[i].x1 * U" :y1="slotLines[i].y1 * U" :x2="slotLines[i].x2 * U" :y2="slotLines[i].y2 * U" />
-          <line class="hit" :x1="slotLines[i].x1 * U" :y1="slotLines[i].y1 * U" :x2="slotLines[i].x2 * U" :y2="slotLines[i].y2 * U" />
-        </g>
-
-        <g
           v-for="(desk, i) in store.office.desks"
           :key="`d${i}`"
           class="item desk"
@@ -377,14 +355,10 @@ async function onFile(event: Event): Promise<void> {
 
     <p class="cap">
       <b>{{ roomSize }}</b> ·
-      <label class="inline">ceiling <input v-model.number="store.office.ceiling_height_m" type="number" min="2" max="6" step="0.05" /> m</label> ·
-      {{ store.office.sources.length }} noise {{ store.office.sources.length === 1 ? 'source' : 'sources' }} · {{ store.office.quiet_zones.length }} quiet
-      {{ store.office.quiet_zones.length === 1 ? 'zone' : 'zones' }} · {{ store.office.desks.length }} desks · {{ store.office.slots.length }} screen positions.
-      <template v-if="store.notice"> {{ store.notice }}</template>
-      <template v-else>
-        Drag anything to move it. The dot in the middle of a wall adds a corner. Arrow keys move the selected item, Delete removes it, R turns a
-        screen position.
-      </template>
+      <label class="inline">ceiling <input v-model.number="store.office.ceiling_height_m" type="number" min="2" max="6" step="0.05" /> m</label>
+      <template v-if="store.notice"> · {{ store.notice }}</template>
+      <template v-else-if="store.step === 'room'"> · Drag a corner to move it. The dot in the middle of a wall adds a corner.</template>
+      <template v-else-if="store.step === 'zones'"> · Drag anything to move it. Arrow keys move the selected item, Delete removes it.</template>
     </p>
   </div>
 </template>

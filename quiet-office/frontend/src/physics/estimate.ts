@@ -306,12 +306,18 @@ export function suggestSlots(office: Office, screenLength: number, limit = 24): 
       }
     }
   }
-  // Most useful first, and never two on the same spot: screens there would cross each other.
+  // Most useful first, and never two that touch: any of them may be chosen together.
+  const apart = (a: Segment, b: Segment) => {
+    const dx = Math.max(0, Math.min(a.x1, a.x2) - Math.max(b.x1, b.x2), Math.min(b.x1, b.x2) - Math.max(a.x1, a.x2))
+    const dy = Math.max(0, Math.min(a.y1, a.y2) - Math.max(b.y1, b.y2), Math.min(b.y1, b.y2) - Math.max(a.y1, a.y2))
+    return Math.hypot(dx, dy) > 0.3
+  }
   candidates.sort((p, q) => q.worth - p.worth)
   const chosen: Slot[] = []
   for (const { slot } of candidates) {
     if (chosen.length >= limit) break
-    if (chosen.every((c) => dist(c.x, c.y, slot.x, slot.y) > 0.9)) chosen.push(slot)
+    const g = segmentOf(slot, screenLength)
+    if (chosen.every((c) => apart(segmentOf(c, screenLength), g))) chosen.push(slot)
   }
   return chosen.map((slot, id) => ({ ...slot, id, label: `Suggested position ${id + 1}` }))
 }

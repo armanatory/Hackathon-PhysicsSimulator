@@ -175,7 +175,7 @@ class OptimizationParams(BaseModel):
     """What the user asks for: how many screens, and how to search."""
 
     office: Office = Field(default_factory=default_office)
-    n_screens: int = Field(default=3, ge=1, le=3, description="Screens to place")
+    n_screens: int = Field(default=3, ge=1, le=4, description="Screens to place")
     screen_length_m: float = Field(default=1.8, gt=0.3, le=4.0)
     screen_thickness_m: float = Field(default=0.1, gt=0.02, le=0.5)
     screen_height_m: float = Field(
@@ -218,7 +218,8 @@ class OptimizationParams(BaseModel):
         description=(
             "greedy places one screen at a time and keeps the best (about 12+11+10 layouts); "
             "exhaustive tries every combination (220 layouts for 3 screens in 12 slots); "
-            "fast simulates as many of candidate_layouts as fit time_budget_s, all at once"
+            "fast simulates as many of candidate_layouts as fit time_budget_s: up to 100 machines, "
+            "each solving several layouts one after another"
         ),
     )
     candidate_layouts: List[List[int]] = Field(

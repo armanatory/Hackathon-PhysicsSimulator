@@ -57,6 +57,32 @@ export function snap(value: number, step = 0.1): number {
   return Number((Math.round(value / step) * step).toFixed(3))
 }
 
+export interface WallDistances {
+  left: number
+  right: number
+  top: number
+  bottom: number
+}
+
+/** Distance from a point to the nearest wall straight left, right, up and down on the plan. */
+export function wallDistances(p: Point, polygon: Point[]): WallDistances {
+  const d: WallDistances = { left: Infinity, right: Infinity, top: Infinity, bottom: Infinity }
+  for (let i = 0; i < polygon.length; i++) {
+    const a = polygon[i], b = polygon[(i + 1) % polygon.length]
+    if (a.y > p.y !== b.y > p.y) {
+      const x = a.x + ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y)
+      if (x <= p.x) d.left = Math.min(d.left, p.x - x)
+      else d.right = Math.min(d.right, x - p.x)
+    }
+    if (a.x > p.x !== b.x > p.x) {
+      const y = a.y + ((b.y - a.y) * (p.x - a.x)) / (b.x - a.x)
+      if (y <= p.y) d.top = Math.min(d.top, p.y - y)
+      else d.bottom = Math.min(d.bottom, y - p.y)
+    }
+  }
+  return d
+}
+
 /** SVG path for a closed polygon, scaled by `unit` drawing units per metre. */
 export function polygonPath(polygon: Point[], unit: number): string {
   return polygon.map((p, i) => `${i ? 'L' : 'M'}${(p.x * unit).toFixed(2)} ${(p.y * unit).toFixed(2)}`).join('') + 'Z'

@@ -19,6 +19,13 @@ only pays for meshing and solving.
 The fast search also uses the one-mesh model (see project_builder.py), which needs no mesh per
 layout. Measured with it: 7 layouts from a cold start in 27 s, and 200 layouts (400 solves) on
 100 warm machines in 31 s. It agreed with the cut-out model to 0.1 dB on every desk and zone.
+
+With one mesh a machine does not stop after one solve (see batch_script.py): each sweep step
+solves its share of the layouts one after another. Measured on the demo office (143 000
+unknowns): 1.65 s per solve, of which 1.4 s is the factorisation, and the same pressures to
+the last digit. A 4-core machine was only 1.3 times faster, so many small machines stay best.
+Measured on 100 warm machines, two bands: 300 layouts (600 solves) in 28.9 s. A search on a
+room that was searched before uses its project and mesh again: 500 layouts in 22.6 s.
 """
 
 import atexit
@@ -29,6 +36,8 @@ import time
 from typing import Any, Optional, Tuple
 
 from ..config import PROJECT_ROOT, get_settings
+from ..models.office import SPEED_OF_SOUND
+from .project_builder import ELEMENTS_PER_WAVELENGTH
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +61,15 @@ FIXED_MESH_S = 5.5  # the one mesh of the one-mesh model; it needs no reserved m
 FIRST_SOLVE_WAVE_S = 8.5
 NEXT_SOLVE_WAVE_S = 3.5
 READ_RESULTS_S = 1.5
+# One-mesh model, where a machine solves several layouts in one sweep step
+JOB_OVERHEAD_S = 7.0  # start the steps, load the mesh on each machine, upload the results
+REUSED_JOB_OVERHEAD_S = 5.5  # measured 3.9 to 4.6 s when an earlier simulation already used the mesh
+REUSE_SETUP_S = 1.0  # project and mesh are kept from an earlier run: only a sweep and a simulation are made
+MAX_FAST_LAYOUTS = 3001  # OptimizationParams.candidate_layouts allows 3000, plus the untreated office
+MEASURED_UNKNOWNS = 143_366  # the demo office at 500 Hz
+MEASURED_ASSEMBLE_S = 0.25  # grows in step with the unknowns
+MEASURED_FACTORISE_S = 1.4  # grows with the unknowns to the power 1.5 for a 2D direct solve
+MESH_REFINEMENT = 1.27  # the mesh is finer around sources and screen positions
 COLD_MACHINES = 15  # used when nothing fits the budget: few machines boot fastest
 
 _client_lock = threading.Lock()
@@ -81,22 +99,53 @@ def boot_seconds(machines: int) -> float:
     return BOOT_BASE_S + BOOT_PER_MACHINE_S * machines
 
 
-def run_seconds(layouts: int, solves_per_layout: int, machines: int, warm: bool, fixed_mesh: bool = True) -> float:
+def unknowns_2d(area_m2: float, max_frequency_hz: float) -> int:
+    """Rough number of pressure unknowns in one 2D solve: second-order triangles, two harmonics."""
+    mesh_size = SPEED_OF_SOUND / (max_frequency_hz * ELEMENTS_PER_WAVELENGTH)
+    corners = MESH_REFINEMENT * area_m2 / (0.866 * mesh_size**2)
+    return int(8 * corners)
+
+
+def solve_seconds(unknowns: int = MEASURED_UNKNOWNS) -> float:
+    """Expected time of one solve inside a running job, scaled from the measured demo office."""
+    size = unknowns / MEASURED_UNKNOWNS
+    return MEASURED_ASSEMBLE_S * size + MEASURED_FACTORISE_S * size**1.5
+
+
+def run_seconds(
+    layouts: int,
+    solves_per_layout: int,
+    machines: int,
+    warm: bool,
+    fixed_mesh: bool = True,
+    solve_s: Optional[float] = None,
+    reused: bool = False,
+) -> float:
     """Expected wall time of one fast search of `layouts` layouts (the untreated office included).
 
-    With `fixed_mesh` there is one mesh, made while the machines boot. Without it every layout
-    is meshed on the reserved machines first.
+    With `fixed_mesh` there is one mesh, made while the machines boot, and every machine solves
+    its share of the layouts in one job; `reused` means project and mesh are already there.
+    Without it every layout is meshed on the reserved machines first, and each solve is a job.
     """
     booted = 0.0 if warm else boot_seconds(machines) + BOOT_TO_START_S
     if fixed_mesh:
-        start, mesh = max(SETUP_S + FIXED_MESH_S, booted), 0.0
-    else:
-        start, mesh = max(SETUP_S, booted), math.ceil(layouts / machines) * MESH_WAVE_S
+        start = max(REUSE_SETUP_S if reused else SETUP_S + FIXED_MESH_S, booted)
+        per_machine = math.ceil(layouts / min(machines, layouts)) * solves_per_layout
+        overhead = REUSED_JOB_OVERHEAD_S if reused else JOB_OVERHEAD_S
+        return start + overhead + per_machine * (solve_s or solve_seconds()) + READ_RESULTS_S
+    start, mesh = max(SETUP_S, booted), math.ceil(layouts / machines) * MESH_WAVE_S
     waves = math.ceil(layouts * solves_per_layout / machines)
     return start + mesh + FIRST_SOLVE_WAVE_S + (waves - 1) * NEXT_SOLVE_WAVE_S + READ_RESULTS_S
 
 
-def plan_fast_search(budget_s: float, solves_per_layout: int, warm_machines: int = 0, fixed_mesh: bool = True) -> Tuple[int, int, float]:
+def plan_fast_search(
+    budget_s: float,
+    solves_per_layout: int,
+    warm_machines: int = 0,
+    fixed_mesh: bool = True,
+    solve_s: Optional[float] = None,
+    reused: bool = False,
+) -> Tuple[int, int, float]:
     """The most layouts that fit the budget: (layouts, machines to run them on, expected seconds).
 
     The count includes the untreated office. With a warm pool the machine count is given.
@@ -108,14 +157,14 @@ def plan_fast_search(budget_s: float, solves_per_layout: int, warm_machines: int
     best: Optional[Tuple[int, int, float]] = None
     for machines in [warm_machines] if warm else range(5, MAX_PARALLEL_STEPS + 1, 5):
         layouts = 1
-        while run_seconds(layouts + 1, solves_per_layout, machines, warm, fixed_mesh) <= budget_s:
+        while layouts < MAX_FAST_LAYOUTS and run_seconds(layouts + 1, solves_per_layout, machines, warm, fixed_mesh, solve_s, reused) <= budget_s:
             layouts += 1
         if layouts >= 2 and (best is None or layouts > best[0]):
-            best = (layouts, machines, run_seconds(layouts, solves_per_layout, machines, warm, fixed_mesh))
+            best = (layouts, machines, run_seconds(layouts, solves_per_layout, machines, warm, fixed_mesh, solve_s, reused))
     if best is None:
         machines = warm_machines or COLD_MACHINES
-        layouts = max(2, machines // solves_per_layout)
-        best = (layouts, machines, run_seconds(layouts, solves_per_layout, machines, warm, fixed_mesh))
+        layouts = machines if fixed_mesh else max(2, machines // solves_per_layout)
+        best = (layouts, machines, run_seconds(layouts, solves_per_layout, machines, warm, fixed_mesh, solve_s, reused))
     return best
 
 

@@ -10,6 +10,8 @@ from fastapi import APIRouter, BackgroundTasks, HTTPException
 from ..allsolve import (
     ALLSOLVE_AVAILABLE,
     WARM_MACHINES,
+    solve_seconds,
+    unknowns_2d,
     OptimizationAborted,
     OptimizationRunner,
     plan_fast_search,
@@ -57,28 +59,41 @@ async def get_capabilities() -> Capabilities:
     )
 
 
-def _machines(sources: int, bands: int, budget_s: float) -> dict:
-    """The warm machine pool, and what a fast search could do right now with and without it."""
+def _machines(sources: int, bands: int, budget_s: float, area_m2: float = 160.0, max_hz: float = 500.0) -> dict:
+    """The warm machine pool, and what a fast search could do right now with and without it.
+
+    The room's area and highest band set how long one solve takes. `plan_repeat` is a search on
+    warm machines of a room that was searched before, whose project and mesh are used again.
+    """
     status = pool.status()
     solves_per_layout = max(1, sources) * max(1, bands)
+    solve_s = solve_seconds(unknowns_2d(area_m2, max_hz))
 
-    def plan(machines: int) -> dict:
-        layouts, used, seconds = plan_fast_search(budget_s, solves_per_layout, machines)
+    def plan(machines: int, reused: bool = False) -> dict:
+        layouts, used, seconds = plan_fast_search(budget_s, solves_per_layout, machines, True, solve_s, reused)
         return {"layouts": layouts, "machines": used, "seconds": round(seconds)}
 
-    return {**status, "warm_size": WARM_MACHINES, "plan_cold": plan(0), "plan_warm": plan(WARM_MACHINES), "plan_now": plan(status["machines"])}
+    return {
+        **status,
+        "warm_size": WARM_MACHINES,
+        "solve_s": round(solve_s, 2),
+        "plan_cold": plan(0),
+        "plan_warm": plan(WARM_MACHINES),
+        "plan_repeat": plan(WARM_MACHINES, True),
+        "plan_now": plan(status["machines"]),
+    }
 
 
 @router.get("/machines")
-async def get_machines(sources: int = 1, bands: int = 2, budget_s: float = 30.0) -> dict:
+async def get_machines(sources: int = 1, bands: int = 2, budget_s: float = 30.0, area_m2: float = 160.0, max_hz: float = 500.0) -> dict:
     """Whether cloud machines are being held ready, and how many layouts fit the time budget."""
     if not ALLSOLVE_AVAILABLE or not get_settings().has_credentials:
         raise HTTPException(status_code=503, detail="Allsolve is not available on the backend")
-    return await asyncio.to_thread(_machines, sources, bands, budget_s)
+    return await asyncio.to_thread(_machines, sources, bands, budget_s, area_m2, max_hz)
 
 
 @router.post("/machines/warm")
-async def warm_machines(sources: int = 1, bands: int = 2, budget_s: float = 30.0) -> dict:
+async def warm_machines(sources: int = 1, bands: int = 2, budget_s: float = 30.0, area_m2: float = 160.0, max_hz: float = 500.0) -> dict:
     """Boot machines on Allsolve and hold them, so the next fast search does not wait for them.
 
     They cost credits while held. An unused pool is given back after five minutes.
@@ -86,14 +101,14 @@ async def warm_machines(sources: int = 1, bands: int = 2, budget_s: float = 30.0
     if not ALLSOLVE_AVAILABLE or not get_settings().has_credentials:
         raise HTTPException(status_code=503, detail="Allsolve is not available on the backend")
     pool.warm(WARM_MACHINES)
-    return await asyncio.to_thread(_machines, sources, bands, budget_s)
+    return await asyncio.to_thread(_machines, sources, bands, budget_s, area_m2, max_hz)
 
 
 @router.post("/machines/release")
-async def release_machines(sources: int = 1, bands: int = 2, budget_s: float = 30.0) -> dict:
+async def release_machines(sources: int = 1, bands: int = 2, budget_s: float = 30.0, area_m2: float = 160.0, max_hz: float = 500.0) -> dict:
     """Give the held machines back to Allsolve."""
     await asyncio.to_thread(pool.release)
-    return await asyncio.to_thread(_machines, sources, bands, budget_s)
+    return await asyncio.to_thread(_machines, sources, bands, budget_s, area_m2, max_hz)
 
 
 @router.post("/explain", response_model=ExplainResponse)

@@ -1,131 +1,72 @@
 <script setup lang="ts">
 /**
- * Floor plan with the sound map. Before and after are stacked and split by a draggable divider.
- * The map is always the in-browser estimate; the desk numbers come from the results passed in.
+ * The result on the floor plan: where each panel goes, measured from the walls, and the level in
+ * each quiet zone before and after. Every number comes from the results passed in.
  */
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed } from 'vue'
 import type { LayoutResult, Office, OptimizationParams } from '@/types'
-import { EARSHOT_DB } from '@/types'
-import { levelColor, paintField, segmentOf } from '@/physics/estimate'
-import { boundsOf, polygonPath } from '@/physics/geometry'
+import { segmentOf } from '@/physics/estimate'
+import { boundsOf, polygonPath, wallDistances } from '@/physics/geometry'
 
 const props = defineProps<{
   office: Office
   params: OptimizationParams
   before: LayoutResult
   after: LayoutResult
-  /** Fade the estimated map when the numbers on top of it come from Allsolve. */
-  fadedMap?: boolean
 }>()
 
 const U = 10 // drawing units per metre
-const split = ref(50)
-const beforeCanvas = ref<HTMLCanvasElement | null>(null)
-const afterCanvas = ref<HTMLCanvasElement | null>(null)
 
 // A little air round the room so the wall line is not cut off.
-const view = computed(() => boundsOf(props.office.outline, 0.15))
+const view = computed(() => boundsOf(props.office.outline, 0.3))
 const viewBox = computed(() => `${view.value.minX * U} ${view.value.minY * U} ${view.value.width * U} ${view.value.height * U}`)
 const outlinePath = computed(() => polygonPath(props.office.outline, U))
-const screens = computed(() =>
-  props.after.slot_ids.map((id) => segmentOf(props.office.slots.find((s) => s.id === id)!, props.params.screen_length_m)),
-)
 
-function repaint(): void {
-  if (beforeCanvas.value) paintField(beforeCanvas.value, props.office, [], props.params, view.value)
-  if (afterCanvas.value) paintField(afterCanvas.value, props.office, props.after.slot_ids, props.params, view.value)
-}
-onMounted(repaint)
-watch(() => [props.office, props.after.slot_ids.join(','), props.params.frequencies_hz.join(','), props.params.screen_length_m], repaint, { deep: true })
+const panels = computed(() =>
+  props.after.slot_ids.map((id, i) => {
+    const slot = props.office.slots.find((s) => s.id === id)!
+    const d = wallDistances(slot, props.office.outline)
+    // One measure across and one down, each to the nearer wall.
+    const across = d.left <= d.right ? -d.left : d.right
+    const down = d.top <= d.bottom ? -d.top : d.bottom
+    return { number: i + 1, slot, line: segmentOf(slot, props.params.screen_length_m), across, down }
+  }),
+)
 </script>
 
 <template>
-  <div class="plan" :class="{ faded: fadedMap }" :style="{ aspectRatio: `${view.width} / ${view.height}` }">
-    <div
-      v-for="side in (['before', 'after'] as const)"
-      :key="side"
-      class="stack"
-      :style="{ clipPath: side === 'before' ? `inset(0 ${100 - split}% 0 0)` : `inset(0 0 0 ${split}%)` }"
-    >
-      <canvas :ref="(el) => (side === 'before' ? (beforeCanvas = el as HTMLCanvasElement) : (afterCanvas = el as HTMLCanvasElement))" />
-      <svg :viewBox="viewBox" aria-hidden="true">
-        <g v-for="(zone, i) in office.quiet_zones" :key="`z${i}`">
-          <rect
-            :x="zone.x * U"
-            :y="zone.y * U"
-            :width="zone.width * U"
-            :height="zone.height * U"
-            rx="1.5"
-            fill="#2a7a5f"
-            fill-opacity=".08"
-            stroke="#2a7a5f"
-            stroke-width=".6"
-            stroke-dasharray="2 1.4"
-          />
-          <text :x="zone.x * U + 1.6" :y="zone.y * U + 4.4" font-size="3" fill="#17302b">{{ zone.label || 'Quiet zone' }}</text>
-          <text
-            :x="zone.x * U + 1.6"
-            :y="zone.y * U + 9.4"
-            font-size="4.2"
-            fill="#17302b"
-            :font-weight="((side === 'before' ? before : after).zone_levels_db[i] ?? 0) >= EARSHOT_DB ? 700 : 400"
-          >
-            {{ ((side === 'before' ? before : after).zone_levels_db[i] ?? 0).toFixed(0) }} dB
-          </text>
-        </g>
+  <svg class="resultplan" :viewBox="viewBox" role="img" aria-label="Floor plan with the panels in place">
+    <path :d="outlinePath" class="room" />
 
-        <g v-for="(desk, i) in office.desks" :key="i">
-          <rect :x="desk.x * U - 6.5" :y="desk.y * U - 4.5" width="13" height="9" rx="1.6" fill="#fff" stroke="#17302b" stroke-width=".5" />
-          <circle
-            :cx="desk.x * U - 3.4"
-            :cy="desk.y * U"
-            r="1.5"
-            :fill="levelColor((side === 'before' ? before : after).desk_levels_db[i] ?? 0)"
-            stroke="#17302b"
-            stroke-width=".4"
-          />
-          <text
-            :x="desk.x * U + 1.9"
-            :y="desk.y * U + 1.2"
-            font-size="3.3"
-            text-anchor="middle"
-            fill="#17302b"
-            :font-weight="((side === 'before' ? before : after).desk_levels_db[i] ?? 0) >= EARSHOT_DB ? 700 : 400"
-          >
-            {{ ((side === 'before' ? before : after).desk_levels_db[i] ?? 0).toFixed(0) }}
-          </text>
-        </g>
+    <g v-for="(zone, i) in office.quiet_zones" :key="`z${i}`">
+      <rect class="zone" :x="zone.x * U" :y="zone.y * U" :width="zone.width * U" :height="zone.height * U" rx="1.5" />
+      <text :x="zone.x * U + 1.6" :y="zone.y * U + 4.4" class="small">{{ zone.label || 'Quiet zone' }}</text>
+      <text :x="zone.x * U + 1.6" :y="zone.y * U + 10" class="level">
+        {{ (before.zone_levels_db[i] ?? 0).toFixed(0) }} → {{ (after.zone_levels_db[i] ?? 0).toFixed(0) }} dB
+      </text>
+    </g>
 
-        <g v-for="(source, i) in office.sources" :key="`n${i}`">
-          <circle :cx="source.x * U" :cy="source.y * U" r="2.2" fill="#17302b" />
-          <path
-            v-for="r in [4.5, 7]"
-            :key="r"
-            :d="`M${source.x * U + r * 0.6} ${source.y * U - r * 0.8} A${r} ${r} 0 0 1 ${source.x * U + r * 0.6} ${source.y * U + r * 0.8}`"
-            fill="none"
-            stroke="#17302b"
-            stroke-width=".7"
-          />
-          <text :x="source.x * U" :y="source.y * U + 11" font-size="3" text-anchor="middle" fill="#17302b">
-            {{ (source.label || 'noise').toLowerCase() }} · {{ source.level_db }} dB
-          </text>
-        </g>
+    <g v-for="(desk, i) in office.desks" :key="`d${i}`">
+      <rect class="desk" :x="desk.x * U - 6.5" :y="desk.y * U - 4.5" width="13" height="9" rx="1.6" />
+      <text :x="desk.x * U" :y="desk.y * U + 1.2" class="small" text-anchor="middle">{{ (after.desk_levels_db[i] ?? 0).toFixed(0) }}</text>
+    </g>
 
-        <g v-for="(g, i) in screens" :key="`s${i}`">
-          <template v-if="side === 'after'">
-            <line :x1="g.x1 * U" :y1="g.y1 * U" :x2="g.x2 * U" :y2="g.y2 * U" stroke="#17302b" stroke-width="2.4" stroke-linecap="round" />
-            <line :x1="g.x1 * U" :y1="g.y1 * U" :x2="g.x2 * U" :y2="g.y2 * U" stroke="#d9a520" stroke-width=".9" stroke-linecap="round" />
-          </template>
-          <line v-else :x1="g.x1 * U" :y1="g.y1 * U" :x2="g.x2 * U" :y2="g.y2 * U" stroke="#17302b" stroke-width="1" stroke-dasharray="2 1.6" />
-        </g>
+    <g v-for="(source, i) in office.sources" :key="`n${i}`">
+      <circle :cx="source.x * U" :cy="source.y * U" r="6" class="halo" />
+      <circle :cx="source.x * U" :cy="source.y * U" r="2.2" class="ink" />
+      <text :x="source.x * U" :y="source.y * U + 10.5" class="small" text-anchor="middle">{{ source.label || 'Noise' }}</text>
+    </g>
 
-        <path :d="outlinePath" fill="none" stroke="#17302b" stroke-width="1" stroke-linejoin="round" />
-      </svg>
-    </div>
-
-    <div class="split" :style="{ left: `${split}%` }">
-      <span>before</span><i></i><span>after</span>
-    </div>
-    <input v-model.number="split" class="split-input" type="range" min="0" max="100" aria-label="Slide to compare before and after" />
-  </div>
+    <g v-for="p in panels" :key="p.number">
+      <line class="measure" :x1="p.slot.x * U" :y1="p.slot.y * U" :x2="(p.slot.x + p.across) * U" :y2="p.slot.y * U" />
+      <text class="dim" :x="(p.slot.x + p.across / 2) * U" :y="p.slot.y * U - 1.2" text-anchor="middle">{{ Math.abs(p.across).toFixed(1) }} m</text>
+      <line class="measure" :x1="p.slot.x * U" :y1="p.slot.y * U" :x2="p.slot.x * U" :y2="(p.slot.y + p.down) * U" />
+      <text class="dim" :x="p.slot.x * U + 1.2" :y="(p.slot.y + p.down / 2) * U">{{ Math.abs(p.down).toFixed(1) }} m</text>
+    </g>
+    <g v-for="p in panels" :key="`p${p.number}`">
+      <line class="panelline" :x1="p.line.x1 * U" :y1="p.line.y1 * U" :x2="p.line.x2 * U" :y2="p.line.y2 * U" />
+      <circle :cx="p.slot.x * U" :cy="p.slot.y * U" r="3.4" class="badge" />
+      <text :x="p.slot.x * U" :y="p.slot.y * U + 1.4" class="badgetext" text-anchor="middle">{{ p.number }}</text>
+    </g>
+  </svg>
 </template>

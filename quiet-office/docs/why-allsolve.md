@@ -60,6 +60,11 @@ through that in a GUI. What the SDK gives us, concretely:
   booting the machines, not solving: see the measurements in
   [`machines.py`](../backend/app/allsolve/machines.py). The fast search boots them once with a
   resource reservation, or uses machines started beforehand.
+- **Many layouts per machine.** In the fast search a sweep step is not one solve. A custom
+  solver script ([`batch_script.py`](../backend/app/allsolve/batch_script.py)) makes each of
+  the 100 machines solve its share of the layouts one after another on the mesh it has
+  already loaded, and return all pressures as one list. Measured: 300 layouts (600 solves) in
+  29 s, and 500 in 23 s when the room was searched before and its mesh is used again.
 - **Sweeps as one cloud job.** `create_variable_overrides` plus one mesh and one harmonic
   simulation run a whole round of layouts and frequencies. Allsolve remeshes only when the
   geometry changes, so the frequencies of a layout share its mesh.
