@@ -2,3 +2,4 @@
 frontend/dist/
 *.tsbuildinfo
 .allsolve_cache/
+.vite/
