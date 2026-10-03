@@ -1,5 +1,44 @@
 # Ideas — Arman
 
+## Claude select (scored on the judging criteria)
+
+**Pick: Cable Reel Fire Risk.** Backup: **WakeFrame: Bed Vibration Alarm**.
+
+Scores are my estimates against the five hackathon criteria (0–10 each, 50 total). Nothing here has been run in Allsolve yet; "Functionality" is how likely we are to have a real simulation working by the pitch.
+
+| # | Idea | Impact | Functionality | Creativity | Presentation | Scalability | Total |
+|---|---|:---:|:---:|:---:|:---:|:---:|:---:|
+| 1 | ⭐ **Cable Reel Fire Risk** | 8 | 9 | 7 | 9 | 8 | **41** |
+| 2 | **WakeFrame: Bed Vibration Alarm** | 7 | 8 | 9 | 8 | 7 | **39** |
+| 3 | **Stray Voltage in a Clinic** | 9 | 7 | 8 | 8 | 7 | **39** |
+| 4 | Hearing Loop vs Rebar | 8 | 5 | 9 | 7 | 8 | 37 |
+| 5 | Cold IV Fluid Warmer | 9 | 6 | 7 | 7 | 7 | 36 |
+| 6 | Siren Blind Spots | 8 | 6 | 7 | 8 | 7 | 36 |
+| 7 | Public-Toilet Privacy | 6 | 7 | 9 | 8 | 5 | 35 |
+| 8 | Quietest Corner for a Crib | 5 | 9 | 6 | 8 | 6 | 34 |
+| 9 | Portable Toilet Tip-Over | 6 | 7 | 8 | 7 | 5 | 33 |
+| 10 | Bouncy Loft Bed | 4 | 9 | 4 | 8 | 5 | 30 |
+
+### Why Cable Reel wins
+
+- **Impact (8):** partly wound reels overheating is a real cause of house fires, and the label only gives "wound" and "unwound" ratings. The app answers the in-between case a person actually has.
+- **Functionality (9):** Current flow + Heat solid with the Joule heating coupling is documented, and a 2D cross-section is cheap to mesh, so a sweep of 30–60 runs is realistic in one day.
+- **Creativity (7):** not the wildest idea on the list, but nobody else will bring it, and the question ("how much do I have to unroll?") is instantly understood.
+- **Presentation (9):** one curve (safe amps vs % unrolled), one temperature cross-section with the hot spot buried in the middle, and a redesigned reel label. It can be explained in 30 seconds.
+- **Scalability (8):** a clear customer (reel and cable manufacturers, safety labelling), and the same model extends to any bundled or coiled cable, such as EV charging leads and cable trays.
+- **Quanscient's own criteria:** it is an industry problem with a named customer, it needs a solver (heat through alternating copper, PVC and air layers), and a programmatic sweep plus bisection gives us real SDK experience to report in [sdk-feedback.md](sdk-feedback.md).
+- **Weak spot to state openly in the pitch:** air gaps are modelled as conducting solids because natural convection is not documented, so results lean conservative. Contact resistances are estimates.
+
+### Why the others rank lower
+
+- **WakeFrame (backup):** the most original idea with a clear user (deaf sleepers), and a structural harmonic sweep is well supported. It loses on impact evidence and on a harder-to-defend metric ("feels strongest").
+- **Stray Voltage in a Clinic:** highest impact and a simple current-flow model, but the inputs (wet concrete conductivity, earth resistance) are guesses, so the danger map is hard to defend when a judge asks "is this correct?".
+- **Hearing Loop vs Rebar:** strong story, but a 3D magnetics model with a thin rebar grid is the most likely to eat the day on meshing.
+- **Cold IV Fluid Warmer:** conjugate heat transfer is documented, but it is three coupled physics and the result reads as medical guidance.
+- **Siren Blind Spots / Public-Toilet Privacy:** speech and siren frequencies in a 3D room need a very fine mesh; realistic only in 2D.
+- **Quietest Corner for a Crib / Bouncy Loft Bed:** easy to finish, but low impact and low scalability.
+- **Portable Toilet Tip-Over:** mostly rigid-body statics, so "why does this need a solver?" is hard to answer.
+
 ## Top selected by AI: 
 
 | Idea | Core demo / MVP in a few hours | Difficulty | Novelty | Team-friendly? |
