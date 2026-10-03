@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The search — QuietOffice</title>
+  <link rel="stylesheet" href="quiet.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap">
+      <a class="brand" href="index.html"><i></i>QuietOffice</a>
+      <nav aria-label="Screens">
+        <a href="index.html">Result</a>
+        <a href="search.html" aria-current="page">The search</a>
+        <a href="budget.html">Budget</a>
+      </nav>
+      <a class="back" href="../index.html">All explorations</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="head">
+      <div class="eyebrow">Three screens · twelve places they could stand · four speech bands</div>
+      <h1><b>220</b> layouts, each one simulated</h1>
+      <p class="lead">The Python SDK moves the screens, launches an Allsolve acoustic run, reads the pressure at every desk and scores the layout. Nobody guesses.</p>
+    </div>
+
+    <div class="grid">
+      <div class="panel chart">
+        <div class="runline">
+          <div class="log" id="log"></div>
+          <button class="btn" type="button" id="run">Run the search again</button>
+        </div>
+        <svg id="chart" viewBox="0 0 720 320" role="img" aria-label="Noise score of every tested layout, with the best so far"></svg>
+        <p class="cap">Each dot is one layout. The line is the best score found so far. Lower is quieter; 100 is the office with no screens.</p>
+      </div>
+
+      <div class="col">
+        <div class="panel">
+          <h2>Places a screen can stand</h2>
+          <div class="plan" id="slots"></div>
+          <p class="cap">Dashed lines are the twelve candidate positions, kept clear of desks and walkways.</p>
+        </div>
+        <div class="panel">
+          <h2>What each extra screen buys</h2>
+          <div class="steps" id="steps"></div>
+        </div>
+      </div>
+    </div>
+
+    <section class="block panel">
+      <h2>The five best layouts</h2>
+      <div class="thumbs" id="thumbs"></div>
+    </section>
+
+    <footer class="note">UI sketch with made-up sample data. No Allsolve call is connected here; the scores come from a stand-in model.</footer>
+  </main>
+
+  <script src="quiet.js"></script>
+  <script>
+    (function () {
+      var Q = window.Quiet, $ = function (id) { return document.getElementById(id); };
+      var layouts = Q.screenLayouts(3), total = layouts.length, timer = null;
+      // Tested in a fixed shuffled order, the way a job queue would hand them back.
+      for (var seed = 7, i = total - 1; i > 0; i--) {
+        seed = (seed * 1103515245 + 12345) % 2147483648;
+        var j = seed % (i + 1), tmp = layouts[i]; layouts[i] = layouts[j]; layouts[j] = tmp;
+      }
+      var W = 720, H = 320, m = { l: 40, r: 14, t: 12, b: 32 }, lo = 40, hi = 105;
+      var x = function (i) { return m.l + i / (total - 1) * (W - m.l - m.r); };
+      var y = function (s) { return H - m.b - (s - lo) / (hi - lo) * (H - m.t - m.b); };
+
+      function draw(n) {
+        var h = '', best = Infinity, bestI = 0, d = '';
+        for (var s = 40; s <= 100; s += 20) {
+          h += '<line x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + y(s) + '" y2="' + y(s) + '" stroke="#cbd3c8"' + (s === 100 ? ' stroke-dasharray="4 4"' : '') + '/>';
+          h += '<text x="' + (m.l - 8) + '" y="' + (y(s) + 4) + '" font-size="12" text-anchor="end" fill="#5a6d67">' + s + '</text>';
+        }
+        h += '<text x="' + m.l + '" y="' + (H - 8) + '" font-size="12" fill="#5a6d67">layout 1</text>';
+        h += '<text x="' + (W - m.r) + '" y="' + (H - 8) + '" font-size="12" text-anchor="end" fill="#5a6d67">layout ' + total + '</text>';
+        for (var i = 0; i < n; i++) {
+          var sc = layouts[i].score;
+          if (sc < best) { d += (d ? 'H' + x(i).toFixed(1) + 'V' : 'M' + x(i).toFixed(1) + ' ') + y(sc).toFixed(1); best = sc; bestI = i; }
+          h += '<circle cx="' + x(i).toFixed(1) + '" cy="' + y(sc).toFixed(1) + '" r="3" fill="#17302b" fill-opacity=".28"/>';
+        }
+        if (n) {
+          h += '<path d="' + d + 'H' + x(n - 1).toFixed(1) + '" fill="none" stroke="#2a7a5f" stroke-width="2.5"/>';
+          h += '<circle cx="' + x(bestI) + '" cy="' + y(best) + '" r="6" fill="#2a7a5f" stroke="#f8f9f5" stroke-width="2"/>';
+        }
+        $('chart').innerHTML = h;
+        $('log').innerHTML = n < total
+          ? 'Testing layout <b>' + (n + 1) + '</b> of ' + total + ' · best so far <b>' + (n ? Math.round(best) : '–') + '</b>'
+          : 'Finished · ' + total + ' layouts · best score <b>' + Math.round(best) + '</b> (layout ' + (bestI + 1) + ')';
+      }
+
+      function run() {
+        clearInterval(timer);
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { draw(total); return; }
+        var n = 0;
+        timer = setInterval(function () { n = Math.min(total, n + 3); draw(n); if (n === total) clearInterval(timer); }, 30);
+      }
+      $('run').onclick = run;
+      draw(total);
+
+      Q.mount($('slots'), { after: Q.all().base });
+      $('slots').querySelector('svg').outerHTML = Q.planSVG(Q.all().base, { slots: true });
+
+      var notes = ['No treatment', '', '', ''];
+      $('steps').innerHTML = [0, 1, 2, 3].map(function (k) {
+        var r = Q.bestScreens(k), prev = k ? Q.bestScreens(k - 1).score : 100;
+        var note = k ? 'takes off ' + Math.round(prev - r.score) + ' points for €' + Q.TYPES[Q.SCREEN].cost : 'the office as it is today';
+        return '<div class="step"><span>' + (k === 0 ? 'No screens' : k + (k === 1 ? ' screen' : ' screens')) + '</span><span class="track"><i style="width:' + r.score.toFixed(0) + '%"></i></span><b>' + Math.round(r.score) + '</b><small>' + note + '</small></div>';
+      }).join('');
+
+      var top = layouts.slice().sort(function (a, b) { return a.score - b.score; }).slice(0, 5);
+      $('thumbs').innerHTML = top.map(function (r, i) {
+        return '<div class="thumb' + (i === 0 ? ' best' : '') + '">' + Q.planSVG(r, { mini: true }) + '<p><span>' + (i === 0 ? 'Best' : '#' + (i + 1)) + '</span><b>' + r.score.toFixed(1) + '</b></p></div>';
+      }).join('');
+    })();
+  </script>
+</body>
+</html>

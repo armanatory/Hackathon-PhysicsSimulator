@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tonight — Last Cool Corner</title>
+  <link rel="stylesheet" href="cool.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap">
+      <a class="brand" href="index.html">Last Cool Corner</a>
+      <nav aria-label="Screens">
+        <a href="index.html" aria-current="page">Tonight</a>
+        <a href="hours.html">Hour by hour</a>
+        <a href="notice.html">Door notice</a>
+      </nav>
+      <a class="back" href="../index.html">All explorations</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="head">
+      <div class="eyebrow">Power cut, day 2 · 37 °C outside this afternoon</div>
+      <h1 id="verdict"></h1>
+      <p class="lead" id="lead"></p>
+    </div>
+
+    <div class="grid">
+      <div class="panel plan">
+        <div class="clock">
+          <span class="now" id="now"></span>
+          <span class="out" id="out"></span>
+        </div>
+        <svg id="plan" role="img" aria-label="Floor plan of the flat coloured by air temperature"></svg>
+        <div class="scrub">
+          <button type="button" id="play">Play the night</button>
+          <input type="range" id="time" min="0" max="48" step="1" value="30" aria-label="Time of day">
+          <div class="hours"><span>12:00</span><span>18:00</span><span>00:00</span><span>06:00</span><span>12:00</span></div>
+        </div>
+        <div class="ramp"><i></i><div><span>25 °C</span><span>31 °C</span><span>37 °C</span></div></div>
+        <p class="cap">The white outline is where the mattress goes. Drag the time to watch the afternoon heat soak inward from the windows and drain out again overnight.</p>
+      </div>
+
+      <div class="col">
+        <div class="panel">
+          <h2>Your flat</h2>
+          <div id="controls"></div>
+        </div>
+        <div class="panel">
+          <h2>Tonight, 23:00 to 07:00</h2>
+          <ol class="rank" id="rank"></ol>
+        </div>
+        <div class="panel tip" id="tip"></div>
+      </div>
+    </div>
+
+    <footer class="note">UI sketch with made-up sample data. Not solver output and not medical advice.</footer>
+  </main>
+
+  <script src="cool.js"></script>
+  <script>
+    (function () {
+      var C = window.Cool, $ = function (id) { return document.getElementById(id); };
+      var plan, timer = null;
+
+      function tick() {
+        var t = C.timeAt(+$('time').value);
+        $('now').textContent = C.hhmm(t);
+        $('out').textContent = 'outside ' + C.outdoor(t).toFixed(0) + ' °C';
+        plan.update(t);
+      }
+
+      function render() {
+        var s = C.summary();
+        $('verdict').innerHTML = 'Sleep in <em>' + s.best.room.the + '</em> tonight.';
+        $('lead').innerHTML = 'It averages <b>' + s.best.night.toFixed(1) + ' °C</b> overnight, ' +
+          (s.worst.night - s.best.night).toFixed(1) + ' °C cooler than ' + s.worst.room.the + '. ' +
+          (s.day.i === s.best.i ? 'It is also the coolest place to sit out the afternoon.' : 'For the afternoon, move to <b>' + s.day.room.the + '</b>.');
+
+        var lo = 25, hi = 32;
+        $('rank').innerHTML = s.night.map(function (r) {
+          return '<li class="' + (r.i === s.best.i ? 'best' : '') + '"><span class="name">' + r.room.name +
+            (r.room.sleep ? '' : '<small>too small for a mattress</small>') + '</span><span class="deg">' + r.night.toFixed(1) + ' °C</span>' +
+            '<span class="bar"><i style="width:' + Math.max(4, Math.min(100, (r.night - lo) / (hi - lo) * 100)).toFixed(0) + '%;background:' + C.color(r.night) + '"></i></span></li>';
+        }).join('');
+
+        $('tip').innerHTML = s.vent
+          ? '<div class="when">' + C.hhmm(s.vent.from) + ' – ' + C.hhmm(s.vent.to) + '</div><p>Outside is cooler than ' + s.best.room.the + ' between these hours. Open every window you safely can, then shut windows and blinds again.</p>'
+          : '<p>Outside never gets cooler than ' + s.best.room.the + ' tonight. Keep windows and blinds shut.</p>';
+
+        plan = C.drawPlan($('plan'));
+        plan.mattress(s.best);
+        tick();
+      }
+
+      $('time').oninput = tick;
+      $('play').onclick = function () {
+        if (timer) { clearInterval(timer); timer = null; this.textContent = 'Play the night'; return; }
+        this.textContent = 'Pause';
+        timer = setInterval(function () { $('time').value = (+$('time').value + 1) % 49; tick(); }, 220);
+      };
+      C.controls($('controls'), render);
+      render();
+    })();
+  </script>
+</body>
+</html>

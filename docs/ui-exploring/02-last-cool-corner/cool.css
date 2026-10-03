@@ -1,0 +1,142 @@
+/* Last Cool Corner — shared styles for the three sketch pages.
+   Look: a phone held up in a dark flat during a power cut. Indigo night, the heat field is the only bright thing.
+   System fonts only (works from file://). */
+
+:root {
+  --night: #1b1f3b;
+  --deep: #12142b;
+  --raise: #252a4f;
+  --ink: #ece7f5;
+  --mute: #a3a4c8;
+  --line: #373d6b;
+  --cool: #7fd6e8;
+  --amber: #f6a93b;
+  --display: "Sitka Display", "Sitka Text", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+  --body: "Segoe UI", system-ui, -apple-system, sans-serif;
+  --data: "Cascadia Mono", Consolas, ui-monospace, Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+html { background: var(--night); }
+body { margin: 0; color: var(--ink); font: 16px/1.5 var(--body); }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--cool); outline-offset: 3px; }
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
+
+/* ---- top bar ---- */
+.bar { border-bottom: 1px solid var(--line); }
+.bar .wrap { display: flex; align-items: center; gap: 8px 24px; min-height: 60px; flex-wrap: wrap; }
+.brand { font: italic 600 21px/1 var(--display); text-decoration: none; }
+.bar nav { display: flex; gap: 2px; margin-left: auto; flex-wrap: wrap; }
+.bar nav a { padding: 7px 12px; border-radius: 99px; text-decoration: none; font-size: 14px; color: var(--mute); }
+.bar nav a:hover { color: var(--ink); }
+.bar nav a[aria-current="page"] { color: var(--deep); background: var(--ink); font-weight: 600; }
+.bar .back { font-size: 13px; color: var(--mute); }
+
+/* ---- headline ---- */
+.head { padding: 40px 0 28px; }
+.eyebrow { font: 13px/1 var(--data); color: var(--amber); letter-spacing: .02em; }
+h1 { margin: 14px 0 12px; font: 400 clamp(38px, 6.2vw, 72px)/1.02 var(--display); letter-spacing: -.015em; text-wrap: balance; max-width: 16ch; }
+h1 em { font-style: italic; color: var(--cool); }
+.lead { margin: 0; max-width: 60ch; color: var(--mute); font-size: 17px; }
+.lead b { color: var(--ink); font-weight: 600; }
+h2 { margin: 0 0 14px; font: italic 400 24px/1.15 var(--display); }
+
+/* ---- layout ---- */
+.grid { display: grid; grid-template-columns: 1.7fr 1fr; gap: 16px; align-items: start; }
+.grid > *, .col > * { min-width: 0; }
+.col { display: grid; gap: 16px; }
+.panel { background: var(--deep); border: 1px solid var(--line); border-radius: 14px; padding: 20px; }
+section.block { margin-top: 16px; }
+
+/* ---- plan ---- */
+.plan svg { display: block; width: 100%; height: auto; }
+.plan .lbl { fill: #fff; paint-order: stroke; stroke: rgba(18, 20, 43, .55); stroke-width: 3px; font-family: var(--body); }
+.plan .val { font-family: var(--data); }
+.plan text { font-family: var(--body); }
+.clock { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.clock .now { font: 600 30px/1 var(--data); }
+.clock .out { font: 14px var(--data); color: var(--mute); }
+.scrub { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: center; margin-top: 16px; }
+.scrub input { width: 100%; accent-color: var(--cool); height: 24px; margin: 0; }
+.scrub button, .btn {
+  font: 600 14px var(--body); padding: 8px 14px; border-radius: 99px; cursor: pointer;
+  border: 1px solid var(--ink); background: transparent; color: var(--ink);
+}
+.scrub button:hover, .btn:hover { background: var(--raise); }
+.hours { display: flex; justify-content: space-between; font: 12px var(--data); color: var(--mute); margin: 4px 0 0 0; grid-column: 2; }
+.ramp { margin-top: 18px; }
+.ramp i { display: block; height: 8px; border-radius: 4px; background: linear-gradient(90deg, #2b7fd0, #5a56c8 16.7%, #9a45b8 29.2%, #c2407a 50%, #f0803c 75%, #ffe08a); }
+.ramp div { display: flex; justify-content: space-between; font: 12px var(--data); color: var(--mute); margin-top: 6px; }
+.cap { font-size: 13px; color: var(--mute); margin: 12px 0 0; }
+
+/* ---- questions ---- */
+.q + .q { margin-top: 16px; }
+.q-label { font-size: 14px; color: var(--mute); margin-bottom: 7px; }
+.seg { display: flex; gap: 4px; flex-wrap: wrap; }
+.seg button {
+  flex: 1; font: 14px var(--body); padding: 8px 10px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--line); background: transparent; color: var(--ink);
+}
+.seg button:hover { background: var(--raise); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--deep); border-color: var(--ink); font-weight: 600; }
+
+/* ---- ranking ---- */
+.rank { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.rank li { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: baseline; }
+.rank .name { font-size: 15px; }
+.rank .name small { color: var(--mute); font-size: 12px; margin-left: 6px; }
+.rank .deg { font: 600 16px var(--data); }
+.rank .bar { grid-column: 1 / -1; height: 6px; border-radius: 3px; background: var(--raise); overflow: hidden; }
+.rank .bar i { display: block; height: 100%; border-radius: 3px; }
+.rank li.best .name { color: var(--cool); font-weight: 600; }
+.tip { border-color: var(--cool); }
+.tip p { margin: 0; }
+.tip .when { font: 600 22px var(--data); color: var(--cool); margin-bottom: 4px; }
+
+/* ---- hour by hour ---- */
+.chart svg { display: block; width: 100%; height: auto; }
+.chart text { font-family: var(--data); }
+table.rooms { width: 100%; border-collapse: collapse; font-size: 14px; }
+.rooms th { text-align: right; font-weight: 400; color: var(--mute); font-size: 13px; padding: 0 0 8px 12px; vertical-align: bottom; }
+.rooms th:first-child, .rooms td:first-child { text-align: left; padding-left: 0; }
+.rooms td { text-align: right; padding: 9px 0 9px 12px; border-top: 1px solid var(--line); font-family: var(--data); }
+.rooms td:first-child { font-family: var(--body); }
+.rooms .sw { display: inline-block; width: 14px; height: 3px; border-radius: 2px; vertical-align: middle; margin-right: 8px; }
+.rooms tr.best td { color: var(--cool); font-weight: 600; }
+.how { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.how li { font-size: 14px; color: var(--mute); }
+.how b { display: block; color: var(--ink); font-size: 15px; margin-bottom: 2px; }
+
+/* ---- door notice: the one light thing in the set, because it gets printed ---- */
+.sheet {
+  background: #fbfaf6; color: #1b1f3b; border-radius: 4px; padding: 36px 40px; max-width: 760px; margin: 0 auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .4);
+}
+.sheet .kicker { font: 600 13px var(--body); letter-spacing: .12em; text-transform: uppercase; border-bottom: 3px solid #1b1f3b; padding-bottom: 10px; }
+.sheet h2 { font: 400 clamp(30px, 5vw, 46px)/1.05 var(--display); margin: 20px 0 6px; letter-spacing: -.01em; }
+.sheet h2 em { font-style: italic; }
+.sheet .sub { margin: 0 0 20px; color: #50547a; }
+.sheet .plan { margin: 0 0 20px; }
+.sheet .plan text { font-family: var(--body); }
+.sheet ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; }
+.sheet ol li { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding-top: 12px; border-top: 1px solid #cfd0de; }
+.sheet ol b { font: 600 15px var(--data); }
+.sheet .small { margin: 22px 0 0; font-size: 12px; color: #50547a; }
+.actions { max-width: 760px; margin: 16px auto 0; display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.actions .q { margin: 0; }
+.actions #controls { display: flex; gap: 16px; flex-wrap: wrap; flex: 1; }
+
+footer.note { padding: 28px 0 44px; font-size: 13px; color: var(--mute); }
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: 1fr; }
+  .how { grid-template-columns: 1fr; }
+  .sheet { padding: 24px 20px; }
+  .sheet ol li { grid-template-columns: 1fr; gap: 2px; }
+}
+@media print {
+  html { background: #fff; }
+  .bar, .head, .actions, footer.note { display: none !important; }
+  .sheet { box-shadow: none; max-width: none; padding: 0; }
+}

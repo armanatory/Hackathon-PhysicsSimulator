@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Door notice — Last Cool Corner</title>
+  <link rel="stylesheet" href="cool.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap">
+      <a class="brand" href="index.html">Last Cool Corner</a>
+      <nav aria-label="Screens">
+        <a href="index.html">Tonight</a>
+        <a href="hours.html">Hour by hour</a>
+        <a href="notice.html" aria-current="page">Door notice</a>
+      </nav>
+      <a class="back" href="../index.html">All explorations</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="head">
+      <div class="eyebrow">For the neighbour without a phone</div>
+      <h1>One sheet for the <em>inside</em> of the front door</h1>
+      <p class="lead">A housing association prints this once per flat type, before the heatwave. It needs no power and no app to read.</p>
+    </div>
+
+    <article class="sheet">
+      <div class="kicker">If the power goes out in a heatwave</div>
+      <h2 id="title"></h2>
+      <p class="sub" id="sub"></p>
+      <div class="plan"><svg id="plan" role="img" aria-label="Floor plan with rooms numbered from coolest to hottest overnight"></svg></div>
+      <ol id="rules"></ol>
+      <p class="small" id="small"></p>
+    </article>
+
+    <div class="actions">
+      <div id="controls"></div>
+      <button class="btn" type="button" onclick="window.print()">Print notice</button>
+    </div>
+
+    <footer class="note">UI sketch with made-up sample data. Not solver output and not medical advice.</footer>
+  </main>
+
+  <script src="cool.js"></script>
+  <script>
+    (function () {
+      var C = window.Cool, $ = function (id) { return document.getElementById(id); };
+      var names = { N: 'north', E: 'east', S: 'south', W: 'west' };
+
+      function render() {
+        var s = C.summary();
+        $('title').innerHTML = 'Sleep in <em>' + s.best.room.the + '</em>.';
+        $('sub').textContent = 'Rooms are numbered from coolest (1) to hottest (' + s.night.length + ') between 23:00 and 07:00.';
+        C.drawPlan($('plan'), { rank: s.night, ink: '#1b1f3b' });
+
+        var rules = [];
+        rules.push(['By 13:00', 'Close blinds and curtains on every window that gets sun. Move to ' + s.day.room.the + ' for the afternoon.']);
+        if (s.vent && C.state.windows === 'open') {
+          rules.push([C.hhmm(s.vent.from), 'Open the windows. The air outside is now cooler than the air inside.']);
+          rules.push(['23:00', 'Put the mattress on the floor in ' + s.best.room.the + '. It stays about ' + (s.worst.night - s.best.night).toFixed(0) + ' °C cooler than ' + s.worst.room.the + ' all night.']);
+          rules.push([C.hhmm(s.vent.to), 'Shut the windows and blinds again before the day heats up.']);
+        } else {
+          rules.push(['23:00', 'Put the mattress on the floor in ' + s.best.room.the + '. It stays about ' + (s.worst.night - s.best.night).toFixed(0) + ' °C cooler than ' + s.worst.room.the + ' all night.']);
+          rules.push(['All night', 'If the windows have to stay shut, keep the inside doors open so the cool room is not sealed off.']);
+        }
+        $('rules').innerHTML = rules.map(function (r) { return '<li><b>' + r[0] + '</b><span>' + r[1] + '</span></li>'; }).join('');
+        $('small').textContent = 'Flat type B · ' + C.state.floor + ' floor · living room faces ' + names[C.state.facing] + ' · windows ' + C.state.windows + ' at night.';
+      }
+      C.controls($('controls'), render);
+      render();
+    })();
+  </script>
+</body>
+</html>

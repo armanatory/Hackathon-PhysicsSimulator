@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hour by hour — Last Cool Corner</title>
+  <link rel="stylesheet" href="cool.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap">
+      <a class="brand" href="index.html">Last Cool Corner</a>
+      <nav aria-label="Screens">
+        <a href="index.html">Tonight</a>
+        <a href="hours.html" aria-current="page">Hour by hour</a>
+        <a href="notice.html">Door notice</a>
+      </nav>
+      <a class="back" href="../index.html">All explorations</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="head">
+      <div class="eyebrow">Noon to noon · every room · one transient run</div>
+      <h1>The coolest room <em>changes</em> with the clock</h1>
+      <p class="lead" id="lead"></p>
+    </div>
+
+    <div class="grid">
+      <div class="panel chart">
+        <h2>Room temperature through the day</h2>
+        <svg id="chart" viewBox="0 0 720 400" role="img" aria-label="Line chart of each room's temperature from noon to noon"></svg>
+        <p class="cap">The shaded band is the sleeping window. The dashed line is the air outside.</p>
+      </div>
+      <div class="col">
+        <div class="panel">
+          <h2>Your flat</h2>
+          <div id="controls"></div>
+        </div>
+        <div class="panel">
+          <h2>By room</h2>
+          <table class="rooms">
+            <thead><tr><th>Room</th><th>Afternoon</th><th>Overnight</th><th>Peak</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <section class="block panel">
+      <h2>What the simulation does</h2>
+      <ul class="how">
+        <li><b>Walls, floors and air as solids</b>Heat transfer in solids, transient, over 24 hours of a repeating heatwave day.</li>
+        <li><b>The weather on the outside faces</b>Convection to the outdoor temperature, plus the sun as a surface heat source on each facade.</li>
+        <li><b>One run per flat setup</b>Orientation, floor and night windows change the boundary conditions. The room averages are read back every half hour.</li>
+      </ul>
+    </section>
+
+    <footer class="note">UI sketch with made-up sample data. No Allsolve call is connected here.</footer>
+  </main>
+
+  <script src="cool.js"></script>
+  <script>
+    (function () {
+      var C = window.Cool, $ = function (id) { return document.getElementById(id); };
+
+      function render() {
+        var s = C.summary();
+        var W = 720, H = 400, m = { l: 44, r: 16, t: 14, b: 34 }, lo = 22, hi = 40;
+        var x = function (k) { return m.l + k / (C.N - 1) * (W - m.l - m.r); };
+        var y = function (T) { return H - m.b - (T - lo) / (hi - lo) * (H - m.t - m.b); };
+        var line = function (f) { var d = ''; for (var k = 0; k < C.N; k++) d += (k ? 'L' : 'M') + x(k).toFixed(1) + ' ' + y(f(k)).toFixed(1); return d; };
+
+        var h = '<rect x="' + x(22) + '" y="' + m.t + '" width="' + (x(38) - x(22)) + '" height="' + (H - m.t - m.b) + '" fill="#252a4f"/>';
+        h += '<text x="' + (x(22) + 8) + '" y="' + (m.t + 18) + '" font-size="12" fill="#a3a4c8">asleep</text>';
+        for (var T = 24; T <= 40; T += 4) {
+          h += '<line x1="' + m.l + '" x2="' + (W - m.r) + '" y1="' + y(T) + '" y2="' + y(T) + '" stroke="#373d6b"/>';
+          h += '<text x="' + (m.l - 8) + '" y="' + (y(T) + 4) + '" font-size="12" text-anchor="end" fill="#a3a4c8">' + T + '°</text>';
+        }
+        for (var k = 0; k < C.N; k += 6) {
+          h += '<text x="' + x(k) + '" y="' + (H - 10) + '" font-size="12" text-anchor="' + (k === C.N - 1 ? 'end' : 'middle') + '" fill="#a3a4c8">' + C.hhmm(C.timeAt(k)) + '</text>';
+        }
+        h += '<path d="' + line(function (k) { return C.outdoor(C.timeAt(k)); }) + '" fill="none" stroke="#a3a4c8" stroke-width="1.5" stroke-dasharray="5 5"/>';
+        h += '<text x="' + (x(8) + 8) + '" y="' + (y(C.outdoor(16)) - 8) + '" font-size="12" fill="#a3a4c8">outside</text>';
+        C.ROOMS.forEach(function (rm, i) {
+          if (i === s.best.i) return;
+          h += '<path d="' + line(function (k) { return s.series[i][k]; }) + '" fill="none" stroke="' + rm.color + '" stroke-width="2" stroke-linejoin="round" opacity=".8"/>';
+        });
+        h += '<path d="' + line(function (k) { return s.series[s.best.i][k]; }) + '" fill="none" stroke="' + s.best.room.color + '" stroke-width="4" stroke-linejoin="round"/>';
+        $('chart').innerHTML = h;
+
+        $('rows').innerHTML = s.night.map(function (r) {
+          return '<tr class="' + (r.i === s.best.i ? 'best' : '') + '"><td><span class="sw" style="background:' + r.room.color + '"></span>' + r.room.name + '</td><td>' +
+            r.day.toFixed(1) + '°</td><td>' + r.night.toFixed(1) + '°</td><td>' + r.peak.toFixed(1) + '°</td></tr>';
+        }).join('');
+
+        $('lead').innerHTML = (s.day.i === s.best.i
+          ? '<b>' + s.best.room.name + '</b> is coolest both in the afternoon and overnight in this setup.'
+          : 'In the afternoon it is <b>' + s.day.room.the + '</b>. By the time you go to bed it is <b>' + s.best.room.the + '</b>.') +
+          ' Change the flat on the right and the lines cross in different places.';
+      }
+      C.controls($('controls'), render);
+      render();
+    })();
+  </script>
+</body>
+</html>

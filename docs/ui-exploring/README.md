@@ -14,6 +14,8 @@ access — plain HTML, CSS and classic JavaScript, so every page works straight 
 | Folder | Exploration | Covers | By |
 | --- | --- | --- | --- |
 | [`01-cable-reel/`](01-cable-reel/index.html) | Cable Reel Fire Risk | Checker (`index.html`), sweep results (`lab.html`), redesigned label (`label.html`) | Arman |
+| [`02-last-cool-corner/`](02-last-cool-corner/index.html) | Last Cool Corner | Tonight's sleeping spot (`index.html`), hour by hour (`hours.html`), door notice (`notice.html`) | Arman |
+| [`03-quiet-office/`](03-quiet-office/index.html) | QuietOffice | Panel placement result (`index.html`), the layout search (`search.html`), budget (`budget.html`) | Arman |
 
 ## Folder rules
 

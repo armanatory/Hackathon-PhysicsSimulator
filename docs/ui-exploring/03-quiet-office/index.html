@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Result — QuietOffice</title>
+  <link rel="stylesheet" href="quiet.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="wrap">
+      <a class="brand" href="index.html"><i></i>QuietOffice</a>
+      <nav aria-label="Screens">
+        <a href="index.html" aria-current="page">Result</a>
+        <a href="search.html">The search</a>
+        <a href="budget.html">Budget</a>
+      </nav>
+      <a class="back" href="../index.html">All explorations</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="head">
+      <div class="eyebrow">Open office, 16 desks · one conversation at the coffee point</div>
+      <h1 id="title"></h1>
+      <p class="lead" id="lead"></p>
+    </div>
+
+    <div class="grid">
+      <div class="panel">
+        <div class="plan" id="plan"></div>
+        <div class="under">
+          <div class="seg small" id="bands" role="group" aria-label="Speech band shown on the map"></div>
+          <div class="ramp"><i></i><div><span>36 dB</span><span>48 dB</span><span>60 dB</span></div></div>
+        </div>
+        <p class="cap">Drag the divider across the room. Dashed lines on the before side mark where the screens will stand. The number on each desk is the simulated speech level there; bold means the conversation is still in earshot.</p>
+      </div>
+
+      <div class="col">
+        <div class="panel">
+          <h2>Screens to place</h2>
+          <div class="seg" id="count" role="group" aria-label="Number of screens"></div>
+        </div>
+        <div class="panel">
+          <h2>Noise score at the desks</h2>
+          <div class="score">
+            <div><small>Before</small><span>100</span></div>
+            <div class="arrow" aria-hidden="true">→</div>
+            <div><small>After</small><span id="after"></span></div>
+          </div>
+          <ul class="facts">
+            <li>Desks in earshot <b id="fEar"></b></li>
+            <li>Loudest desk <b id="fMax"></b></li>
+            <li>Cost <b id="fCost"></b></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h2>Where they go</h2>
+          <ul class="where" id="where"></ul>
+        </div>
+      </div>
+    </div>
+
+    <footer class="note">UI sketch with made-up sample data, not solver output. The score is a relative improvement inside the simulation model, not a certified real-world dB reduction.</footer>
+  </main>
+
+  <script src="quiet.js"></script>
+  <script>
+    (function () {
+      var Q = window.Quiet, $ = function (id) { return document.getElementById(id); };
+      var state = { n: 3, band: 'all', split: 50 };
+      var words = ['', 'one screen', 'two screens', 'three screens'];
+
+      $('count').innerHTML = [1, 2, 3].map(function (n) { return '<button type="button" data-n="' + n + '">' + n + '</button>'; }).join('');
+      $('bands').innerHTML = '<button type="button" data-b="all">All speech</button>' +
+        Q.BANDS.map(function (f, i) { return '<button type="button" data-b="' + i + '">' + (f >= 1000 ? f / 1000 + ' kHz' : f + ' Hz') + '</button>'; }).join('');
+      $('count').onclick = function (e) { var b = e.target.closest('button'); if (b) { state.n = +b.dataset.n; render(); } };
+      $('bands').onclick = function (e) { var b = e.target.closest('button'); if (b) { state.band = b.dataset.b === 'all' ? 'all' : +b.dataset.b; render(); } };
+
+      function render() {
+        var base = Q.all().base, best = Q.bestScreens(state.n), tested = Q.screenLayouts(state.n).length;
+        [].forEach.call($('count').children, function (b) { b.setAttribute('aria-pressed', +b.dataset.n === state.n); });
+        [].forEach.call($('bands').children, function (b) { b.setAttribute('aria-pressed', String(state.band) === b.dataset.b); });
+
+        $('title').innerHTML = state.n === 1 ? 'Put the one screen <b>here</b>.' : 'Put the ' + words[state.n].split(' ')[0] + ' screens <b>here</b>.';
+        $('lead').innerHTML = 'Out of <b>' + tested + ' layouts</b> simulated, this one lowers the noise score at the desks by <b>' +
+          Math.round(100 - best.score) + '%</b> and takes ' + (Q.inEarshot(base) - Q.inEarshot(best)) + ' of ' + Q.inEarshot(base) + ' desks out of earshot of the conversation.';
+
+        $('after').textContent = Math.round(best.score);
+        $('fEar').textContent = Q.inEarshot(base) + ' → ' + Q.inEarshot(best);
+        $('fMax').textContent = Math.max.apply(null, base.desks).toFixed(0) + ' → ' + Math.max.apply(null, best.desks).toFixed(0) + ' dB';
+        $('fCost').textContent = '€' + best.cost;
+        $('where').innerHTML = best.pieces.map(function (p) {
+          return '<li><span>' + Q.SLOTS[p[0]][3] + '<small>' + Q.TYPES[p[1]].len + ' m acoustic screen</small></span></li>';
+        }).join('');
+
+        Q.mount($('plan'), { before: base, after: best, band: state.band, split: state.split, onSplit: function (v) { state.split = v; } });
+      }
+      render();
+    })();
+  </script>
+</body>
+</html>
