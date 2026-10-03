@@ -1,5 +1,23 @@
 # Ideas — Arman
 
+## Top selected by AI: 
+
+| Idea | Core demo / MVP in a few hours | Difficulty | Novelty | Team-friendly? |
+|---|---|:---:|:---:|:---:|
+| ⭐ **Cable Reel Fire Risk** | 2D cable layers → sweep current + wound turns → graph **“safe amps vs % unrolled”** | 🟢 2/5 | 4/5 | ⭐⭐⭐⭐⭐ |
+| ⭐ **Public-Toilet Privacy** | Model two stalls → acoustic sweep → heatmap showing **where speech leaks** → test one cheap door-gap fix | 🟢 2/5 | 5/5 | ⭐⭐⭐⭐⭐ |
+| ⭐ **Portable Toilet Tip-Over** | Simple toilet + tank + people loads → vary tank fill/skid width → show **safe vs tipping configuration** | 🟢 2/5 | 5/5 | ⭐⭐⭐⭐⭐ |
+| **Stray Voltage in a Clinic** | Wet concrete floor + generator earth + steel table → current-flow simulation → **touch-voltage danger map** | 🟢 2/5 | 5/5 | ⭐⭐⭐⭐ |
+| **Quietest Corner for a Crib** | Simple bedroom → acoustic frequency sweep → **red/green map of noisy and quiet crib locations** | 🟢 2/5 | 4/5 | ⭐⭐⭐⭐⭐ |
+| **Bouncy Loft Bed** | Parametric frame → eigenmodes → automatically try braces → show **before/after vibration animation** | 🟢 2/5 | 3/5 | ⭐⭐⭐⭐⭐ |
+| **Cold IV Fluid Warmer** | Tube against warm pack → laminar flow + heat → sweep flow rate/contact length → **“wrap X cm” rule** | 🟡 3/5 | 4/5 | ⭐⭐⭐⭐ |
+| **Hearing Loop vs Rebar** | Simple room + loop + steel grid → magnetic-field map → compare loop layouts/height | 🟡 3/5 | 5/5 | ⭐⭐⭐⭐ |
+| 🆕 **WakeFrame: Bed Vibration Alarm** | Put a vibration motor at different bed-frame locations/frequencies → structural harmonic sweep → find **where a deaf sleeper feels the strongest vibration** | 🟢 2/5 | **5/5** | ⭐⭐⭐⭐⭐ |
+| 🆕 **Siren Blind Spots** | Model a shelter/corridor → place one alarm at candidate positions → acoustic sweep → optimize **worst-case audibility**, not average loudness | 🟢 2/5 | **4.5/5** | ⭐⭐⭐⭐⭐ |
+
+
+---
+
 ## ChatGPT
 
 | Project / surprising question | Difficulty | Novelty | Demo strength |
