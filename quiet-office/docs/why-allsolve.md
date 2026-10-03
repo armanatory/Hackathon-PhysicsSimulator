@@ -53,6 +53,10 @@ through that in a GUI. What the SDK gives us, concretely:
 - **Geometry as variables.** Screen positions are project variables
   (`s0_x`, `s0_y`, ...). One project describes every layout; see
   [`project_builder.py`](../backend/app/allsolve/project_builder.py).
+- **Parallel by construction.** A round of layouts is split into several sweeps that mesh
+  and solve at the same time in the cloud, started from plain Python threads. With several
+  noise sources each layout needs one solve per source and band, so this is where the wall
+  time goes, and where local software on one workstation would queue.
 - **Sweeps as one cloud job.** `create_variable_overrides` plus one mesh and one harmonic
   simulation run a whole round of layouts and frequencies. Allsolve remeshes only when the
   geometry changes, so the frequencies of a layout share its mesh.
@@ -80,7 +84,9 @@ the backend can sit on a small server while the heavy work scales separately.
 
 ## 4. Room to grow without changing tools
 
-v1 is deliberately small: 2D, sound-hard screens, absorbing walls. Each next step is a feature
+The first model was deliberately small: 2D, sound-hard screens, absorbing walls. The 3D room
+with panel heights and absorbing panels was then added as a second project builder, using the
+same SDK calls with boxes in place of rectangles. Each further step is likewise a feature
 Allsolve already documents, so it is an edit to the project builder, not a new toolchain:
 
 | Next step | Allsolve feature |

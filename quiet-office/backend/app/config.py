@@ -25,6 +25,14 @@ class Settings(BaseSettings):
     qs_secret_key: str = ""
     qs_host: str = "https://allsolve.quanscient.com"
 
+    # Optional: OpenAI key for the plain-language explanation of a run
+    openai_api_key: str = ""
+    openai_model: str = "gpt-4o-mini"
+
+    # Optional: OpenAI key for the plain-language explanation of a run
+    openai_api_key: str = ""
+    openai_model: str = "gpt-4o-mini"
+
     # Application settings
     app_name: str = "QuietOffice"
     debug: bool = False

@@ -84,6 +84,8 @@ async def root():
             "start_optimization": "POST /api/optimization/start",
             "get_status": "GET /api/optimization/{id}/status",
             "get_results": "GET /api/optimization/{id}/results",
+            "get_log": "GET /api/optimization/{id}/log",
+            "explain": "POST /api/explain",
             "abort": "POST /api/optimization/{id}/abort",
         },
     }

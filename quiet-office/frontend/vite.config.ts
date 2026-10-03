@@ -13,7 +13,8 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:8000',
+        // Set QUIETOFFICE_API to point the dev server at a backend on another port.
+        target: process.env.QUIETOFFICE_API ?? 'http://localhost:8000',
         changeOrigin: true,
       },
     },

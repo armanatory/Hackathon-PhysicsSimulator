@@ -16,6 +16,11 @@ def level_db(pressure: float, reference_pressure_1m: float) -> float:
     return max(FLOOR_DB, SPEECH_LEVEL_AT_1M_DB + 20.0 * math.log10(pressure / reference_pressure_1m))
 
 
+def combine_sources(levels_db: Sequence[float]) -> float:
+    """Total level from several independent sources: their energies add."""
+    return 10.0 * math.log10(sum(10.0 ** (level / 10.0) for level in levels_db))
+
+
 def combine_bands(levels_db: Sequence[float]) -> float:
     """Energy average of the per-band levels at one desk."""
     energy = sum(10.0 ** (level / 10.0) for level in levels_db) / len(levels_db)

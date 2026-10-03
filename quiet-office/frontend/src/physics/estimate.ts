@@ -1,20 +1,22 @@
 /**
  * Quick acoustic estimate that runs in the browser.
  *
- * Geometric acoustics: direct path, first wall reflections and diffraction around screen
- * ends. It draws the sound map and gives an instant answer while the backend is offline or
+ * Geometric acoustics: direct path, first wall reflections, and diffraction around the two
+ * ends and over the top of each screen. Heights matter: a talker's mouth, a listener's ears
+ * and the panel height decide whether a screen is in the way at all. It draws the sound map and gives an instant answer while the backend is offline or
  * an Allsolve run is still going. It is NOT the solver: real results come from the backend.
  */
 
-import type { LayoutResult, Office, OptimizationParams, Point, Slot } from '@/types'
+import type { LayoutResult, Office, OptimizationParams, Point, QuietZone, Slot } from '@/types'
 import type { Bounds } from './geometry'
-import { pointInPolygon } from './geometry'
+import { boundsOf, pointInPolygon, snap } from './geometry'
 
 const SPEED_OF_SOUND = 343
-const SCREEN_MAX_LOSS_DB = 14 // sound also passes over a free-standing screen
+const SCREENS_MAX_LOSS_DB = 26 // flanking paths keep any real screen from doing better
 const WALL_MAX_LOSS_DB = 30 // a wall in the way (L-shaped rooms): sound only gets round the corner
 const WALL_REFLECTION = 0.36
 const REVERB_DB = 38
+const ZONE_SAMPLE_STEP_M = 0.8 // same as the backend
 
 export interface Segment {
   x1: number
@@ -27,6 +29,7 @@ export interface Segment {
 interface Source {
   x: number
   y: number
+  /** Energy 1 m away, relative to a 60 dB source, times the wall reflection for images. */
   a: number
   /** For a mirror image: the wall it reflects in. The path must actually hit that wall. */
   wall: Segment | null
@@ -37,9 +40,16 @@ interface Scene {
   screens: Segment[]
   walls: Segment[]
   reverb: number
+  /** Top of the screens above the floor; null when they reach the ceiling. */
+  screenTop: number | null
+  sourceHeight: number
+  earHeight: number
 }
 
-type SearchParams = Pick<OptimizationParams, 'n_screens' | 'screen_length_m' | 'frequencies_hz' | 'strategy'>
+type SearchParams = Pick<
+  OptimizationParams,
+  'n_screens' | 'screen_length_m' | 'screen_height_m' | 'screen_absorbing' | 'source_height_m' | 'ear_height_m' | 'frequencies_hz' | 'strategy'
+>
 
 export function segmentOf(slot: Slot, length: number): Segment {
   const half = length / 2
@@ -79,18 +89,58 @@ function detour(sx: number, sy: number, rx: number, ry: number, g: Segment): num
 
 function sceneOf(office: Office, slotIds: number[], params: SearchParams): Scene {
   const walls = wallsOf(office.outline).filter((w) => w.length > 1e-6)
-  const { x, y } = office.source
-  // The talker plus its mirror image in each wall.
-  const sources: Source[] = [{ x, y, a: 1, wall: null }]
-  for (const w of walls) {
-    const ux = (w.x2 - w.x1) / w.length, uy = (w.y2 - w.y1) / w.length
-    const along = (x - w.x1) * ux + (y - w.y1) * uy
-    const footX = w.x1 + along * ux, footY = w.y1 + along * uy
-    sources.push({ x: 2 * footX - x, y: 2 * footY - y, a: WALL_REFLECTION, wall: w })
+  // Every noise source plus its mirror image in each wall. Sources are independent, so
+  // their energies simply add.
+  const sources: Source[] = []
+  let totalGain = 0
+  for (const { x, y, level_db } of office.sources) {
+    const gain = Math.pow(10, (level_db - 60) / 10)
+    totalGain += gain
+    sources.push({ x, y, a: gain, wall: null })
+    for (const w of walls) {
+      const ux = (w.x2 - w.x1) / w.length, uy = (w.y2 - w.y1) / w.length
+      const along = (x - w.x1) * ux + (y - w.y1) * uy
+      const footX = w.x1 + along * ux, footY = w.y1 + along * uy
+      sources.push({ x: 2 * footX - x, y: 2 * footY - y, a: gain * WALL_REFLECTION, wall: w })
+    }
   }
   const screens = slotIds.map((id) => segmentOf(office.slots.find((s) => s.id === id)!, params.screen_length_m))
-  const absorbing = screens.reduce((sum, g) => sum + g.length, 0)
-  return { sources, screens, walls, reverb: Math.pow(10, (REVERB_DB - 0.8 * absorbing) / 10) }
+  // Panels soak up some of the room's reverberant sound: by area, and far more if they are soft.
+  const height = Math.min(params.screen_height_m, office.ceiling_height_m)
+  const area = screens.reduce((sum, g) => sum + g.length * height, 0)
+  const reverbDrop = area * (params.screen_absorbing ? 0.5 : 0.12)
+  return {
+    sources,
+    screens,
+    walls,
+    reverb: totalGain * Math.pow(10, (REVERB_DB - reverbDrop) / 10),
+    screenTop: height >= office.ceiling_height_m - 0.05 ? null : height,
+    sourceHeight: params.source_height_m,
+    earHeight: params.ear_height_m,
+  }
+}
+
+/**
+ * How one screen bends the path from (sx, sy) to (rx, ry): the extra length round each end
+ * and over the top. Returns null when the screen is not in the way, which includes the
+ * straight line clearing its top.
+ */
+function screenDetours(sx: number, sy: number, rx: number, ry: number, g: Segment, scene: Scene): number[] | null {
+  if (!crosses(sx, sy, rx, ry, g)) return null
+  const direct = dist(sx, sy, rx, ry)
+  const detours = [
+    dist(sx, sy, g.x1, g.y1) + dist(g.x1, g.y1, rx, ry) - direct,
+    dist(sx, sy, g.x2, g.y2) + dist(g.x2, g.y2, rx, ry) - direct,
+  ]
+  if (scene.screenTop === null) return detours
+  // Where the path meets the screen, measured from the source.
+  const gx = g.x2 - g.x1, gy = g.y2 - g.y1, px = rx - sx, py = ry - sy
+  const t = (gx * (sy - g.y1) - gy * (sx - g.x1)) / (gy * px - gx * py)
+  const before = direct * t, after = direct * (1 - t)
+  const top = scene.screenTop, hs = scene.sourceHeight, hr = scene.earHeight
+  if (hs + (hr - hs) * t >= top) return null // line of sight passes over the screen
+  detours.push(Math.hypot(before, top - hs) + Math.hypot(after, top - hr) - Math.hypot(direct, hs - hr))
+  return detours
 }
 
 /**
@@ -106,10 +156,10 @@ function levelAt(x: number, y: number, scene: Scene, frequencies: number[], cohe
     if (s.wall && !crosses(s.x, s.y, x, y, s.wall)) continue // this reflection does not reach here
     const r = Math.max(dist(s.x, s.y, x, y), 0.3)
     const base = (s.a * 1e6) / (r * r) // 60 dB at 1 m
-    const screenDetours: number[] = []
+    const blocking: number[][] = []
     for (const g of scene.screens) {
-      const d = detour(s.x, s.y, x, y, g)
-      if (d >= 0) screenDetours.push(d)
+      const d = screenDetours(s.x, s.y, x, y, g, scene)
+      if (d) blocking.push(d)
     }
     const wallDetours: number[] = []
     if (!s.wall) {
@@ -121,8 +171,13 @@ function levelAt(x: number, y: number, scene: Scene, frequencies: number[], cohe
     for (let b = 0; b < n; b++) {
       const k = (40 * frequencies[b]) / SPEED_OF_SOUND
       let loss = 0
-      for (const d of screenDetours) loss += Math.min(SCREEN_MAX_LOSS_DB, 10 * Math.log10(3 + k * d))
-      loss = Math.min(loss, 26)
+      for (const detours of blocking) {
+        // Each way round carries some sound; add them up.
+        let through = 0
+        for (const d of detours) through += 1 / (3 + k * d)
+        loss += -10 * Math.log10(Math.min(1, through))
+      }
+      loss = Math.min(loss, SCREENS_MAX_LOSS_DB)
       for (const d of wallDetours) loss += Math.min(WALL_MAX_LOSS_DB, 10 * Math.log10(3 + k * d))
       const e = base * Math.pow(10, -Math.min(loss, 45) / 10)
       energy[b] += e
@@ -147,10 +202,36 @@ function rawScore(levels: number[]): number {
   return pressures.reduce((a, b) => a + b, 0) / pressures.length + 0.5 * Math.max(...pressures)
 }
 
+/** Listening points spread evenly over a quiet zone, about one every 0.8 m. */
+export function zonePoints(zone: QuietZone): Point[] {
+  const nx = Math.max(1, Math.round(zone.width / ZONE_SAMPLE_STEP_M)), ny = Math.max(1, Math.round(zone.height / ZONE_SAMPLE_STEP_M))
+  const points: Point[] = []
+  for (let j = 0; j < ny; j++) {
+    for (let i = 0; i < nx; i++) points.push({ x: zone.x + ((i + 0.5) * zone.width) / nx, y: zone.y + ((j + 0.5) * zone.height) / ny })
+  }
+  return points
+}
+
+/** Every point the noise is judged at: the desks first, then each quiet zone's points. */
+export function receiversOf(office: Office): Point[] {
+  return [...office.desks, ...office.quiet_zones.flatMap(zonePoints)]
+}
+
+function energyMean(levels: number[]): number {
+  return 10 * Math.log10(levels.reduce((sum, l) => sum + Math.pow(10, l / 10), 0) / levels.length)
+}
+
 function evaluate(office: Office, slotIds: number[], params: SearchParams) {
   const scene = sceneOf(office, slotIds, params)
-  const levels = office.desks.map((d) => levelAt(d.x, d.y, scene, params.frequencies_hz, false))
-  return { levels, raw: rawScore(levels) }
+  const levels = receiversOf(office).map((p) => levelAt(p.x, p.y, scene, params.frequencies_hz, false))
+  const zones: number[] = []
+  let start = office.desks.length
+  for (const zone of office.quiet_zones) {
+    const count = zonePoints(zone).length
+    zones.push(energyMean(levels.slice(start, start + count)))
+    start += count
+  }
+  return { desks: levels.slice(0, office.desks.length), zones, raw: rawScore(levels) }
 }
 
 function combinations(ids: number[], k: number): number[][] {
@@ -167,13 +248,13 @@ function combinations(ids: number[], k: number): number[][] {
  * Returns every layout in the order tested; the untreated office is first.
  */
 export function estimateSearch(office: Office, params: SearchParams): LayoutResult[] {
-  if (!office.desks.length) return []
+  if (!office.desks.length && !office.quiet_zones.length) return []
   const base = evaluate(office, [], params)
   const result = (slotIds: number[]): LayoutResult => {
     const e = evaluate(office, slotIds, params)
-    return { slot_ids: slotIds, desk_levels_db: e.levels, score: (100 * e.raw) / base.raw }
+    return { slot_ids: slotIds, desk_levels_db: e.desks, zone_levels_db: e.zones, score: (100 * e.raw) / base.raw }
   }
-  const results: LayoutResult[] = [{ slot_ids: [], desk_levels_db: base.levels, score: 100 }]
+  const results: LayoutResult[] = [{ slot_ids: [], desk_levels_db: base.desks, zone_levels_db: base.zones, score: 100 }]
   const ids = office.slots.map((s) => s.id)
   const n = Math.min(params.n_screens, ids.length)
 
@@ -188,6 +269,55 @@ export function estimateSearch(office: Office, params: SearchParams): LayoutResu
     chosen = round.reduce((best, r) => (r.score < best.score ? r : best)).slot_ids
   }
   return results
+}
+
+/**
+ * Propose places where a screen could stand, for when the user has not marked any.
+ *
+ * Tries both orientations on a 1 m grid and keeps the positions that sit on the most
+ * important paths from a noise source to a listening point. Positions on top of a source, a
+ * desk or a quiet zone, or poking through a wall, are skipped.
+ */
+export function suggestSlots(office: Office, screenLength: number, limit = 24): Slot[] {
+  const b = boundsOf(office.outline)
+  const receivers = receiversOf(office)
+  const candidates: { slot: Slot; worth: number }[] = []
+  for (let y = b.minY + 0.5; y < b.maxY; y += 1) {
+    for (let x = b.minX + 0.5; x < b.maxX; x += 1) {
+      for (const orientation of ['v', 'h'] as const) {
+        const slot: Slot = { id: 0, x: snap(x), y: snap(y), orientation, label: '' }
+        const g = segmentOf(slot, screenLength)
+        const inside = [[g.x1, g.y1], [g.x2, g.y2], [slot.x, slot.y]].every(([px, py]) => pointInPolygon(px, py, office.outline))
+        if (!inside) continue
+        if (office.sources.some((s) => dist(s.x, s.y, slot.x, slot.y) < 0.9)) continue
+        if (office.desks.some((d) => dist(d.x, d.y, slot.x, slot.y) < 0.9)) continue
+        if (office.quiet_zones.some((z) => slot.x > z.x && slot.x < z.x + z.width && slot.y > z.y && slot.y < z.y + z.height)) continue
+        // Worth: the direct sound energy it stands in the way of.
+        let worth = 0
+        for (const s of office.sources) {
+          const gain = Math.pow(10, (s.level_db - 60) / 10)
+          for (const r of receivers) {
+            if (crosses(s.x, s.y, r.x, r.y, g)) worth += gain / Math.max(dist(s.x, s.y, r.x, r.y), 1) ** 2
+          }
+        }
+        if (worth > 0) candidates.push({ slot, worth })
+      }
+    }
+  }
+  // Most useful first, and never two on the same spot: screens there would cross each other.
+  candidates.sort((p, q) => q.worth - p.worth)
+  const chosen: Slot[] = []
+  for (const { slot } of candidates) {
+    if (chosen.length >= limit) break
+    if (chosen.every((c) => dist(c.x, c.y, slot.x, slot.y) > 0.9)) chosen.push(slot)
+  }
+  return chosen.map((slot, id) => ({ ...slot, id, label: `Suggested position ${id + 1}` }))
+}
+
+/** The estimate for one given layout, scored against the estimate of the untreated office. */
+export function estimateLayout(office: Office, slotIds: number[], params: SearchParams): LayoutResult {
+  const base = evaluate(office, [], params), e = evaluate(office, slotIds, params)
+  return { slot_ids: slotIds, desk_levels_db: e.desks, zone_levels_db: e.zones, score: (100 * e.raw) / base.raw }
 }
 
 /** Best layout that uses exactly n screens. */

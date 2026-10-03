@@ -63,21 +63,27 @@ Then open http://localhost:8080. Details and server notes: [docs/deploy.md](docs
 
 ## How it works
 
-1. The office is described as data: the room outline, where the conversation is, desk positions
-   and the places a screen is allowed to stand. It is drawn in the app's editor, by hand or
+1. The office is described as data: the room outline, the noise sources, the desks and quiet
+   zones that should be quiet, and the places a screen is allowed to stand (marked by hand or
+   suggested by the app). It is drawn in the app's editor, by hand or
    traced over a phone scan.
-2. The backend turns that into a 2D Allsolve project: air, a pulsating talker, sound-hard
-   screens whose positions are project variables, absorbing walls.
+2. The backend turns that into an Allsolve project: air, a pulsating talker, and screens whose
+   positions are project variables. By default this is the full 3D room, with ceiling height,
+   panel height and panel material; a cheaper 2D top-down slice is the alternative.
 3. A search runs rounds of layouts as geometry sweeps: harmonic acoustic simulations at the
-   chosen speech bands, with the pressure read at every desk.
+   chosen speech bands, one source at a time, with the pressure read at every listening point.
+   Each round is split into several Allsolve jobs that run in parallel.
 4. Desk pressures become speech levels and one score per layout; the untreated office is 100.
 5. The UI shows the best layout, before and after, and every layout that was tested.
 
 ## Status
 
 - Frontend: working, checked in a browser, including the floor-plan editor and scan import.
-- Backend: starts, the SDK is installed and keys are configured. The Allsolve run itself has
-  not been confirmed yet; run [`simulations/baseline`](simulations/baseline/run_baseline.py)
-  first and fix what the solver reports.
+- Backend: confirmed on Allsolve with real 2D and 3D runs; see the status table in
+  [backend/README.md](backend/README.md). Each run records every request and answer, and the
+  UI shows that record and the raw solver pressures.
+- AI: with an OpenAI key, a result and its run record can be explained in plain language.
+- 3D: the app has a 3D view, panel types by height and surface, and a 3D Allsolve model. The
+  3D model is far more expensive than 2D: two layouts at 250 Hz took about five minutes.
 - The coloured sound map is still the quick estimate, also after an Allsolve run. Showing the
   solver's pressure field is the next piece.

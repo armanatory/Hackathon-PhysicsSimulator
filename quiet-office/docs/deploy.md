@@ -41,6 +41,9 @@ places and neither is required:
 The keys are passed to the container at start. They are not copied into the image, so the
 image is safe to push to a registry.
 
+An optional `OPENAI_API_KEY` in the same file turns on the plain-language explanation. When it
+is used, the result summary and the run log messages are sent to OpenAI.
+
 Without keys the app still starts; "Run on Allsolve" stays disabled and the page shows the
 quick estimate.
 

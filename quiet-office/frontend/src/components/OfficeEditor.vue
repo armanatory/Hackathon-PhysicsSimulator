@@ -56,6 +56,11 @@ const tracePath = computed(() => {
   const points = hover.value && tracing.value ? [...trace.value, hover.value] : trace.value
   return points.map((p, i) => `${i ? 'L' : 'M'}${p.x * U} ${p.y * U}`).join('')
 })
+const selectedSource = computed(() => (store.selection?.kind === 'source' ? store.office.sources[store.selection.index] : null))
+const selectedZone = computed(() => {
+  const s = store.selection
+  return s && (s.kind === 'zone' || s.kind === 'zonesize') ? store.office.quiet_zones[s.index] : null
+})
 const roomSize = computed(() => {
   const b = boundsOf(store.office.outline)
   return `${b.width.toFixed(1)} × ${b.height.toFixed(1)} m`
@@ -164,13 +169,16 @@ async function onFile(event: Event): Promise<void> {
 <template>
   <div class="editor">
     <div class="toolbar" role="toolbar" aria-label="Edit the office">
+      <button type="button" :disabled="tracing || store.office.sources.length >= 6" @click="store.addSource()">Add noise source</button>
+      <button type="button" :disabled="tracing || store.office.quiet_zones.length >= 10" @click="store.addZone()">Add quiet zone</button>
       <button type="button" :disabled="tracing" @click="store.addDesk()">Add desk</button>
       <button type="button" :disabled="tracing" @click="store.addSlot()">Add screen position</button>
+      <button type="button" :disabled="tracing" @click="store.suggestPositions()">Suggest screen positions</button>
       <button type="button" :disabled="tracing || store.selection?.kind !== 'slot'" @click="store.rotateSelectedSlot()">Rotate</button>
       <button type="button" :disabled="tracing || !store.canDeleteSelected" @click="store.deleteSelected()">Delete</button>
       <span class="gap"></span>
       <template v-if="!tracing">
-        <button type="button" @click="fileInput?.click()">Open scan (.glb)</button>
+        <button type="button" @click="fileInput?.click()">Open 3D model (.glb)</button>
         <button type="button" @click="startTrace()">Trace room</button>
         <button type="button" @click="store.resetOffice()">Reset to demo office</button>
       </template>
@@ -182,6 +190,25 @@ async function onFile(event: Event): Promise<void> {
       <input ref="fileInput" type="file" accept=".glb,model/gltf-binary" hidden @change="onFile" />
     </div>
 
+    <div v-if="selectedSource" class="scanbar">
+      <label>
+        Name
+        <input v-model="selectedSource.label" type="text" maxlength="24" />
+      </label>
+      <label>
+        Level at 1 m <output>{{ selectedSource.level_db }} dB</output>
+        <input v-model.number="selectedSource.level_db" type="range" min="40" max="90" step="1" />
+      </label>
+      <span class="file">quiet talk 55 · normal speech 60 · loud phone call 66 · printer 55</span>
+    </div>
+    <div v-else-if="selectedZone" class="scanbar">
+      <label>
+        Name
+        <input v-model="selectedZone.label" type="text" maxlength="24" />
+      </label>
+      <span class="file">{{ selectedZone.width.toFixed(1) }} × {{ selectedZone.height.toFixed(1) }} m · drag the corner handle to resize</span>
+    </div>
+
     <div v-if="store.scan" class="scanbar">
       <span class="file">{{ store.scanName }} · {{ Math.round(store.scan.triangles / 1000) }}k triangles</span>
       <label>
@@ -191,6 +218,29 @@ async function onFile(event: Event): Promise<void> {
       <label>
         Rotate scan <output>{{ store.scanAngle }}°</output>
         <input v-model.number="store.scanAngle" type="range" min="-180" max="180" step="1" />
+      </label>
+      <span class="group" role="group" aria-label="Which axis of the file points up">
+        Up axis
+        <button
+          v-for="axis in (['x', 'y', 'z'] as const)"
+          :key="axis"
+          type="button"
+          :aria-pressed="store.scan.orientation.up === axis"
+          @click="store.orientScan({ up: axis })"
+        >
+          {{ axis.toUpperCase() }}
+        </button>
+        <button type="button" :aria-pressed="store.scan.orientation.flipped" @click="store.orientScan({ flipped: !store.scan.orientation.flipped })">
+          Upside down
+        </button>
+      </span>
+      <label>
+        Units
+        <select :value="store.scan.orientation.unitScale" @change="store.orientScan({ unitScale: Number(($event.target as HTMLSelectElement).value) })">
+          <option :value="1">metres</option>
+          <option :value="0.01">centimetres</option>
+          <option :value="0.001">millimetres</option>
+        </select>
       </label>
       <button type="button" @click="store.clearScan()">Remove scan</button>
     </div>
@@ -229,6 +279,34 @@ async function onFile(event: Event): Promise<void> {
           </circle>
         </g>
 
+        <g v-for="(zone, i) in store.office.quiet_zones" :key="`z${i}`">
+          <rect
+            class="item zone"
+            :class="{ on: isSelected('zone', i) || isSelected('zonesize', i) }"
+            :x="zone.x * U"
+            :y="zone.y * U"
+            :width="zone.width * U"
+            :height="zone.height * U"
+            rx="1.5"
+            tabindex="0"
+            role="button"
+            :aria-label="`Quiet zone ${zone.label || i + 1}`"
+            @focus="store.selection = { kind: 'zone', index: i }"
+            @pointerdown="startDrag($event, { kind: 'zone', index: i }, zone)"
+          />
+          <text :x="zone.x * U + 1.6" :y="zone.y * U + 4.4" class="zonelabel">{{ zone.label || 'Quiet zone' }}</text>
+          <rect
+            class="item zonehandle"
+            :x="(zone.x + zone.width) * U - 1.6"
+            :y="(zone.y + zone.height) * U - 1.6"
+            width="3.2"
+            height="3.2"
+            @pointerdown="startDrag($event, { kind: 'zonesize', index: i }, { x: zone.x + zone.width, y: zone.y + zone.height })"
+          >
+            <title>Drag to resize</title>
+          </rect>
+        </g>
+
         <g
           v-for="(slot, i) in store.office.slots"
           :key="`s${slot.id}`"
@@ -259,17 +337,19 @@ async function onFile(event: Event): Promise<void> {
         </g>
 
         <g
+          v-for="(source, i) in store.office.sources"
+          :key="`n${i}`"
           class="item source"
-          :class="{ on: isSelected('source', 0) }"
+          :class="{ on: isSelected('source', i) }"
           tabindex="0"
           role="button"
-          aria-label="Conversation"
-          @focus="store.selection = { kind: 'source', index: 0 }"
-          @pointerdown="startDrag($event, { kind: 'source', index: 0 }, store.office.source)"
+          :aria-label="`Noise source ${source.label || i + 1}`"
+          @focus="store.selection = { kind: 'source', index: i }"
+          @pointerdown="startDrag($event, { kind: 'source', index: i }, source)"
         >
-          <circle :cx="store.office.source.x * U" :cy="store.office.source.y * U" r="6" class="halo" />
-          <circle :cx="store.office.source.x * U" :cy="store.office.source.y * U" r="2.4" />
-          <text :x="store.office.source.x * U" :y="store.office.source.y * U + 10" class="label">conversation</text>
+          <circle :cx="source.x * U" :cy="source.y * U" r="6" class="halo" />
+          <circle :cx="source.x * U" :cy="source.y * U" r="2.4" />
+          <text :x="source.x * U" :y="source.y * U + 10" class="label">{{ (source.label || 'noise').toLowerCase() }} · {{ source.level_db }} dB</text>
         </g>
 
         <rect
@@ -296,7 +376,10 @@ async function onFile(event: Event): Promise<void> {
     </svg>
 
     <p class="cap">
-      <b>{{ roomSize }}</b> · {{ store.office.desks.length }} desks · {{ store.office.slots.length }} screen positions.
+      <b>{{ roomSize }}</b> ·
+      <label class="inline">ceiling <input v-model.number="store.office.ceiling_height_m" type="number" min="2" max="6" step="0.05" /> m</label> ·
+      {{ store.office.sources.length }} noise {{ store.office.sources.length === 1 ? 'source' : 'sources' }} · {{ store.office.quiet_zones.length }} quiet
+      {{ store.office.quiet_zones.length === 1 ? 'zone' : 'zones' }} · {{ store.office.desks.length }} desks · {{ store.office.slots.length }} screen positions.
       <template v-if="store.notice"> {{ store.notice }}</template>
       <template v-else>
         Drag anything to move it. The dot in the middle of a wall adds a corner. Arrow keys move the selected item, Delete removes it, R turns a

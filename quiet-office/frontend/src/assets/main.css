@@ -165,3 +165,55 @@ footer.note { padding: 28px 0 44px; font-size: 13px; color: var(--mute); max-wid
 .canvas .tracepoint.first { fill: var(--loud); }
 .canvas .item.out.desk rect { stroke: var(--loud); stroke-dasharray: 1.2 1; }
 .canvas .item.out.slot line:not(.hit) { stroke: var(--loud); }
+
+/* ---- 3D view ---- */
+.view3d { position: relative; }
+.view3d .stage { width: 100%; aspect-ratio: 16 / 10; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; background: var(--felt); cursor: grab; }
+.view3d .stage:active { cursor: grabbing; }
+.view3d canvas { display: block; width: 100%; height: 100%; }
+.view3d .reset { position: absolute; top: 10px; right: 10px; font: 13px var(--body); padding: 5px 10px; border-radius: 6px; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
+.view3d .reset:hover { border-color: var(--ink); }
+
+/* ---- panel type buttons and small inputs ---- */
+.seg button small { display: block; font: 12px var(--data); opacity: .7; }
+.cap .inline input { width: 62px; font: 13px var(--data); padding: 2px 4px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); }
+
+/* ---- quiet zones and source settings in the editor ---- */
+.canvas .zone { fill: var(--quiet); fill-opacity: .1; stroke: var(--quiet); stroke-width: .6; stroke-dasharray: 2 1.4; }
+.canvas .zone.on { fill-opacity: .22; stroke-dasharray: none; stroke-width: .9; }
+.canvas .zonehandle { fill: #fff; stroke: var(--quiet); stroke-width: .6; cursor: nwse-resize; }
+.canvas .zonelabel { font: 3px var(--data); fill: var(--ink); pointer-events: none; }
+.scanbar input[type="text"] { width: 150px; font: 13px var(--body); padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); }
+
+/* ---- model orientation controls ---- */
+.scanbar .group { display: flex; align-items: center; gap: 4px; }
+.scanbar .group button { margin-left: 0; padding: 4px 9px; }
+.scanbar button[aria-pressed="true"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+.scanbar select { font: 13px var(--body); padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink); }
+
+/* ---- run log ---- */
+.plan.faded canvas { opacity: .3; }
+.runlog h3 { margin: 18px 0 8px; font: 600 14px var(--body); }
+.runlog .logbar { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.runlog .logbar label { font-size: 13px; color: var(--mute); }
+.runlog .compare { overflow-x: auto; }
+table.t { width: 100%; border-collapse: collapse; font-size: 13px; }
+.t th { text-align: right; font-weight: 400; color: var(--mute); padding: 0 0 6px 12px; white-space: nowrap; }
+.t th:first-child, .t td:first-child { text-align: left; padding-left: 0; }
+.t td { text-align: right; padding: 6px 0 6px 12px; border-top: 1px solid var(--line); font-family: var(--data); white-space: nowrap; }
+.t td:first-child { font-family: var(--body); }
+.log { list-style: none; margin: 0; padding: 0; max-height: 360px; overflow-y: auto; border: 1px solid var(--line); border-radius: 6px; background: #fff; font-size: 13px; }
+.log li { display: grid; grid-template-columns: 44px 74px 1fr; gap: 10px; padding: 6px 10px; border-top: 1px solid var(--line); align-items: start; }
+.log li:first-child { border-top: 0; }
+.log .time { font-family: var(--data); color: var(--mute); }
+.log .kind { font: 600 11px/18px var(--body); text-transform: uppercase; letter-spacing: .04em; text-align: center; border-radius: 4px; background: #e6eae2; color: var(--mute); }
+.log li[data-kind="sent"] .kind { background: var(--ink); color: #fff; }
+.log li[data-kind="received"] .kind { background: var(--quiet); color: #fff; }
+.log li[data-kind="error"] .kind { background: var(--loud); color: #fff; }
+.log li[data-kind="error"] .message { color: var(--loud); }
+.log li[data-kind="solver"] .message { font-family: var(--data); color: var(--mute); }
+.log details { margin-top: 2px; }
+.log summary { cursor: pointer; color: var(--mute); font-size: 12px; }
+.log pre { margin: 4px 0 0; padding: 8px; background: var(--felt); border-radius: 4px; font: 12px/1.4 var(--data); white-space: pre-wrap; word-break: break-word; }
+.btn.small { width: auto; font-size: 13px; padding: 6px 12px; }
+.explanation { white-space: pre-line; font-size: 15px; margin: 10px 0 0; max-width: 68ch; }

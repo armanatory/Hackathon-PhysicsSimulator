@@ -4,6 +4,7 @@
 
 import type {
   Capabilities,
+  LogEntry,
   Office,
   OptimizationParams,
   OptimizationResponse,
@@ -54,6 +55,20 @@ class OptimizationAPI {
 
   getResults(id: string): Promise<OptimizationResults> {
     return request(`/optimization/${id}/results`)
+  }
+
+  /** Run log entries from `since` on: what was sent to Allsolve and what came back */
+  getLog(id: string, since: number): Promise<{ entries: LogEntry[] }> {
+    return request(`/optimization/${id}/log?since=${since}`)
+  }
+
+  /** Plain-language explanation written by an AI model from the facts given */
+  explain(context: Record<string, unknown>, optimizationId: string | null): Promise<{ text: string; model: string }> {
+    return request('/explain', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ optimization_id: optimizationId, context }),
+    })
   }
 
   abort(id: string): Promise<{ status: string; message: string }> {

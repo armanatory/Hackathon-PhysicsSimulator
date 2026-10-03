@@ -8,9 +8,12 @@ from typing import Dict
 from fastapi import APIRouter, BackgroundTasks, HTTPException
 
 from ..allsolve import ALLSOLVE_AVAILABLE, OptimizationAborted, OptimizationRunner, planned_layout_count
+from .. import explain as explainer
 from ..config import get_settings
 from ..models import (
     Capabilities,
+    ExplainRequest,
+    ExplainResponse,
     LayoutResult,
     Office,
     OptimizationParams,
@@ -42,7 +45,27 @@ async def get_capabilities() -> Capabilities:
         sdk_installed=ALLSOLVE_AVAILABLE,
         credentials_configured=settings.has_credentials,
         host=settings.qs_host,
+        ai_configured=explainer.is_configured(),
     )
+
+
+@router.post("/explain", response_model=ExplainResponse)
+async def explain_result(request: ExplainRequest) -> ExplainResponse:
+    """Explain a result in plain language with an OpenAI model.
+
+    For an Allsolve run, pass its optimization_id so the run log is part of what is explained.
+    The model only narrates the facts it is given; it computes nothing.
+    """
+    if not explainer.is_configured():
+        raise HTTPException(status_code=503, detail="No OpenAI key configured. Add OPENAI_API_KEY to .env and restart the backend.")
+    entries = None
+    if request.optimization_id:
+        runner = _get(request.optimization_id).get("runner")
+        entries = runner.log.since(0) if runner else None
+    try:
+        return ExplainResponse(**await asyncio.to_thread(explainer.explain, request.context, entries))
+    except RuntimeError as e:
+        raise HTTPException(status_code=502, detail=str(e))
 
 
 @router.post("/optimization/start", response_model=OptimizationResponse)
@@ -133,7 +156,16 @@ async def get_optimization_status(optimization_id: str) -> OptimizationStatus:
         layouts_total=state["layouts_total"],
         best_score=min(full) if full else None,
         project_url=runner.project_url if runner else None,
+        log_size=len(runner.log) if runner else 0,
     )
+
+
+@router.get("/optimization/{optimization_id}/log")
+async def get_optimization_log(optimization_id: str, since: int = 0) -> dict:
+    """The run log: every request sent to Allsolve and every answer, from entry `since` on."""
+    state = _get(optimization_id)
+    runner = state.get("runner")
+    return {"optimization_id": optimization_id, "entries": runner.log.since(since) if runner else []}
 
 
 @router.get("/optimization/{optimization_id}/results", response_model=OptimizationResults)

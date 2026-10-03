@@ -62,9 +62,16 @@ That decides the design:
 
 In the app, open the **Edit office** tab.
 
-1. **Open scan (.glb).** The file is read in the browser; nothing is uploaded. The app finds
+1. **Open 3D model (.glb).** The file is read in the browser; nothing is uploaded. This works
+   for phone scans and for models from CAD or other tools. The app guesses which axis points
+   up (the floor is normally the largest flat surface) and the units (whichever of metres,
+   centimetres or millimetres gives a believable room height), and says what it guessed. If
+   the model lies on its side or is the wrong size, correct it with **Up axis**, **Upside
+   down** and **Units** above the plan. The app finds
    the floor (the lowest height holding a large share of the horizontal surface) and cuts the
    mesh 1.2 m above it, which is over the desks and under most wall clutter.
+   The ceiling height is read from the scan too, when the scan shows a clear ceiling, and can
+   be corrected in the line under the plan.
 2. **Adjust.** *Cut height* moves the cut: lower it to about 0.7 m to see desks and tables.
    *Rotate scan* turns the underlay; it starts at the angle that lines most wall length up
    with the screen, and often needs a nudge.
@@ -74,7 +81,9 @@ In the app, open the **Edit office** tab.
 4. **Mark up.** The traced outline replaces the room. Desks and screen positions that fall
    outside it are removed; add new ones with *Add desk* and *Add screen position*, and drag
    the conversation to where people talk.
-5. **Result.** Switch to the Result tab. The quick estimate has already been redone for the
+5. **Check in 3D.** The 3D view tab shows the scan as a blue shape inside the room you drew,
+   with desks and panels at their real height, so you can see whether the trace fits.
+6. **Result.** Switch to the Result tab. The quick estimate has already been redone for the
    new room, and *Run on Allsolve* sends the same room to the backend.
 
 The same editor works without a scan: drag the room corners, use the dot in the middle of a
@@ -94,6 +103,8 @@ How it is built:
 Limits:
 
 - Tracing is by hand. The app does not detect walls or furniture in the scan.
+- Up-axis detection is a guess. A model that is mostly one big wall can fool it, and nothing
+  in a mesh says which way is up along the axis, so *Upside down* is always manual.
 - Only `.glb` is read, not `.gltf` with separate files, DXF or USDZ.
 - Rooms with slanted walls work in the quick estimate. On Allsolve they depend on rotated
   rectangles in the SDK geometry builder, which has not been run yet; see the

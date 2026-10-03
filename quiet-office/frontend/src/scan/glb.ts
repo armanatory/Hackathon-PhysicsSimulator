@@ -6,11 +6,28 @@
  * See docs/scan-import.md.
  */
 
+export type UpAxis = 'x' | 'y' | 'z'
+
+/** How the file's own coordinates are turned into metres with Y pointing up. */
+export interface Orientation {
+  /** Which of the file's axes points up. Phone scans use y; CAD and BIM exports often use z. */
+  up: UpAxis
+  /** Turn the model upside down. Nothing in a mesh says which way is up along the axis. */
+  flipped: boolean
+  /** Metres per file unit: 1 for metres, 0.01 for centimetres, 0.001 for millimetres. */
+  unitScale: number
+}
+
 export interface ScanMesh {
-  /** x, y, z per vertex, in metres, Y up, with node transforms applied. */
+  /** x, y, z per vertex exactly as in the file, with node transforms applied. */
+  raw: Float32Array
+  orientation: Orientation
+  /** x, y, z per vertex, in metres, Y up. Derived from raw and orientation. */
   positions: Float32Array
   indices: Uint32Array
   floorY: number
+  /** Floor to ceiling in metres, or null when the scan shows no clear ceiling. */
+  ceilingHeight: number | null
   triangles: number
 }
 
@@ -102,16 +119,81 @@ export function parseGlb(buffer: ArrayBuffer): ScanMesh {
   for (const root of scene?.nodes ?? []) visit(root, IDENTITY)
 
   if (indices.length < 3) throw new Error('The file has no triangles in it.')
-  const mesh = { positions: new Float32Array(positions), indices: new Uint32Array(indices), floorY: 0, triangles: indices.length / 3 }
-  mesh.floorY = findFloor(mesh)
-  return mesh
+  const raw = new Float32Array(positions), index = new Uint32Array(indices)
+  return orient(raw, index, guessOrientation(raw, index))
+}
+
+/** Build the usable mesh for a given orientation. Cheap enough to redo when the user changes it. */
+export function orient(raw: Float32Array, indices: Uint32Array, orientation: Orientation): ScanMesh {
+  const { up, flipped, unitScale: k } = orientation
+  const positions = new Float32Array(raw.length)
+  const sign = flipped ? -1 : 1 // flipping is a half turn about x: y and z change sign
+  for (let i = 0; i < raw.length; i += 3) {
+    const x = raw[i], y = raw[i + 1], z = raw[i + 2]
+    // Each case is a pure rotation, so the model is never mirrored.
+    let px: number, py: number, pz: number
+    if (up === 'y') { px = x; py = y; pz = z }
+    else if (up === 'z') { px = x; py = z; pz = -y }
+    else { px = y; py = x; pz = -z }
+    positions[i] = px * k
+    positions[i + 1] = py * k * sign
+    positions[i + 2] = pz * k * sign
+  }
+  const levels = findLevels({ positions, indices })
+  return { raw, orientation, positions, indices, floorY: levels.floorY, ceilingHeight: levels.ceilingHeight, triangles: indices.length / 3 }
 }
 
 /**
- * Height of the floor: the lowest height that holds a large share of the horizontal surface.
- * Counting area, not vertices, keeps desks and ceilings from being mistaken for the floor.
+ * Guess which axis is up and what the units are.
+ *
+ * Up: the floor is normally the largest flat surface in a room, so take the axis with the
+ * most surface area lying in a single plane across it. Units: pick the one that makes the
+ * model a believable height for a room.
  */
-function findFloor(mesh: Pick<ScanMesh, 'positions' | 'indices'>): number {
+function guessOrientation(raw: Float32Array, indices: Uint32Array): Orientation {
+  const min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity]
+  for (let i = 0; i < raw.length; i += 3) {
+    for (let k = 0; k < 3; k++) {
+      if (raw[i + k] < min[k]) min[k] = raw[i + k]
+      if (raw[i + k] > max[k]) max[k] = raw[i + k]
+    }
+  }
+  const extent = [0, 1, 2].map((k) => Math.max(max[k] - min[k], 1e-9))
+  const BINS = 80
+  const area = [new Float64Array(BINS + 2), new Float64Array(BINS + 2), new Float64Array(BINS + 2)]
+  for (let t = 0; t < indices.length; t += 3) {
+    const a = indices[t] * 3, b = indices[t + 1] * 3, c = indices[t + 2] * 3
+    const ux = raw[b] - raw[a], uy = raw[b + 1] - raw[a + 1], uz = raw[b + 2] - raw[a + 2]
+    const vx = raw[c] - raw[a], vy = raw[c + 1] - raw[a + 1], vz = raw[c + 2] - raw[a + 2]
+    const n = [uy * vz - uz * vy, uz * vx - ux * vz, ux * vy - uy * vx]
+    const length = Math.hypot(n[0], n[1], n[2])
+    if (length === 0) continue
+    for (let k = 0; k < 3; k++) {
+      if (Math.abs(n[k]) / length < 0.8) continue // not facing along this axis
+      const centre = (raw[a + k] + raw[b + k] + raw[c + k]) / 3
+      area[k][1 + Math.min(BINS - 1, Math.floor(((centre - min[k]) / extent[k]) * BINS))] += length / 2
+    }
+  }
+  const peak = area.map((bins) => {
+    let best = 0
+    for (let i = 1; i <= BINS; i++) best = Math.max(best, bins[i - 1] + bins[i] + bins[i + 1])
+    return best
+  })
+  // y wins ties, since that is what glTF says up should be.
+  let axis = 1
+  for (const k of [2, 0]) if (peak[k] > peak[axis] * 1.15) axis = k
+  const up = (['x', 'y', 'z'] as const)[axis]
+
+  const height = extent[axis]
+  const unitScale = [1, 0.01, 0.001].find((k) => height * k >= 2 && height * k <= 8) ?? 1
+  return { up, flipped: false, unitScale }
+}
+
+/**
+ * Floor and ceiling: the lowest and the highest heights that hold a large share of the
+ * horizontal surface. Counting area, not vertices, keeps desks from being mistaken for either.
+ */
+function findLevels(mesh: Pick<ScanMesh, 'positions' | 'indices'>): { floorY: number; ceilingHeight: number | null } {
   const { positions: p, indices } = mesh
   const BIN = 0.05
   const area = new Map<number, number>()
@@ -128,14 +210,18 @@ function findFloor(mesh: Pick<ScanMesh, 'positions' | 'indices'>): number {
   if (!area.size) {
     let min = Infinity
     for (let i = 1; i < p.length; i += 3) if (p[i] < min) min = p[i]
-    return min
+    return { floorY: min, ceilingHeight: null }
   }
   // Smooth over neighbouring bins: a scanned floor is never perfectly flat.
   const keys = [...area.keys()].sort((a, b) => a - b)
   const smooth = (k: number) => (area.get(k - 1) ?? 0) + (area.get(k) ?? 0) + (area.get(k + 1) ?? 0)
   const largest = Math.max(...keys.map(smooth))
   const floorKey = keys.find((k) => smooth(k) >= 0.4 * largest)!
-  return floorKey * BIN
+  // The ceiling is often only partly scanned, so it gets a lower bar than the floor.
+  const ceilingKey = [...keys].reverse().find((k) => smooth(k) >= 0.15 * largest)!
+  const height = (ceilingKey - floorKey) * BIN
+  const plausible = height >= 2.0 && height <= 6.0
+  return { floorY: floorKey * BIN, ceilingHeight: plausible ? Math.round(height * 20) / 20 : null }
 }
 
 /**

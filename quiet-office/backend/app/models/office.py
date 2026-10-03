@@ -25,6 +25,36 @@ class Slot(BaseModel):
     label: str = ""
 
 
+class NoiseSource(Point):
+    """Something that makes noise: a conversation, a printer, a coffee machine."""
+
+    level_db: float = Field(default=60.0, ge=30.0, le=100.0, description="Level 1 m away. Normal speech is about 60 dB.")
+    label: str = ""
+
+
+ZONE_SAMPLE_STEP_M = 0.8
+
+
+class QuietZone(BaseModel):
+    """A rectangular area that should be quiet, such as a focus area or a meeting corner."""
+
+    x: float = Field(description="Smallest x of the rectangle, metres")
+    y: float = Field(description="Smallest y of the rectangle, metres")
+    width: float = Field(gt=0.2, le=60.0)
+    height: float = Field(gt=0.2, le=60.0)
+    label: str = ""
+
+    def sample_points(self) -> List[Point]:
+        """Listening points spread evenly over the zone, about one every 0.8 m."""
+        nx = max(1, round(self.width / ZONE_SAMPLE_STEP_M))
+        ny = max(1, round(self.height / ZONE_SAMPLE_STEP_M))
+        return [
+            Point(x=self.x + (i + 0.5) * self.width / nx, y=self.y + (j + 0.5) * self.height / ny)
+            for j in range(ny)
+            for i in range(nx)
+        ]
+
+
 class Office(BaseModel):
     """An open-plan office seen from above. The room is any simple polygon."""
 
@@ -33,9 +63,11 @@ class Office(BaseModel):
         max_length=40,
         description="Room corners in order, metres. The last corner joins back to the first.",
     )
-    source: Point = Field(description="Where the conversation happens")
-    desks: List[Point] = Field(min_length=1, max_length=40)
-    slots: List[Slot] = Field(min_length=1, max_length=40)
+    ceiling_height_m: float = Field(default=2.7, ge=2.0, le=6.0, description="Floor to ceiling")
+    sources: List[NoiseSource] = Field(min_length=1, max_length=6, description="Where the noise comes from")
+    desks: List[Point] = Field(default_factory=list, max_length=40, description="Single listening points")
+    quiet_zones: List[QuietZone] = Field(default_factory=list, max_length=10, description="Areas that should be quiet")
+    slots: List[Slot] = Field(min_length=1, max_length=60)
 
     @model_validator(mode="after")
     def _check_size(self) -> "Office":
@@ -46,7 +78,49 @@ class Office(BaseModel):
             raise ValueError("The room must be at most 60 m in each direction")
         if len({slot.id for slot in self.slots}) != len(self.slots):
             raise ValueError("Screen position ids must be unique")
+        if not self.desks and not self.quiet_zones:
+            raise ValueError("Add at least one desk or one quiet zone to listen at")
+        if len(self.receivers()) > 150:
+            raise ValueError("Too many listening points: make the quiet zones smaller or fewer")
         return self
+
+    def receivers(self) -> List[Point]:
+        """Every point the sound is read at: the desks first, then each quiet zone's points."""
+        points = list(self.desks)
+        for zone in self.quiet_zones:
+            points.extend(zone.sample_points())
+        return points
+
+    def zone_ranges(self) -> List[Tuple[int, int]]:
+        """For each quiet zone, where its points sit in receivers(): (start, end)."""
+        ranges, start = [], len(self.desks)
+        for zone in self.quiet_zones:
+            count = len(zone.sample_points())
+            ranges.append((start, start + count))
+            start += count
+        return ranges
+
+    def contains(self, x: float, y: float) -> bool:
+        """Whether a point is inside the room outline (even-odd rule)."""
+        inside, n = False, len(self.outline)
+        for i in range(n):
+            a, b = self.outline[i], self.outline[i - 1]
+            if (a.y > y) != (b.y > y) and x < (b.x - a.x) * (y - a.y) / (b.y - a.y) + a.x:
+                inside = not inside
+        return inside
+
+    def reference_point(self, index: int) -> Point:
+        """A point 1 m from source `index`, inside the room and clear of the other sources.
+
+        The level there, with no screens, is what the source's level_db is defined as.
+        """
+        source = self.sources[index]
+        others = [s for i, s in enumerate(self.sources) if i != index]
+        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1), (0.707, 0.707), (-0.707, 0.707), (0.707, -0.707), (-0.707, -0.707)]:
+            x, y = source.x + dx, source.y + dy
+            if self.contains(x, y) and all((o.x - x) ** 2 + (o.y - y) ** 2 > 0.25 for o in others):
+                return Point(x=x, y=y)
+        return Point(x=source.x + 1.0, y=source.y)
 
     @property
     def bounds(self) -> Tuple[float, float, float, float]:
@@ -79,7 +153,7 @@ def default_office() -> Office:
     ]
     return Office(
         outline=[Point(x=0.0, y=0.0), Point(x=16.0, y=0.0), Point(x=16.0, y=10.0), Point(x=0.0, y=10.0)],
-        source=Point(x=2.2, y=5.0),
+        sources=[NoiseSource(x=2.2, y=5.0, level_db=60.0, label="Conversation")],
         desks=desks,
         slots=[
             Slot(id=i, x=x, y=y, orientation=o, label=label)
@@ -95,6 +169,34 @@ class OptimizationParams(BaseModel):
     n_screens: int = Field(default=3, ge=1, le=3, description="Screens to place")
     screen_length_m: float = Field(default=1.8, gt=0.3, le=4.0)
     screen_thickness_m: float = Field(default=0.1, gt=0.02, le=0.5)
+    screen_height_m: float = Field(
+        default=1.6,
+        ge=0.8,
+        le=6.0,
+        description="Panel height. A desk divider is about 1.2 m, a tall partition 2 m. Only used in 3D.",
+    )
+    screen_absorbing: bool = Field(
+        default=False,
+        description="True: the panel faces absorb sound. False: they reflect it. Only used in 3D.",
+    )
+    parallel_jobs: int = Field(
+        default=4,
+        ge=1,
+        le=8,
+        description=(
+            "How many Allsolve jobs each round of layouts is split into and run at the same time. "
+            "More is faster but uses more of a shared account's compute quota."
+        ),
+    )
+    model: Literal["2d", "3d"] = Field(
+        default="3d",
+        description=(
+            "3d includes ceiling height and sound passing over the panels, and is far more "
+            "expensive. 2d is a top-down slice where every panel is floor-to-ceiling."
+        ),
+    )
+    source_height_m: float = Field(default=1.5, ge=0.5, le=2.2, description="Talker mouth height (standing)")
+    ear_height_m: float = Field(default=1.2, ge=0.5, le=2.2, description="Listener ear height (seated)")
     frequencies_hz: List[float] = Field(
         default=[250.0, 500.0],
         min_length=1,
@@ -114,7 +216,11 @@ class LayoutResult(BaseModel):
     """One simulated layout."""
 
     slot_ids: List[int]
-    desk_levels_db: List[float] = Field(description="Speech level at each desk, same order as office.desks")
+    desk_levels_db: List[float] = Field(description="Noise level at each desk, same order as office.desks")
+    zone_levels_db: List[float] = Field(
+        default_factory=list,
+        description="Average noise level over each quiet zone, same order as office.quiet_zones",
+    )
     score: float = Field(description="Noise score relative to the untreated office (= 100)")
 
 
@@ -137,6 +243,7 @@ class OptimizationStatus(BaseModel):
     layouts_total: int = 0
     best_score: Optional[float] = None
     project_url: Optional[str] = None
+    log_size: int = Field(default=0, description="Entries in the run log so far; fetch them from /log")
 
 
 class OptimizationResults(BaseModel):
@@ -149,6 +256,10 @@ class OptimizationResults(BaseModel):
     layouts: List[LayoutResult] = Field(description="Every layout simulated, in the order tested")
     project_url: Optional[str] = None
     parameters: OptimizationParams
+    evidence: Optional[dict] = Field(
+        default=None,
+        description="What ties the result to Allsolve: project, jobs, and the raw pressures the solver returned",
+    )
 
 
 class Capabilities(BaseModel):
@@ -157,3 +268,16 @@ class Capabilities(BaseModel):
     sdk_installed: bool
     credentials_configured: bool
     host: str
+    ai_configured: bool = Field(default=False, description="An OpenAI key is set, so runs can be explained in plain language")
+
+
+class ExplainRequest(BaseModel):
+    """Ask for a plain-language explanation of what is on screen."""
+
+    optimization_id: Optional[str] = Field(default=None, description="An Allsolve run, so its log is included")
+    context: dict = Field(description="The office, settings and result to explain")
+
+
+class ExplainResponse(BaseModel):
+    text: str
+    model: str

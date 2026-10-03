@@ -14,6 +14,8 @@ const props = defineProps<{
   params: OptimizationParams
   before: LayoutResult
   after: LayoutResult
+  /** Fade the estimated map when the numbers on top of it come from Allsolve. */
+  fadedMap?: boolean
 }>()
 
 const U = 10 // drawing units per metre
@@ -38,7 +40,7 @@ watch(() => [props.office, props.after.slot_ids.join(','), props.params.frequenc
 </script>
 
 <template>
-  <div class="plan" :style="{ aspectRatio: `${view.width} / ${view.height}` }">
+  <div class="plan" :class="{ faded: fadedMap }" :style="{ aspectRatio: `${view.width} / ${view.height}` }">
     <div
       v-for="side in (['before', 'after'] as const)"
       :key="side"
@@ -47,6 +49,31 @@ watch(() => [props.office, props.after.slot_ids.join(','), props.params.frequenc
     >
       <canvas :ref="(el) => (side === 'before' ? (beforeCanvas = el as HTMLCanvasElement) : (afterCanvas = el as HTMLCanvasElement))" />
       <svg :viewBox="viewBox" aria-hidden="true">
+        <g v-for="(zone, i) in office.quiet_zones" :key="`z${i}`">
+          <rect
+            :x="zone.x * U"
+            :y="zone.y * U"
+            :width="zone.width * U"
+            :height="zone.height * U"
+            rx="1.5"
+            fill="#2a7a5f"
+            fill-opacity=".08"
+            stroke="#2a7a5f"
+            stroke-width=".6"
+            stroke-dasharray="2 1.4"
+          />
+          <text :x="zone.x * U + 1.6" :y="zone.y * U + 4.4" font-size="3" fill="#17302b">{{ zone.label || 'Quiet zone' }}</text>
+          <text
+            :x="zone.x * U + 1.6"
+            :y="zone.y * U + 9.4"
+            font-size="4.2"
+            fill="#17302b"
+            :font-weight="((side === 'before' ? before : after).zone_levels_db[i] ?? 0) >= EARSHOT_DB ? 700 : 400"
+          >
+            {{ ((side === 'before' ? before : after).zone_levels_db[i] ?? 0).toFixed(0) }} dB
+          </text>
+        </g>
+
         <g v-for="(desk, i) in office.desks" :key="i">
           <rect :x="desk.x * U - 6.5" :y="desk.y * U - 4.5" width="13" height="9" rx="1.6" fill="#fff" stroke="#17302b" stroke-width=".5" />
           <circle
@@ -69,16 +96,20 @@ watch(() => [props.office, props.after.slot_ids.join(','), props.params.frequenc
           </text>
         </g>
 
-        <circle :cx="office.source.x * U" :cy="office.source.y * U" r="2.2" fill="#17302b" />
-        <path
-          v-for="r in [4.5, 7]"
-          :key="r"
-          :d="`M${office.source.x * U + r * 0.6} ${office.source.y * U - r * 0.8} A${r} ${r} 0 0 1 ${office.source.x * U + r * 0.6} ${office.source.y * U + r * 0.8}`"
-          fill="none"
-          stroke="#17302b"
-          stroke-width=".7"
-        />
-        <text :x="office.source.x * U" :y="office.source.y * U + 11" font-size="3" text-anchor="middle" fill="#17302b">conversation</text>
+        <g v-for="(source, i) in office.sources" :key="`n${i}`">
+          <circle :cx="source.x * U" :cy="source.y * U" r="2.2" fill="#17302b" />
+          <path
+            v-for="r in [4.5, 7]"
+            :key="r"
+            :d="`M${source.x * U + r * 0.6} ${source.y * U - r * 0.8} A${r} ${r} 0 0 1 ${source.x * U + r * 0.6} ${source.y * U + r * 0.8}`"
+            fill="none"
+            stroke="#17302b"
+            stroke-width=".7"
+          />
+          <text :x="source.x * U" :y="source.y * U + 11" font-size="3" text-anchor="middle" fill="#17302b">
+            {{ (source.label || 'noise').toLowerCase() }} · {{ source.level_db }} dB
+          </text>
+        </g>
 
         <g v-for="(g, i) in screens" :key="`s${i}`">
           <template v-if="side === 'after'">

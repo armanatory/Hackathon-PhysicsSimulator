@@ -4,23 +4,38 @@
 
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef, watch } from 'vue'
-import type { Capabilities, LayoutResult, Office, OptimizationParams, Point, ResultSource, Strategy } from '@/types'
-import { EARSHOT_DB, defaultOffice } from '@/types'
+import type { Capabilities, Evidence, LayoutResult, LogEntry, Office, OptimizationParams, Point, ResultSource, SimulationModel, Strategy } from '@/types'
+import { EARSHOT_DB, PANEL_TYPES, defaultOffice } from '@/types'
 import { optimizationApi } from '@/api/optimization'
-import { bestOf, estimateSearch } from '@/physics/estimate'
+import { bestOf, estimateLayout, estimateSearch, suggestSlots } from '@/physics/estimate'
 import { boundsOf, interiorPoint, pointInPolygon, snap } from '@/physics/geometry'
-import type { ScanMesh } from '@/scan/glb'
-import { dominantAngle, parseGlb, placeSegments, placementOf, sliceAt } from '@/scan/glb'
+import type { Orientation, ScanMesh } from '@/scan/glb'
+import { dominantAngle, orient, parseGlb, placeSegments, placementOf, sliceAt } from '@/scan/glb'
+
+// Same rule of thumb as the backend: second-order tetrahedra at six elements per wavelength.
+const UNKNOWNS_PER_CUBIC_MESH_SIZE = 11.5
+const ELEMENTS_PER_WAVELENGTH = 6
+const SPEED_OF_SOUND = 343
 
 const POLL_INTERVAL_MS = 2000
 const STORAGE_KEY = 'quietoffice.office.v1'
 
-export type Selection = { kind: 'corner' | 'desk' | 'slot' | 'source'; index: number } | null
+/** 'zone' moves a quiet zone; 'zonesize' drags its bottom-right corner to resize it. */
+export type Selection = { kind: 'corner' | 'desk' | 'slot' | 'source' | 'zone' | 'zonesize'; index: number } | null
 
 function loadSavedOffice(): Office | null {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? 'null')
-    if (saved && Array.isArray(saved.outline) && saved.outline.length >= 3 && saved.source && Array.isArray(saved.desks) && Array.isArray(saved.slots)) {
+    if (saved && Array.isArray(saved.outline) && saved.outline.length >= 3 && Array.isArray(saved.desks) && Array.isArray(saved.slots)) {
+      if (typeof saved.ceiling_height_m !== 'number') saved.ceiling_height_m = 2.7
+      // Offices saved before several noise sources and quiet zones existed
+      if (!Array.isArray(saved.sources)) {
+        if (!saved.source) return null
+        saved.sources = [{ x: saved.source.x, y: saved.source.y, level_db: 60, label: 'Conversation' }]
+        delete saved.source
+      }
+      if (!saved.sources.length) return null
+      if (!Array.isArray(saved.quiet_zones)) saved.quiet_zones = []
       return saved as Office
     }
   } catch {
@@ -40,6 +55,10 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const strategy = ref<Strategy>('greedy')
   const frequencies = ref<number[]>([250, 500])
   const screenLength = ref(1.8)
+  const panelTypeId = ref('screen')
+  const screenAbsorbing = ref(false)
+  const model = ref<SimulationModel>('3d')
+  const parallelJobs = ref(4)
 
   const capabilities = ref<Capabilities | null>(null)
   const backendOnline = ref(false)
@@ -56,8 +75,18 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const layouts = ref<LayoutResult[]>([])
   const source = ref<ResultSource>('estimate')
 
+  // Proof of the Allsolve run: its log and the raw solver output
+  const logEntries = ref<LogEntry[]>([])
+  const evidence = ref<Evidence | null>(null)
+
+  // Plain-language explanation
+  const explanation = ref('')
+  const explanationModel = ref('')
+  const explaining = ref(false)
+  const explainError = ref<string | null>(null)
+
   // Editing
-  const view = ref<'result' | 'edit'>('result')
+  const view = ref<'result' | '3d' | 'edit'>('result')
   const selection = ref<Selection>(null)
   const notice = ref('')
 
@@ -72,27 +101,37 @@ export const useOptimizationStore = defineStore('optimization', () => {
   // GETTERS
   // ============================================================================
 
+  const panelType = computed(() => PANEL_TYPES.find((t) => t.id === panelTypeId.value) ?? PANEL_TYPES[1])
+
   const params = computed<OptimizationParams>(() => ({
     office: office.value,
     n_screens: nScreens.value,
     screen_length_m: screenLength.value,
     screen_thickness_m: 0.1,
+    screen_height_m: Math.min(panelType.value.height_m, office.value.ceiling_height_m),
+    screen_absorbing: screenAbsorbing.value,
+    model: model.value,
+    parallel_jobs: parallelJobs.value,
+    source_height_m: 1.5,
+    ear_height_m: 1.2,
     frequencies_hz: frequencies.value,
     strategy: strategy.value,
   }))
 
   const isRunning = computed(() => status.value === 'running' || status.value === 'pending')
+  const hasListeners = computed(() => office.value.desks.length > 0 || office.value.quiet_zones.length > 0)
   const baseline = computed(() => layouts.value.find((l) => l.slot_ids.length === 0) ?? null)
   const placedScreens = computed(() => Math.min(nScreens.value, office.value.slots.length))
   const best = computed(() => bestOf(layouts.value, placedScreens.value))
   const canUseAllsolve = computed(
-    () => backendOnline.value && !!capabilities.value?.sdk_installed && !!capabilities.value?.credentials_configured && office.value.desks.length > 0,
+    () => backendOnline.value && !!capabilities.value?.sdk_installed && !!capabilities.value?.credentials_configured && hasListeners.value && office.value.slots.length > 0,
   )
   const allsolveBlockedReason = computed(() => {
     if (!backendOnline.value) return 'The backend is not running. Start it to run on Allsolve.'
     if (!capabilities.value?.sdk_installed) return 'The Allsolve SDK is not installed on the backend.'
     if (!capabilities.value?.credentials_configured) return 'Allsolve credentials are missing. Fill in .env and restart the backend.'
-    if (!office.value.desks.length) return 'Add at least one desk first.'
+    if (!hasListeners.value) return 'Add at least one desk or quiet zone first.'
+    if (!office.value.slots.length) return 'Add or suggest at least one screen position first.'
     return null
   })
   const plannedLayouts = computed(() => {
@@ -107,11 +146,46 @@ export const useOptimizationStore = defineStore('optimization', () => {
     return 1 + Math.round(combos)
   })
 
+  /** Rough size of one 3D solve on Allsolve at the highest chosen band. */
+  const unknowns3d = computed(() => {
+    const b = boundsOf(office.value.outline)
+    const meshSize = SPEED_OF_SOUND / (Math.max(...frequencies.value) * ELEMENTS_PER_WAVELENGTH)
+    return (UNKNOWNS_PER_CUBIC_MESH_SIZE * b.width * b.height * office.value.ceiling_height_m) / meshSize ** 3
+  })
+
   const scanPlacement = computed(() => (scan.value ? placementOf(scan.value, scanAngle.value) : null))
   /** The scan cut at the chosen height, placed on the floor plan: x1, y1, x2, y2 per segment. */
   const scanSegments = computed(() =>
     scan.value && scanPlacement.value ? placeSegments(sliceAt(scan.value, sliceHeight.value), scanPlacement.value) : null,
   )
+
+  /** The quick estimate for the layout Allsolve chose, to set beside the solver's numbers. */
+  const estimateForBest = computed(() =>
+    source.value === 'allsolve' && best.value ? estimateLayout(office.value, best.value.slot_ids, params.value) : null,
+  )
+  const estimateScoreForBest = computed(() => estimateForBest.value?.score ?? null)
+  const comparison = computed(() => {
+    const allsolve = best.value, estimate = estimateForBest.value
+    if (!allsolve || !estimate) return []
+    const pressures = evidence.value?.best_pressures_pa ?? []
+    const rows = office.value.quiet_zones.map((zone, i) => ({
+      label: zone.label || `Quiet zone ${i + 1}`,
+      estimate: estimate.zone_levels_db[i] ?? 0,
+      allsolve: allsolve.zone_levels_db[i] ?? 0,
+      pressures: undefined as number[][] | undefined,
+    }))
+    allsolve.desk_levels_db.forEach((level, i) => {
+      rows.push({ label: `Desk ${i + 1}`, estimate: estimate.desk_levels_db[i] ?? 0, allsolve: level, pressures: pressures[i] })
+    })
+    return rows
+  })
+
+  const canExplain = computed(() => backendOnline.value && !!capabilities.value?.ai_configured && (!!best.value || logEntries.value.length > 0))
+  const explainBlockedReason = computed(() => {
+    if (!backendOnline.value) return 'The backend is not running, so the explanation is not available.'
+    if (!capabilities.value?.ai_configured) return 'Add OPENAI_API_KEY to .env and restart the backend to get an explanation in plain language.'
+    return null
+  })
 
   function inEarshot(layout: LayoutResult | null): number {
     return layout ? layout.desk_levels_db.filter((l) => l >= EARSHOT_DB).length : 0
@@ -144,6 +218,10 @@ export const useOptimizationStore = defineStore('optimization', () => {
     message.value = ''
     error.value = null
     projectUrl.value = null
+    logEntries.value = []
+    evidence.value = null
+    explanation.value = ''
+    explainError.value = null
   }
 
   /** Run the search on Allsolve through the backend and poll until it finishes. */
@@ -153,6 +231,9 @@ export const useOptimizationStore = defineStore('optimization', () => {
     status.value = 'pending'
     progress.value = 0
     message.value = 'Starting...'
+    logEntries.value = []
+    evidence.value = null
+    explanation.value = ''
     try {
       const response = await optimizationApi.start({ ...params.value, n_screens: placedScreens.value })
       optimizationId.value = response.optimization_id
@@ -171,9 +252,14 @@ export const useOptimizationStore = defineStore('optimization', () => {
       message.value = s.message ?? ''
       layoutsTotal.value = s.layouts_total
       projectUrl.value = s.project_url
+      if (s.log_size > logEntries.value.length) {
+        const log = await optimizationApi.getLog(id, logEntries.value.length)
+        logEntries.value.push(...log.entries)
+      }
       if (s.status === 'completed') {
         const results = await optimizationApi.getResults(id)
         layouts.value = results.layouts
+        evidence.value = results.evidence
         source.value = 'allsolve'
         projectUrl.value = results.project_url
         status.value = 'completed'
@@ -198,6 +284,65 @@ export const useOptimizationStore = defineStore('optimization', () => {
     }
   }
 
+  /** Ask the AI model to explain what is on screen, and the run log if there is one. */
+  async function explain(): Promise<void> {
+    if (!canExplain.value || explaining.value) return
+    explaining.value = true
+    explainError.value = null
+    const o = office.value, b = baseline.value, w = best.value
+    const round = (values: number[]) => values.map((v) => Math.round(v * 10) / 10)
+    const context = {
+      source_of_numbers: source.value,
+      run_status: status.value,
+      run_error: error.value,
+      office: {
+        room_size_m: boundsOf(o.outline),
+        ceiling_height_m: o.ceiling_height_m,
+        noise_sources: o.sources.map((s) => ({ name: s.label, level_db_at_1m: s.level_db })),
+        quiet_zones: o.quiet_zones.map((z) => z.label),
+        desks: o.desks.length,
+        candidate_screen_positions: o.slots.length,
+      },
+      settings: {
+        screens_to_place: placedScreens.value,
+        panel: panelType.value.name,
+        panel_height_m: panelType.value.height_m,
+        panel_surface: screenAbsorbing.value ? 'absorbing' : 'hard',
+        speech_bands_hz: frequencies.value,
+        search: strategy.value === 'greedy' ? 'one screen at a time' : 'every combination',
+        allsolve_model: model.value,
+      },
+      result:
+        b && w
+          ? {
+              layouts_tested: layouts.value.length,
+              noise_score_before: 100,
+              noise_score_after: Math.round(w.score * 10) / 10,
+              chosen_positions: w.slot_ids.map((id) => o.slots.find((s) => s.id === id)?.label ?? `position ${id}`),
+              desk_levels_db_before: round(b.desk_levels_db),
+              desk_levels_db_after: round(w.desk_levels_db),
+              zone_levels_db_before: round(b.zone_levels_db),
+              zone_levels_db_after: round(w.zone_levels_db),
+              desks_in_earshot_before: inEarshot(b),
+              desks_in_earshot_after: inEarshot(w),
+            }
+          : null,
+      allsolve: evidence.value
+        ? { project_url: evidence.value.project_url, solves: evidence.value.solves, cloud_jobs: evidence.value.jobs.length }
+        : null,
+      quick_estimate_score_for_same_layout: estimateScoreForBest.value === null ? null : Math.round(estimateScoreForBest.value * 10) / 10,
+    }
+    try {
+      const answer = await optimizationApi.explain(context, logEntries.value.length ? optimizationId.value : null)
+      explanation.value = answer.text
+      explanationModel.value = answer.model
+    } catch (e) {
+      explainError.value = e instanceof Error ? e.message : String(e)
+    } finally {
+      explaining.value = false
+    }
+  }
+
   /** Changing a choice invalidates what is on screen, so re-run the estimate. */
   function setScreens(n: number): void {
     nScreens.value = n
@@ -205,6 +350,18 @@ export const useOptimizationStore = defineStore('optimization', () => {
   }
   function setStrategy(s: Strategy): void {
     strategy.value = s
+    runEstimate()
+  }
+  function setPanelType(id: string): void {
+    panelTypeId.value = id
+    runEstimate()
+  }
+  function setAbsorbing(absorbing: boolean): void {
+    screenAbsorbing.value = absorbing
+    runEstimate()
+  }
+  function setModel(value: SimulationModel): void {
+    model.value = value
     runEstimate()
   }
   function toggleFrequency(hz: number): void {
@@ -240,12 +397,24 @@ export const useOptimizationStore = defineStore('optimization', () => {
     if (s.kind === 'corner') Object.assign(o.outline[s.index], p)
     else if (s.kind === 'desk') Object.assign(o.desks[s.index], p)
     else if (s.kind === 'slot') Object.assign(o.slots[s.index], p)
-    else Object.assign(o.source, p)
+    else if (s.kind === 'source') Object.assign(o.sources[s.index], p)
+    else if (s.kind === 'zone') Object.assign(o.quiet_zones[s.index], p)
+    else {
+      // The handle is the zone's bottom-right corner.
+      const zone = o.quiet_zones[s.index]
+      zone.width = Math.max(0.6, snap(p.x - zone.x))
+      zone.height = Math.max(0.6, snap(p.y - zone.y))
+    }
   }
 
   function positionOf(s: NonNullable<Selection>): Point {
     const o = office.value
-    return s.kind === 'corner' ? o.outline[s.index] : s.kind === 'desk' ? o.desks[s.index] : s.kind === 'slot' ? o.slots[s.index] : o.source
+    if (s.kind === 'corner') return o.outline[s.index]
+    if (s.kind === 'desk') return o.desks[s.index]
+    if (s.kind === 'slot') return o.slots[s.index]
+    if (s.kind === 'source') return o.sources[s.index]
+    const zone = o.quiet_zones[s.index]
+    return s.kind === 'zone' ? zone : { x: zone.x + zone.width, y: zone.y + zone.height }
   }
 
   function nudgeSelected(dx: number, dy: number): void {
@@ -257,7 +426,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
   /** A free spot for a new item: inside the room, away from what is already there. */
   function freeSpot(): Point {
     const o = office.value, b = boundsOf(o.outline)
-    const taken = [...o.desks, ...o.slots, o.source]
+    const taken = [...o.desks, ...o.slots, ...o.sources]
     for (let y = b.minY + 1; y < b.maxY; y += 1) {
       for (let x = b.minX + 1; x < b.maxX; x += 1) {
         if (pointInPolygon(x, y, o.outline) && taken.every((t) => Math.hypot(t.x - x, t.y - y) > 1.2)) return { x: snap(x), y: snap(y) }
@@ -278,6 +447,33 @@ export const useOptimizationStore = defineStore('optimization', () => {
     selection.value = { kind: 'slot', index: slots.length - 1 }
   }
 
+  function addSource(): void {
+    const sources = office.value.sources
+    if (sources.length >= 6) return
+    sources.push({ ...freeSpot(), level_db: 60, label: `Source ${sources.length + 1}` })
+    selection.value = { kind: 'source', index: sources.length - 1 }
+  }
+
+  function addZone(): void {
+    const zones = office.value.quiet_zones
+    if (zones.length >= 10) return
+    const spot = freeSpot()
+    zones.push({ x: spot.x, y: spot.y, width: 3, height: 2, label: `Quiet zone ${zones.length + 1}` })
+    selection.value = { kind: 'zone', index: zones.length - 1 }
+  }
+
+  /** Replace the screen positions with ones worked out from the sources and listening points. */
+  function suggestPositions(): void {
+    const suggested = suggestSlots(office.value, screenLength.value)
+    if (!suggested.length) {
+      notice.value = 'No useful screen positions found. Add a desk or a quiet zone that a noise source can reach.'
+      return
+    }
+    office.value.slots = suggested
+    selection.value = null
+    notice.value = `${suggested.length} screen positions suggested between the noise sources and the places that should be quiet.`
+  }
+
   function rotateSelectedSlot(): void {
     const s = selection.value
     if (s?.kind !== 'slot') return
@@ -295,7 +491,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
 
   const canDeleteSelected = computed(() => {
     const s = selection.value
-    if (!s || s.kind === 'source') return false
+    if (!s) return false
+    if (s.kind === 'source') return office.value.sources.length > 1
     return s.kind !== 'corner' || office.value.outline.length > 3
   })
 
@@ -306,6 +503,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
     if (s.kind === 'corner') o.outline.splice(s.index, 1)
     else if (s.kind === 'desk') o.desks.splice(s.index, 1)
     else if (s.kind === 'slot') o.slots.splice(s.index, 1)
+    else if (s.kind === 'source') o.sources.splice(s.index, 1)
+    else o.quiet_zones.splice(s.index, 1)
     selection.value = null
   }
 
@@ -324,11 +523,14 @@ export const useOptimizationStore = defineStore('optimization', () => {
     const o = office.value
     const inside = (p: Point) => pointInPolygon(p.x, p.y, outline)
     const desks = o.desks.filter(inside), slots = o.slots.filter(inside)
-    const removed = o.desks.length - desks.length + (o.slots.length - slots.length)
-    office.value = { outline, source: inside(o.source) ? o.source : interiorPoint(outline), desks, slots }
+    const quiet_zones = o.quiet_zones.filter((z) => inside({ x: z.x + z.width / 2, y: z.y + z.height / 2 }))
+    let sources = o.sources.filter(inside)
+    if (!sources.length) sources = [{ ...o.sources[0], ...interiorPoint(outline) }]
+    const removed = o.desks.length - desks.length + (o.slots.length - slots.length) + (o.quiet_zones.length - quiet_zones.length)
+    office.value = { ...o, outline, sources, desks, quiet_zones, slots }
     selection.value = null
     notice.value = removed
-      ? `New room set. ${removed} desks and screen positions were outside it and have been removed. Add new ones.`
+      ? `New room set. ${removed} desks, zones and screen positions were outside it and have been removed. Add new ones.`
       : 'New room set.'
   }
 
@@ -336,20 +538,38 @@ export const useOptimizationStore = defineStore('optimization', () => {
   // SCAN UNDERLAY
   // ============================================================================
 
+  /** Put a freshly parsed or re-oriented model on the plan and square it up. */
+  function showScan(mesh: ScanMesh, what: string): void {
+    scanAngle.value = -Math.round(dominantAngle(sliceAt(mesh, 1.2)))
+    scan.value = mesh
+    if (mesh.ceilingHeight) office.value.ceiling_height_m = mesh.ceilingHeight
+    const { up, unitScale } = mesh.orientation
+    const units = unitScale === 1 ? 'metres' : unitScale === 0.01 ? 'centimetres' : 'millimetres'
+    notice.value =
+      `${what}: read as ${up.toUpperCase()}-up, in ${units}` +
+      (mesh.ceilingHeight ? `, ceiling ${mesh.ceilingHeight.toFixed(2)} m. ` : '. ') +
+      'If it looks wrong, change the up axis or units above the plan. Then trace the room.'
+  }
+
   async function loadScan(file: File): Promise<void> {
     scanError.value = null
     try {
       const mesh = parseGlb(await file.arrayBuffer())
-      scanAngle.value = -Math.round(dominantAngle(sliceAt(mesh, 1.2)))
-      scan.value = mesh
       scanName.value = file.name
       sliceHeight.value = 1.2
-      notice.value = 'Scan loaded. Square it up with the rotation slider if needed, then trace the room.'
+      showScan(mesh, 'Model loaded')
     } catch (e) {
       scan.value = null
       scanName.value = ''
       scanError.value = e instanceof Error ? e.message : String(e)
     }
+  }
+
+  /** Change which way is up, or the units, when the automatic guess was wrong. */
+  function orientScan(change: Partial<Orientation>): void {
+    const mesh = scan.value
+    if (!mesh) return
+    showScan(orient(mesh.raw, mesh.indices, { ...mesh.orientation, ...change }), 'Model re-read')
   }
 
   function clearScan(): void {
@@ -364,6 +584,13 @@ export const useOptimizationStore = defineStore('optimization', () => {
     strategy,
     frequencies,
     screenLength,
+    panelTypeId,
+    panelType,
+    screenAbsorbing,
+    model,
+    parallelJobs,
+    hasListeners,
+    unknowns3d,
     capabilities,
     backendOnline,
     status,
@@ -374,6 +601,17 @@ export const useOptimizationStore = defineStore('optimization', () => {
     projectUrl,
     layouts,
     source,
+    logEntries,
+    evidence,
+    explanation,
+    explanationModel,
+    explaining,
+    explainError,
+    comparison,
+    estimateScoreForBest,
+    canExplain,
+    explainBlockedReason,
+    explain,
     view,
     selection,
     notice,
@@ -401,16 +639,23 @@ export const useOptimizationStore = defineStore('optimization', () => {
     setScreens,
     setStrategy,
     toggleFrequency,
+    setPanelType,
+    setAbsorbing,
+    setModel,
     moveSelected,
     nudgeSelected,
     addDesk,
     addSlot,
+    addSource,
+    addZone,
+    suggestPositions,
     rotateSelectedSlot,
     splitWall,
     deleteSelected,
     resetOffice,
     setOutline,
     loadScan,
+    orientScan,
     clearScan,
   }
 })

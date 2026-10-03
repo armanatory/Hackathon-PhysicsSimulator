@@ -5,7 +5,9 @@ The model is a 2D top-down slice of the office solved with harmonic acoustic wav
 - the room is air. A rectangular room is one rectangle. Any other outline is the bounding
   rectangle of air with a solid strip along every wall that is not on that rectangle; the
   strips seal the room off from the leftover corners (the SDK has no polygon primitive)
-- the talker is a small pulsating disk (normal acceleration on its edge)
+- each noise source is a small pulsating disk (normal acceleration on its edge). Sources are
+  independent, so each is solved on its own (its amplitude variable is 1, the others 0) and
+  the results are added as energy afterwards
 - each screen is a thin rectangle left out of the air domain, so it is sound-hard
 - the walls absorb (no reflections, the simplest stable choice for a first version)
 
@@ -39,6 +41,13 @@ class OfficeProject:
     physics_set: Any
     air: Any
     mesh_size_m: float
+    # How to solve it. The defaults suit the small 2D model.
+    solver_mode: Any = None  # None: direct
+    node_type: Any = None  # None: the default small machine
+    node_count: int = 1
+    probe_height_m: float = 0.0
+    reference_height_m: float = 0.0
+    max_run_time_minutes: int = 30
 
 
 @dataclass
@@ -107,13 +116,30 @@ def wall_strips(office: Office, thickness: float = WALL_THICKNESS_M) -> List[Wal
     return strips
 
 
+def source_variables(index: int) -> List[str]:
+    """Names of the project variables for noise source number `index`: position and on/off."""
+    return [f"src{index}_x", f"src{index}_y", f"amp{index}"]
+
+
 def screen_variables(index: int) -> List[str]:
     """Names of the project variables that place screen number `index`."""
     return [f"s{index}_on", f"s{index}_x", f"s{index}_y", f"s{index}_w", f"s{index}_h"]
 
 
-def build_office_project(client: Any, params: OptimizationParams) -> OfficeProject:
-    """Create the project: variables, geometry, regions, material and physics."""
+def build_office_project(client: Any, params: OptimizationParams, log: Any = None) -> OfficeProject:
+    """Create the project: variables, geometry, regions, material and physics.
+
+    `log` is an optional RunLog that records every request made to Allsolve.
+    """
+
+    def sent(step: str, message: str, data: Any = None) -> None:
+        if log is not None:
+            log.add("sent", step, message, data)
+
+    def received(step: str, message: str, data: Any = None) -> None:
+        if log is not None:
+            log.add("received", step, message, data)
+
     office = params.office
     project = client.create_project(
         name=f"QuietOffice - {params.n_screens} screens",
@@ -121,6 +147,8 @@ def build_office_project(client: Any, params: OptimizationParams) -> OfficeProje
         labels=["quietoffice"],
         dimension=2,
     )
+
+    received("project", f"Allsolve created 2D project {project.id}", {"project_id": project.id, "dimension": 2})
 
     first = office.slots[0]
     min_x, min_y, max_x, max_y = office.bounds
@@ -130,12 +158,17 @@ def build_office_project(client: Any, params: OptimizationParams) -> OfficeProje
         ("room_y0", min_y, "Room bounding rectangle, smallest y [m]"),
         ("room_w", max_x - min_x, "Room bounding rectangle width [m]"),
         ("room_h", max_y - min_y, "Room bounding rectangle depth [m]"),
-        ("src_x", office.source.x, "Talker x [m]"),
-        ("src_y", office.source.y, "Talker y [m]"),
-        ("src_r", TALKER_RADIUS_M, "Talker radius [m]"),
+        ("src_r", TALKER_RADIUS_M, "Source radius [m]"),
         ("freq", params.frequencies_hz[0], "Frequency [Hz]"),
-        ("accel", 1.0, "Talker surface acceleration [m/s^2]"),
+        ("accel", 1.0, "Source surface acceleration [m/s^2]"),
     ]
+    for i, source in enumerate(office.sources):
+        sx, sy, amp = source_variables(i)
+        variables += [
+            (sx, source.x, f"Source {i} x [m]"),
+            (sy, source.y, f"Source {i} y [m]"),
+            (amp, 1 if i == 0 else 0, f"Source {i} active (1) or silent (0)"),
+        ]
     for i in range(params.n_screens):
         on, x, y, w, h = screen_variables(i)
         variables += [
@@ -146,6 +179,11 @@ def build_office_project(client: Any, params: OptimizationParams) -> OfficeProje
             (h, params.screen_length_m, f"Screen {i} size along y [m]"),
         ]
     project.create_variables(variables)
+    sent(
+        "variables",
+        f"Created {len(variables)} project variables (room, sources, screens, frequency)",
+        {"variables": {name: value for name, value, _ in variables}},
+    )
 
     builder = project.geometry_builder()
     builder.add_rectangle(
@@ -161,7 +199,9 @@ def build_office_project(client: Any, params: OptimizationParams) -> OfficeProje
             size=(strip.size_x, strip.size_y),
             rotation=None if strip.rotation_deg is None else (0, 0, strip.rotation_deg),
         )
-    builder.add_disk(name="talker", position=("src_x", "src_y"), radius="src_r")
+    for i in range(len(office.sources)):
+        sx, sy, _ = source_variables(i)
+        builder.add_disk(name=f"source_{i}", position=(sx, sy), radius="src_r")
     for i in range(params.n_screens):
         on, x, y, w, h = screen_variables(i)
         builder.add_rectangle(
@@ -171,7 +211,13 @@ def build_office_project(client: Any, params: OptimizationParams) -> OfficeProje
             enabled=f"eq({on}, 1)",
         )
     # The implicit final fragment-all splits the room into air + walls + talker + screens.
+    sent(
+        "geometry",
+        f"Sent geometry: room, {len(strips)} wall strips, {len(office.sources)} sources, {params.n_screens} movable screens",
+        {"wall_strips": [strip.name for strip in strips], "sources": len(office.sources), "screens": params.n_screens},
+    )
     builder.build(print_logs=False, on_error=allsolve.OnError.RAISE)
+    received("geometry", "Allsolve built the geometry")
 
     everything = project.create_region_rule(
         name="everything",
@@ -222,20 +268,25 @@ def build_office_project(client: Any, params: OptimizationParams) -> OfficeProje
         operation=allsolve.RegionOperation.DIFFERENCE,
         source_regions=[everything.id, solid.id],
     )
-    talker = project.create_region_rule(
-        name="talker",
-        entity_type=allsolve.Region.SURFACE,
-        bounding_box=(
-            ("src_x - 1.1 * src_r", "src_y - 1.1 * src_r", -1),
-            ("src_x + 1.1 * src_r", "src_y + 1.1 * src_r", 1),
-        ),
-    )
-    talker_edge = project.create_region_computed(
-        name="talker_edge",
-        entity_type=allsolve.Region.CURVE,
-        operation=allsolve.RegionOperation.BOUNDARY,
-        source_regions=[talker.id],
-    )
+    source_edges = []
+    for i in range(len(office.sources)):
+        sx, sy, _ = source_variables(i)
+        body = project.create_region_rule(
+            name=f"source_{i}",
+            entity_type=allsolve.Region.SURFACE,
+            bounding_box=(
+                (f"{sx} - 1.1 * src_r", f"{sy} - 1.1 * src_r", -1),
+                (f"{sx} + 1.1 * src_r", f"{sy} + 1.1 * src_r", 1),
+            ),
+        )
+        source_edges.append(
+            project.create_region_computed(
+                name=f"source_{i}_edge",
+                entity_type=allsolve.Region.CURVE,
+                operation=allsolve.RegionOperation.BOUNDARY,
+                source_regions=[body.id],
+            )
+        )
     if not strips:
         walls = project.create_region_computed(
             name="walls",
@@ -278,36 +329,58 @@ def build_office_project(client: Any, params: OptimizationParams) -> OfficeProje
     acoustics.add_interactions(
         [
             allsolve.Interaction.AcousticWavesNormalAcceleration(
-                name="Talker",
-                acoustic_waves_normal_acceleration="accel",
-                target=talker_edge,
-            ),
-            allsolve.Interaction.AcousticWavesAbsorbingBoundary(name="Walls", target=walls),
+                name=f"Source {i}",
+                # sn(1) makes it oscillate at the simulation frequency. A constant value would be a
+                # steady push, which a harmonic simulation answers with silence.
+                acoustic_waves_normal_acceleration=f"accel * {source_variables(i)[2]} * sn(1)",
+                target=edge,
+            )
+            for i, edge in enumerate(source_edges)
         ]
+        + [allsolve.Interaction.AcousticWavesAbsorbingBoundary(name="Walls", target=walls)]
     )
 
     mesh_size = SPEED_OF_SOUND / (max(params.frequencies_hz) * ELEMENTS_PER_WAVELENGTH)
+    sent(
+        "physics",
+        f"Set up acoustic waves in air: {len(office.sources)} pulsating sources, absorbing walls",
+        {"physics": "AcousticWaves", "density": AIR_DENSITY, "speed_of_sound": SPEED_OF_SOUND, "mesh_size_m": round(mesh_size, 4)},
+    )
     return OfficeProject(project=project, physics_set=physics_set, air=air, mesh_size_m=mesh_size)
 
 
-def desk_output_name(index: int) -> str:
-    return f"desk_{index:02d}"
+def receiver_output_name(index: int) -> str:
+    """Output name for listening point `index` of office.receivers()."""
+    return f"rx_{index:03d}"
 
 
-REFERENCE_OUTPUT = "ref_1m"
+def reference_output_name(source_index: int) -> str:
+    """Output name for the point 1 m from a source, used to calibrate its level."""
+    return f"ref_{source_index}"
 
 
-def add_probe_outputs(simulation: Any, params: OptimizationParams) -> None:
-    """One value output per desk, plus the 1 m reference point used for calibration."""
+def add_probe_outputs(
+    simulation: Any,
+    params: OptimizationParams,
+    probe_height_m: float = 0.0,
+    reference_height_m: float = 0.0,
+) -> None:
+    """One value output per listening point, plus a 1 m reference point per source.
+
+    In 3D the listening points are read at ear height and the references at source height.
+    In 2D both are 0.
+    """
     office = params.office
-    probes = [(desk_output_name(i), desk.x, desk.y) for i, desk in enumerate(office.desks)]
-    probes.append((REFERENCE_OUTPUT, office.source.x + 1.0, office.source.y))
+    probes = [(receiver_output_name(i), p.x, p.y, probe_height_m) for i, p in enumerate(office.receivers())]
+    for i in range(len(office.sources)):
+        ref = office.reference_point(i)
+        probes.append((reference_output_name(i), ref.x, ref.y, reference_height_m))
     simulation.add_outputs(
         [
             allsolve.Output.ValueOutput(
                 name=name,
-                expression=f"interpolate(reg.air, {PRESSURE_MAGNITUDE}, [{x}, {y}, 0])",
+                expression=f"interpolate(reg.air, {PRESSURE_MAGNITUDE}, [{x}, {y}, {z}])",
             )
-            for name, x, y in probes
+            for name, x, y, z in probes
         ]
     )
