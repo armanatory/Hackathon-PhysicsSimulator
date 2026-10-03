@@ -16,8 +16,8 @@ export interface Slot {
 }
 
 export interface Office {
-  width_m: number
-  height_m: number
+  /** Room corners in order, metres. The last corner joins back to the first. */
+  outline: Point[]
   source: Point
   desks: Point[]
   slots: Slot[]
@@ -102,8 +102,12 @@ export function defaultOffice(): Office {
     [9.6, 7.7, 'v', 'In front of the far south desks'],
   ]
   return {
-    width_m: 16,
-    height_m: 10,
+    outline: [
+      { x: 0, y: 0 },
+      { x: 16, y: 0 },
+      { x: 16, y: 10 },
+      { x: 0, y: 10 },
+    ],
     source: { x: 2.2, y: 5 },
     desks,
     slots: slots.map(([x, y, orientation, label], id) => ({ id, x, y, orientation, label })),

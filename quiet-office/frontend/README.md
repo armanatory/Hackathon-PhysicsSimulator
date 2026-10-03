@@ -9,11 +9,14 @@ frontend/src/
 ├── api/optimization.ts          # backend client
 ├── components/
 │   ├── OfficePlan.vue           # floor plan, sound map, before/after divider
+│   ├── OfficeEditor.vue         # drag walls, desks, conversation; open and trace a scan
 │   ├── ControlPanel.vue         # screens, speech bands, search, run on Allsolve
 │   ├── ScoreCard.vue            # noise score before and after
 │   ├── PlacementList.vue        # where each screen goes
 │   └── SearchChart.vue          # every layout tested
 ├── physics/estimate.ts          # quick in-browser estimate (not the solver)
+├── physics/geometry.ts          # polygon helpers for the floor plan
+├── scan/glb.ts                  # reads a phone scan (.glb) and slices it into a floor plan
 ├── stores/optimizationStore.ts  # Pinia state
 ├── types/index.ts               # types shared with the backend
 └── App.vue
@@ -44,6 +47,13 @@ Open http://localhost:5173. Requests to `/api` are proxied to the backend on por
 
 The sound map is always the quick estimate, also after an Allsolve run. Showing the solver's
 pressure field is not built yet.
+
+## Editing the office
+
+The **Edit office** tab is a floor-plan editor: drag the room corners, desks, the conversation
+and the places a screen may stand, or open a phone scan and trace the room over it. Every
+change re-runs the quick estimate, and the office is remembered in the browser. See
+[docs/scan-import.md](../docs/scan-import.md).
 
 ## Build
 

@@ -79,6 +79,10 @@ Leaving out `office` uses the default demo office.
 
 2D top-down slice of the office, harmonic acoustic waves:
 
+- **Room**: any outline. A rectangular room is one rectangle of air. For any other shape the
+  air is the bounding rectangle, and a 0.2 m solid strip is added along every wall that is not
+  on that rectangle. The strips seal the room off from the leftover corners. This is a
+  workaround: the SDK geometry builder has no polygon primitive
 - **Air**: density 1.225 kg/m³, speed of sound 343 m/s
 - **Talker**: a 0.15 m pulsating disk, `AcousticWavesNormalAcceleration` on its edge
 - **Screens**: thin rectangles left out of the air domain, so they are sound-hard
@@ -108,5 +112,7 @@ before Python and keys were set up. Before the full search, run the small check 
 and fix what the solver complains about. Things most likely to need adjusting:
 
 - the `obstacles` region (size filter) and whether unmeshed-physics surfaces are accepted
+- non-rectangular rooms: the wall strips are selected by name (`attribute_path`), and slanted
+  walls use `add_rectangle(rotation=...)`, assumed to turn about the rectangle centre
 - the `interpolate(reg.air, ..., [x, y, 0])` output expression in 2D
 - whether harmonic results sit at `NO_STEP` in the output data

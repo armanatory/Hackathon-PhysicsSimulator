@@ -2,19 +2,22 @@
 
 The model is a 2D top-down slice of the office solved with harmonic acoustic waves:
 
-- the room is a rectangle of air
+- the room is air. A rectangular room is one rectangle. Any other outline is the bounding
+  rectangle of air with a solid strip along every wall that is not on that rectangle; the
+  strips seal the room off from the leftover corners (the SDK has no polygon primitive)
 - the talker is a small pulsating disk (normal acceleration on its edge)
 - each screen is a thin rectangle left out of the air domain, so it is sound-hard
-- the outer walls absorb (no reflections, the simplest stable choice for a first version)
+- the walls absorb (no reflections, the simplest stable choice for a first version)
 
 Every screen position is a project variable, so one project serves every layout: a sweep
 overrides the variables and Allsolve remeshes per distinct geometry.
 """
 
+import math
 from dataclasses import dataclass
-from typing import Any, List
+from typing import Any, List, Optional
 
-from ..models.office import AIR_DENSITY, SPEED_OF_SOUND, OptimizationParams
+from ..models.office import AIR_DENSITY, SPEED_OF_SOUND, Office, OptimizationParams
 
 try:
     import allsolve
@@ -22,6 +25,8 @@ except ImportError:  # the API can still start and report that the SDK is missin
     allsolve = None
 
 TALKER_RADIUS_M = 0.15
+WALL_THICKNESS_M = 0.2
+ON_BOUNDS_TOLERANCE_M = 1e-6
 ELEMENTS_PER_WAVELENGTH = 6
 PRESSURE_MAGNITUDE = "sqrt(pow(harm(2, p), 2) + pow(harm(3, p), 2))"
 
@@ -34,6 +39,72 @@ class OfficeProject:
     physics_set: Any
     air: Any
     mesh_size_m: float
+
+
+@dataclass
+class WallStrip:
+    """A solid strip standing in for one wall that is not on the room's bounding rectangle."""
+
+    name: str
+    centre_x: float
+    centre_y: float
+    size_x: float
+    size_y: float
+    rotation_deg: Optional[float]  # None for walls that run along x or y
+
+
+def wall_strips(office: Office, thickness: float = WALL_THICKNESS_M) -> List[WallStrip]:
+    """Strips for every wall of the outline that does not lie on its bounding rectangle.
+
+    Each strip sits just outside the room, so the room keeps its true size, and reaches one
+    thickness past convex corners so neighbouring strips overlap and leave no gap.
+    A rectangular room needs none.
+    """
+    outline = office.outline
+    n = len(outline)
+    min_x, min_y, max_x, max_y = office.bounds
+
+    def on_bounds(a, b) -> bool:
+        tol = ON_BOUNDS_TOLERANCE_M
+        return (
+            (abs(a.x - min_x) < tol and abs(b.x - min_x) < tol)
+            or (abs(a.x - max_x) < tol and abs(b.x - max_x) < tol)
+            or (abs(a.y - min_y) < tol and abs(b.y - min_y) < tol)
+            or (abs(a.y - max_y) < tol and abs(b.y - max_y) < tol)
+        )
+
+    # Positive when the corners run counter-clockwise in x-y.
+    signed_area = sum(outline[i].x * outline[(i + 1) % n].y - outline[(i + 1) % n].x * outline[i].y for i in range(n))
+    orientation = 1.0 if signed_area > 0 else -1.0
+
+    def convex(i: int) -> bool:
+        prev, here, nxt = outline[i - 1], outline[i], outline[(i + 1) % n]
+        cross = (here.x - prev.x) * (nxt.y - here.y) - (here.y - prev.y) * (nxt.x - here.x)
+        return cross * orientation > 0
+
+    strips: List[WallStrip] = []
+    for i in range(n):
+        a, b = outline[i], outline[(i + 1) % n]
+        length = math.hypot(b.x - a.x, b.y - a.y)
+        if length < 1e-9 or on_bounds(a, b):
+            continue
+        ux, uy = (b.x - a.x) / length, (b.y - a.y) / length
+        # Outward normal: to the right of the direction of travel for a counter-clockwise outline.
+        nx, ny = uy * orientation, -ux * orientation
+        before = thickness if convex(i) else 0.0
+        after = thickness if convex((i + 1) % n) else 0.0
+        along = length + before + after
+        shift = (after - before) / 2
+        centre_x = (a.x + b.x) / 2 + ux * shift + nx * thickness / 2
+        centre_y = (a.y + b.y) / 2 + uy * shift + ny * thickness / 2
+        if abs(uy) < 1e-9:
+            size_x, size_y, rotation = along, thickness, None
+        elif abs(ux) < 1e-9:
+            size_x, size_y, rotation = thickness, along, None
+        else:
+            size_x, size_y, rotation = along, thickness, math.degrees(math.atan2(uy, ux))
+        strips.append(WallStrip(f"wall_{i}", centre_x, centre_y, size_x, size_y, rotation))
+    return strips
 
 
 def screen_variables(index: int) -> List[str]:
@@ -52,9 +123,13 @@ def build_office_project(client: Any, params: OptimizationParams) -> OfficeProje
     )
 
     first = office.slots[0]
+    min_x, min_y, max_x, max_y = office.bounds
+    strips = wall_strips(office)
     variables = [
-        ("room_w", office.width_m, "Room width [m]"),
-        ("room_h", office.height_m, "Room depth [m]"),
+        ("room_x0", min_x, "Room bounding rectangle, smallest x [m]"),
+        ("room_y0", min_y, "Room bounding rectangle, smallest y [m]"),
+        ("room_w", max_x - min_x, "Room bounding rectangle width [m]"),
+        ("room_h", max_y - min_y, "Room bounding rectangle depth [m]"),
         ("src_x", office.source.x, "Talker x [m]"),
         ("src_y", office.source.y, "Talker y [m]"),
         ("src_r", TALKER_RADIUS_M, "Talker radius [m]"),
@@ -75,10 +150,17 @@ def build_office_project(client: Any, params: OptimizationParams) -> OfficeProje
     builder = project.geometry_builder()
     builder.add_rectangle(
         name="room",
-        position=(0, 0),
+        position=("room_x0", "room_y0"),
         size=("room_w", "room_h"),
         alignment=allsolve.CadAlignment.CORNER,
     )
+    for strip in strips:
+        builder.add_rectangle(
+            name=strip.name,
+            position=(strip.centre_x, strip.centre_y),
+            size=(strip.size_x, strip.size_y),
+            rotation=None if strip.rotation_deg is None else (0, 0, strip.rotation_deg),
+        )
     builder.add_disk(name="talker", position=("src_x", "src_y"), radius="src_r")
     for i in range(params.n_screens):
         on, x, y, w, h = screen_variables(i)
@@ -88,13 +170,13 @@ def build_office_project(client: Any, params: OptimizationParams) -> OfficeProje
             size=(w, h),
             enabled=f"eq({on}, 1)",
         )
-    # The implicit final fragment-all splits the room into air + talker + screens.
+    # The implicit final fragment-all splits the room into air + walls + talker + screens.
     builder.build(print_logs=False, on_error=allsolve.OnError.RAISE)
 
     everything = project.create_region_rule(
         name="everything",
         entity_type=allsolve.Region.SURFACE,
-        bounding_box=((-1, -1, -1), ("room_w + 1", "room_h + 1", 1)),
+        bounding_box=(("room_x0 - 1", "room_y0 - 1", -1), ("room_x0 + room_w + 1", "room_y0 + room_h + 1", 1)),
     )
     # Talker and screens are all far smaller than the room, so a size filter finds them.
     obstacle_size = max(params.screen_length_m, 2 * TALKER_RADIUS_M) * 1.05
@@ -103,11 +185,42 @@ def build_office_project(client: Any, params: OptimizationParams) -> OfficeProje
         entity_type=allsolve.Region.SURFACE,
         max_size=(obstacle_size, obstacle_size, 1),
     )
+    solid = obstacles  # everything that is not air
+    movable = obstacles  # talker and screens: their edges are not walls
+    if strips:
+        # Wall strips are found by the name they were built with. Their small corner overlaps
+        # also pass the size filter above, so take them back out of the movable set.
+        strip_rules = [
+            project.create_region_rule(
+                name=f"{strip.name}_solid",
+                entity_type=allsolve.Region.SURFACE,
+                attribute_path=[("name", strip.name)],
+            )
+            for strip in strips
+        ]
+        wall_solid = project.create_region_computed(
+            name="wall_solid",
+            entity_type=allsolve.Region.SURFACE,
+            operation=allsolve.RegionOperation.UNION,
+            source_regions=[rule.id for rule in strip_rules],
+        )
+        movable = project.create_region_computed(
+            name="movable",
+            entity_type=allsolve.Region.SURFACE,
+            operation=allsolve.RegionOperation.DIFFERENCE,
+            source_regions=[obstacles.id, wall_solid.id],
+        )
+        solid = project.create_region_computed(
+            name="solid",
+            entity_type=allsolve.Region.SURFACE,
+            operation=allsolve.RegionOperation.UNION,
+            source_regions=[obstacles.id, wall_solid.id],
+        )
     air = project.create_region_computed(
         name="air",
         entity_type=allsolve.Region.SURFACE,
         operation=allsolve.RegionOperation.DIFFERENCE,
-        source_regions=[everything.id, obstacles.id],
+        source_regions=[everything.id, solid.id],
     )
     talker = project.create_region_rule(
         name="talker",
@@ -123,12 +236,33 @@ def build_office_project(client: Any, params: OptimizationParams) -> OfficeProje
         operation=allsolve.RegionOperation.BOUNDARY,
         source_regions=[talker.id],
     )
-    walls = project.create_region_computed(
-        name="walls",
-        entity_type=allsolve.Region.CURVE,
-        operation=allsolve.RegionOperation.BOUNDARY,
-        source_regions=[everything.id],
-    )
+    if not strips:
+        walls = project.create_region_computed(
+            name="walls",
+            entity_type=allsolve.Region.CURVE,
+            operation=allsolve.RegionOperation.BOUNDARY,
+            source_regions=[everything.id],
+        )
+    else:
+        # Every edge of the air that is not the talker or a screen is a wall.
+        air_edges = project.create_region_computed(
+            name="air_edges",
+            entity_type=allsolve.Region.CURVE,
+            operation=allsolve.RegionOperation.BOUNDARY,
+            source_regions=[air.id],
+        )
+        movable_edges = project.create_region_computed(
+            name="movable_edges",
+            entity_type=allsolve.Region.CURVE,
+            operation=allsolve.RegionOperation.BOUNDARY,
+            source_regions=[movable.id],
+        )
+        walls = project.create_region_computed(
+            name="walls",
+            entity_type=allsolve.Region.CURVE,
+            operation=allsolve.RegionOperation.DIFFERENCE,
+            source_regions=[air_edges.id, movable_edges.id],
+        )
 
     project.create_material(
         name="Air",

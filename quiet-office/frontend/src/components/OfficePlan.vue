@@ -7,6 +7,7 @@ import { computed, onMounted, ref, watch } from 'vue'
 import type { LayoutResult, Office, OptimizationParams } from '@/types'
 import { EARSHOT_DB } from '@/types'
 import { levelColor, paintField, segmentOf } from '@/physics/estimate'
+import { boundsOf, polygonPath } from '@/physics/geometry'
 
 const props = defineProps<{
   office: Office
@@ -20,21 +21,24 @@ const split = ref(50)
 const beforeCanvas = ref<HTMLCanvasElement | null>(null)
 const afterCanvas = ref<HTMLCanvasElement | null>(null)
 
-const viewBox = computed(() => `0 0 ${props.office.width_m * U} ${props.office.height_m * U}`)
+// A little air round the room so the wall line is not cut off.
+const view = computed(() => boundsOf(props.office.outline, 0.15))
+const viewBox = computed(() => `${view.value.minX * U} ${view.value.minY * U} ${view.value.width * U} ${view.value.height * U}`)
+const outlinePath = computed(() => polygonPath(props.office.outline, U))
 const screens = computed(() =>
   props.after.slot_ids.map((id) => segmentOf(props.office.slots.find((s) => s.id === id)!, props.params.screen_length_m)),
 )
 
 function repaint(): void {
-  if (beforeCanvas.value) paintField(beforeCanvas.value, props.office, [], props.params)
-  if (afterCanvas.value) paintField(afterCanvas.value, props.office, props.after.slot_ids, props.params)
+  if (beforeCanvas.value) paintField(beforeCanvas.value, props.office, [], props.params, view.value)
+  if (afterCanvas.value) paintField(afterCanvas.value, props.office, props.after.slot_ids, props.params, view.value)
 }
 onMounted(repaint)
-watch(() => [props.office, props.after.slot_ids.join(','), props.params.frequencies_hz.join(','), props.params.screen_length_m], repaint)
+watch(() => [props.office, props.after.slot_ids.join(','), props.params.frequencies_hz.join(','), props.params.screen_length_m], repaint, { deep: true })
 </script>
 
 <template>
-  <div class="plan" :style="{ aspectRatio: `${office.width_m} / ${office.height_m}` }">
+  <div class="plan" :style="{ aspectRatio: `${view.width} / ${view.height}` }">
     <div
       v-for="side in (['before', 'after'] as const)"
       :key="side"
@@ -49,7 +53,7 @@ watch(() => [props.office, props.after.slot_ids.join(','), props.params.frequenc
             :cx="desk.x * U - 3.4"
             :cy="desk.y * U"
             r="1.5"
-            :fill="levelColor((side === 'before' ? before : after).desk_levels_db[i])"
+            :fill="levelColor((side === 'before' ? before : after).desk_levels_db[i] ?? 0)"
             stroke="#17302b"
             stroke-width=".4"
           />
@@ -59,9 +63,9 @@ watch(() => [props.office, props.after.slot_ids.join(','), props.params.frequenc
             font-size="3.3"
             text-anchor="middle"
             fill="#17302b"
-            :font-weight="(side === 'before' ? before : after).desk_levels_db[i] >= EARSHOT_DB ? 700 : 400"
+            :font-weight="((side === 'before' ? before : after).desk_levels_db[i] ?? 0) >= EARSHOT_DB ? 700 : 400"
           >
-            {{ (side === 'before' ? before : after).desk_levels_db[i].toFixed(0) }}
+            {{ ((side === 'before' ? before : after).desk_levels_db[i] ?? 0).toFixed(0) }}
           </text>
         </g>
 
@@ -84,7 +88,7 @@ watch(() => [props.office, props.after.slot_ids.join(','), props.params.frequenc
           <line v-else :x1="g.x1 * U" :y1="g.y1 * U" :x2="g.x2 * U" :y2="g.y2 * U" stroke="#17302b" stroke-width="1" stroke-dasharray="2 1.6" />
         </g>
 
-        <rect x=".5" y=".5" :width="office.width_m * U - 1" :height="office.height_m * U - 1" fill="none" stroke="#17302b" stroke-width="1" />
+        <path :d="outlinePath" fill="none" stroke="#17302b" stroke-width="1" stroke-linejoin="round" />
       </svg>
     </div>
 

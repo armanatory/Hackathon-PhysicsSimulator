@@ -1,8 +1,8 @@
 """Office layout and optimization models."""
 
-from typing import List, Literal, Optional
+from typing import List, Literal, Optional, Tuple
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 SPEED_OF_SOUND = 343.0  # m/s, air at 20 °C
 AIR_DENSITY = 1.225  # kg/m³
@@ -26,13 +26,34 @@ class Slot(BaseModel):
 
 
 class Office(BaseModel):
-    """A rectangular open-plan office seen from above."""
+    """An open-plan office seen from above. The room is any simple polygon."""
 
-    width_m: float = Field(default=16.0, gt=1.0, le=60.0)
-    height_m: float = Field(default=10.0, gt=1.0, le=60.0)
+    outline: List[Point] = Field(
+        min_length=3,
+        max_length=40,
+        description="Room corners in order, metres. The last corner joins back to the first.",
+    )
     source: Point = Field(description="Where the conversation happens")
     desks: List[Point] = Field(min_length=1, max_length=40)
     slots: List[Slot] = Field(min_length=1, max_length=40)
+
+    @model_validator(mode="after")
+    def _check_size(self) -> "Office":
+        min_x, min_y, max_x, max_y = self.bounds
+        if max_x - min_x < 1.0 or max_y - min_y < 1.0:
+            raise ValueError("The room must be at least 1 m in each direction")
+        if max_x - min_x > 60.0 or max_y - min_y > 60.0:
+            raise ValueError("The room must be at most 60 m in each direction")
+        if len({slot.id for slot in self.slots}) != len(self.slots):
+            raise ValueError("Screen position ids must be unique")
+        return self
+
+    @property
+    def bounds(self) -> Tuple[float, float, float, float]:
+        """Bounding box of the room: (min_x, min_y, max_x, max_y)."""
+        xs = [p.x for p in self.outline]
+        ys = [p.y for p in self.outline]
+        return min(xs), min(ys), max(xs), max(ys)
 
 
 def default_office() -> Office:
@@ -57,6 +78,7 @@ def default_office() -> Office:
         (9.6, 7.7, "v", "In front of the far south desks"),
     ]
     return Office(
+        outline=[Point(x=0.0, y=0.0), Point(x=16.0, y=0.0), Point(x=16.0, y=10.0), Point(x=0.0, y=10.0)],
         source=Point(x=2.2, y=5.0),
         desks=desks,
         slots=[

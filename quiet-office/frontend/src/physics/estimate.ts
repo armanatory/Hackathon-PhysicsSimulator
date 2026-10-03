@@ -6,19 +6,37 @@
  * an Allsolve run is still going. It is NOT the solver: real results come from the backend.
  */
 
-import type { LayoutResult, Office, OptimizationParams, Slot } from '@/types'
+import type { LayoutResult, Office, OptimizationParams, Point, Slot } from '@/types'
+import type { Bounds } from './geometry'
+import { pointInPolygon } from './geometry'
 
 const SPEED_OF_SOUND = 343
 const SCREEN_MAX_LOSS_DB = 14 // sound also passes over a free-standing screen
+const WALL_MAX_LOSS_DB = 30 // a wall in the way (L-shaped rooms): sound only gets round the corner
 const WALL_REFLECTION = 0.36
 const REVERB_DB = 38
 
-interface Segment {
+export interface Segment {
   x1: number
   y1: number
   x2: number
   y2: number
   length: number
+}
+
+interface Source {
+  x: number
+  y: number
+  a: number
+  /** For a mirror image: the wall it reflects in. The path must actually hit that wall. */
+  wall: Segment | null
+}
+
+interface Scene {
+  sources: Source[]
+  screens: Segment[]
+  walls: Segment[]
+  reverb: number
 }
 
 type SearchParams = Pick<OptimizationParams, 'n_screens' | 'screen_length_m' | 'frequencies_hz' | 'strategy'>
@@ -30,20 +48,27 @@ export function segmentOf(slot: Slot, length: number): Segment {
     : { x1: slot.x - half, y1: slot.y, x2: slot.x + half, y2: slot.y, length }
 }
 
-function segmentsOf(office: Office, slotIds: number[], length: number): Segment[] {
-  return slotIds.map((id) => segmentOf(office.slots.find((s) => s.id === id)!, length))
+function wallsOf(outline: Point[]): Segment[] {
+  return outline.map((a, i) => {
+    const b = outline[(i + 1) % outline.length]
+    return { x1: a.x, y1: a.y, x2: b.x, y2: b.y, length: Math.hypot(b.x - a.x, b.y - a.y) }
+  })
 }
 
 function dist(ax: number, ay: number, bx: number, by: number): number {
   return Math.hypot(ax - bx, ay - by)
 }
 
-/** Extra path length around the nearer end of a screen, or -1 when it is not in the way. */
-function detour(sx: number, sy: number, rx: number, ry: number, g: Segment): number {
+function crosses(sx: number, sy: number, rx: number, ry: number, g: Segment): boolean {
   const gx = g.x2 - g.x1, gy = g.y2 - g.y1, px = rx - sx, py = ry - sy
   const d1 = gx * (sy - g.y1) - gy * (sx - g.x1), d2 = gx * (ry - g.y1) - gy * (rx - g.x1)
   const d3 = px * (g.y1 - sy) - py * (g.x1 - sx), d4 = px * (g.y2 - sy) - py * (g.x2 - sx)
-  if (d1 * d2 >= 0 || d3 * d4 >= 0) return -1
+  return d1 * d2 < 0 && d3 * d4 < 0
+}
+
+/** Extra path length around the nearer end of an obstacle, or -1 when it is not in the way. */
+function detour(sx: number, sy: number, rx: number, ry: number, g: Segment): number {
+  if (!crosses(sx, sy, rx, ry, g)) return -1
   return (
     Math.min(
       dist(sx, sy, g.x1, g.y1) + dist(g.x1, g.y1, rx, ry),
@@ -52,54 +77,54 @@ function detour(sx: number, sy: number, rx: number, ry: number, g: Segment): num
   )
 }
 
-/** The talker plus its mirror image in each wall. */
-function sources(office: Office) {
+function sceneOf(office: Office, slotIds: number[], params: SearchParams): Scene {
+  const walls = wallsOf(office.outline).filter((w) => w.length > 1e-6)
   const { x, y } = office.source
-  return [
-    { x, y, a: 1 },
-    { x: -x, y, a: WALL_REFLECTION },
-    { x: 2 * office.width_m - x, y, a: WALL_REFLECTION },
-    { x, y: -y, a: WALL_REFLECTION },
-    { x, y: 2 * office.height_m - y, a: WALL_REFLECTION },
-  ]
-}
-
-function reverbEnergy(segments: Segment[]): number {
-  const absorbing = segments.reduce((sum, g) => sum + g.length, 0)
-  return Math.pow(10, (REVERB_DB - 0.8 * absorbing) / 10)
+  // The talker plus its mirror image in each wall.
+  const sources: Source[] = [{ x, y, a: 1, wall: null }]
+  for (const w of walls) {
+    const ux = (w.x2 - w.x1) / w.length, uy = (w.y2 - w.y1) / w.length
+    const along = (x - w.x1) * ux + (y - w.y1) * uy
+    const footX = w.x1 + along * ux, footY = w.y1 + along * uy
+    sources.push({ x: 2 * footX - x, y: 2 * footY - y, a: WALL_REFLECTION, wall: w })
+  }
+  const screens = slotIds.map((id) => segmentOf(office.slots.find((s) => s.id === id)!, params.screen_length_m))
+  const absorbing = screens.reduce((sum, g) => sum + g.length, 0)
+  return { sources, screens, walls, reverb: Math.pow(10, (REVERB_DB - 0.8 * absorbing) / 10) }
 }
 
 /**
  * Speech level in dB at a point, energy-averaged over the bands.
  * With coherent=true the bands up to 500 Hz keep their phase so the map shows interference.
  */
-function levelAt(
-  x: number,
-  y: number,
-  srcs: ReturnType<typeof sources>,
-  segments: Segment[],
-  reverb: number,
-  frequencies: number[],
-  coherent: boolean,
-): number {
+function levelAt(x: number, y: number, scene: Scene, frequencies: number[], coherent: boolean): number {
   const n = frequencies.length
   const energy = new Array<number>(n).fill(0)
   const re = new Array<number>(n).fill(0)
   const im = new Array<number>(n).fill(0)
-  for (const s of srcs) {
+  for (const s of scene.sources) {
+    if (s.wall && !crosses(s.x, s.y, x, y, s.wall)) continue // this reflection does not reach here
     const r = Math.max(dist(s.x, s.y, x, y), 0.3)
     const base = (s.a * 1e6) / (r * r) // 60 dB at 1 m
-    const detours: number[] = []
-    for (const g of segments) {
+    const screenDetours: number[] = []
+    for (const g of scene.screens) {
       const d = detour(s.x, s.y, x, y, g)
-      if (d >= 0) detours.push(d)
+      if (d >= 0) screenDetours.push(d)
+    }
+    const wallDetours: number[] = []
+    if (!s.wall) {
+      for (const w of scene.walls) {
+        const d = detour(s.x, s.y, x, y, w)
+        if (d >= 0) wallDetours.push(d)
+      }
     }
     for (let b = 0; b < n; b++) {
+      const k = (40 * frequencies[b]) / SPEED_OF_SOUND
       let loss = 0
-      for (const d of detours) {
-        loss += Math.min(SCREEN_MAX_LOSS_DB, 10 * Math.log10(3 + (40 * d * frequencies[b]) / SPEED_OF_SOUND))
-      }
-      const e = base * Math.pow(10, -Math.min(loss, 26) / 10)
+      for (const d of screenDetours) loss += Math.min(SCREEN_MAX_LOSS_DB, 10 * Math.log10(3 + k * d))
+      loss = Math.min(loss, 26)
+      for (const d of wallDetours) loss += Math.min(WALL_MAX_LOSS_DB, 10 * Math.log10(3 + k * d))
+      const e = base * Math.pow(10, -Math.min(loss, 45) / 10)
       energy[b] += e
       if (coherent && frequencies[b] <= 500) {
         const amp = Math.sqrt(e), phase = (2 * Math.PI * frequencies[b] * r) / SPEED_OF_SOUND
@@ -112,7 +137,7 @@ function levelAt(
   for (let b = 0; b < n; b++) {
     let e = energy[b]
     if (coherent && frequencies[b] <= 500) e = 0.55 * e + 0.45 * (re[b] * re[b] + im[b] * im[b])
-    total += e + reverb
+    total += e + scene.reverb
   }
   return 10 * Math.log10(total / n)
 }
@@ -123,9 +148,8 @@ function rawScore(levels: number[]): number {
 }
 
 function evaluate(office: Office, slotIds: number[], params: SearchParams) {
-  const segments = segmentsOf(office, slotIds, params.screen_length_m)
-  const srcs = sources(office), reverb = reverbEnergy(segments)
-  const levels = office.desks.map((d) => levelAt(d.x, d.y, srcs, segments, reverb, params.frequencies_hz, false))
+  const scene = sceneOf(office, slotIds, params)
+  const levels = office.desks.map((d) => levelAt(d.x, d.y, scene, params.frequencies_hz, false))
   return { levels, raw: rawScore(levels) }
 }
 
@@ -143,6 +167,7 @@ function combinations(ids: number[], k: number): number[][] {
  * Returns every layout in the order tested; the untreated office is first.
  */
 export function estimateSearch(office: Office, params: SearchParams): LayoutResult[] {
+  if (!office.desks.length) return []
   const base = evaluate(office, [], params)
   const result = (slotIds: number[]): LayoutResult => {
     const e = evaluate(office, slotIds, params)
@@ -150,13 +175,14 @@ export function estimateSearch(office: Office, params: SearchParams): LayoutResu
   }
   const results: LayoutResult[] = [{ slot_ids: [], desk_levels_db: base.levels, score: 100 }]
   const ids = office.slots.map((s) => s.id)
+  const n = Math.min(params.n_screens, ids.length)
 
   if (params.strategy === 'exhaustive') {
-    for (const combo of combinations(ids, params.n_screens)) results.push(result(combo))
+    for (const combo of combinations(ids, n)) if (combo.length) results.push(result(combo))
     return results
   }
   let chosen: number[] = []
-  for (let k = 0; k < params.n_screens; k++) {
+  for (let k = 0; k < n; k++) {
     const round = ids.filter((id) => !chosen.includes(id)).map((id) => result([...chosen, id]))
     results.push(...round)
     chosen = round.reduce((best, r) => (r.score < best.score ? r : best)).slot_ids
@@ -198,21 +224,27 @@ export function levelColor(level: number): string {
   return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`
 }
 
-/** Paint the estimated sound map of one layout onto a canvas. */
-export function paintField(canvas: HTMLCanvasElement, office: Office, slotIds: number[], params: SearchParams): void {
-  const width = 320, height = Math.round((320 * office.height_m) / office.width_m)
+/**
+ * Paint the estimated sound map of one layout onto a canvas covering `view`.
+ * Pixels outside the room are left transparent.
+ */
+export function paintField(canvas: HTMLCanvasElement, office: Office, slotIds: number[], params: SearchParams, view: Bounds): void {
+  const width = 320, height = Math.max(1, Math.round((320 * view.height) / view.width))
   canvas.width = width
   canvas.height = height
   const ctx = canvas.getContext('2d')
   if (!ctx) return
   const image = ctx.createImageData(width, height)
-  const segments = segmentsOf(office, slotIds, params.screen_length_m)
-  const srcs = sources(office), reverb = reverbEnergy(segments)
+  const scene = sceneOf(office, slotIds, params)
   let o = 0
   for (let py = 0; py < height; py++) {
     for (let px = 0; px < width; px++) {
-      const x = ((px + 0.5) * office.width_m) / width, y = ((py + 0.5) * office.height_m) / height
-      const [r, g, b] = levelRGB(levelAt(x, y, srcs, segments, reverb, params.frequencies_hz, true))
+      const x = view.minX + ((px + 0.5) * view.width) / width, y = view.minY + ((py + 0.5) * view.height) / height
+      if (!pointInPolygon(x, y, office.outline)) {
+        o += 4
+        continue
+      }
+      const [r, g, b] = levelRGB(levelAt(x, y, scene, params.frequencies_hz, true))
       image.data[o++] = r
       image.data[o++] = g
       image.data[o++] = b

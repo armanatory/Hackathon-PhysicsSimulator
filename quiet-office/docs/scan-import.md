@@ -3,8 +3,8 @@
 The scenario: walk through a real office with a phone, open the scan in QuietOffice, mark
 where people sit and talk, and get the screen placement for *that* room.
 
-**Status: not built yet.** This page records how to scan, what the export actually contains,
-what the first real scan taught us, and how opening a scan in the app is meant to work.
+**Status: built.** A scan can be opened and traced in the app. This page records how to scan,
+what the export actually contains, what the first real scan taught us, and how to use it.
 
 ## How to scan
 
@@ -58,23 +58,46 @@ That decides the design:
 - A scan is very good as a **tracing underlay**: the walls that were captured are straight,
   to scale and in the right place.
 
-## Opening a scan in the app (planned)
+## Opening a scan in the app
 
-1. **Open** a `.glb` in the app. It is read in the browser; nothing is uploaded.
-2. **Slice.** The app finds the floor (the densest height) and cuts the mesh at about 1.2 m,
-   which is above desks and below most wall clutter. A second cut at desk height shows furniture.
-3. **Trace.** The slice is shown to scale under the floor-plan editor. The user clicks the
-   room corners over it, closing any gaps by hand, and can straighten and square the result.
-4. **Mark up.** Drag in the talker, the desks and the places a screen may stand.
-5. **Simulate.** The traced outline becomes the room in the Allsolve project, exactly as the
-   demo office does today.
+In the app, open the **Edit office** tab.
 
-What has to exist first:
+1. **Open scan (.glb).** The file is read in the browser; nothing is uploaded. The app finds
+   the floor (the lowest height holding a large share of the horizontal surface) and cuts the
+   mesh 1.2 m above it, which is over the desks and under most wall clutter.
+2. **Adjust.** *Cut height* moves the cut: lower it to about 0.7 m to see desks and tables.
+   *Rotate scan* turns the underlay; it starts at the angle that lines most wall length up
+   with the screen, and often needs a nudge.
+3. **Trace room.** Click each corner of the room in order over the blue lines, closing any
+   gaps by eye. Click the first corner again, or press Finish, to close the outline.
+   Undo corner and Cancel are in the toolbar; Backspace, Enter and Escape do the same.
+4. **Mark up.** The traced outline replaces the room. Desks and screen positions that fall
+   outside it are removed; add new ones with *Add desk* and *Add screen position*, and drag
+   the conversation to where people talk.
+5. **Result.** Switch to the Result tab. The quick estimate has already been redone for the
+   new room, and *Run on Allsolve* sends the same room to the backend.
 
-- The office model must allow a **polygon room** (today it is a width and a height).
-- The floor-plan editor (drag talker, desks and screen positions).
-- A `.glb` reader and slicer in the frontend. The format above needs no external library:
-  positions and triangle indices are plain arrays in the binary chunk.
+The same editor works without a scan: drag the room corners, use the dot in the middle of a
+wall to add a corner, and move everything else by dragging or with the arrow keys. The office
+is remembered in the browser; *Reset to demo office* brings the demo back.
+
+How it is built:
+
+- [`frontend/src/scan/glb.ts`](../frontend/src/scan/glb.ts) reads the `.glb`, finds the floor
+  and slices. No external library: positions and triangle indices are plain arrays in the
+  file's binary chunk. Draco-compressed and quantized files are refused with a message.
+- [`frontend/src/components/OfficeEditor.vue`](../frontend/src/components/OfficeEditor.vue)
+  is the editor and the tracing tool.
+- The office model now has an `outline` (a list of corners) where it used to have a width
+  and a height, in both the frontend and the backend.
+
+Limits:
+
+- Tracing is by hand. The app does not detect walls or furniture in the scan.
+- Only `.glb` is read, not `.gltf` with separate files, DXF or USDZ.
+- Rooms with slanted walls work in the quick estimate. On Allsolve they depend on rotated
+  rectangles in the SDK geometry builder, which has not been run yet; see the
+  [backend README](../backend/README.md).
 
 ## Sample files
 

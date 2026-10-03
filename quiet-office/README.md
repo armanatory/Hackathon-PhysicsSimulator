@@ -20,7 +20,7 @@ folders in the repository root are left untouched.
 | [backend/README.md](backend/README.md) | API, physics model, search strategies, current status |
 | [frontend/README.md](frontend/README.md) | UI structure and the two sources of numbers |
 | [docs/deploy.md](docs/deploy.md) | Running it in Docker, locally and on a server |
-| [docs/scan-import.md](docs/scan-import.md) | Scanning a real office with a phone and opening it in the app (planned), with sample files |
+| [docs/scan-import.md](docs/scan-import.md) | Scanning a real office with a phone, opening the scan in the app and tracing the room |
 
 UI sketches that led to this look: [docs/ui-exploring/03-quiet-office](../docs/ui-exploring/03-quiet-office/index.html).
 
@@ -63,8 +63,9 @@ Then open http://localhost:8080. Details and server notes: [docs/deploy.md](docs
 
 ## How it works
 
-1. The office is described as data: room size, where the conversation is, desk positions and
-   the places a screen is allowed to stand.
+1. The office is described as data: the room outline, where the conversation is, desk positions
+   and the places a screen is allowed to stand. It is drawn in the app's editor, by hand or
+   traced over a phone scan.
 2. The backend turns that into a 2D Allsolve project: air, a pulsating talker, sound-hard
    screens whose positions are project variables, absorbing walls.
 3. A search runs rounds of layouts as geometry sweeps: harmonic acoustic simulations at the
@@ -74,7 +75,7 @@ Then open http://localhost:8080. Details and server notes: [docs/deploy.md](docs
 
 ## Status
 
-- Frontend: working, checked in a browser.
+- Frontend: working, checked in a browser, including the floor-plan editor and scan import.
 - Backend: starts, the SDK is installed and keys are configured. The Allsolve run itself has
   not been confirmed yet; run [`simulations/baseline`](simulations/baseline/run_baseline.py)
   first and fix what the solver reports.
