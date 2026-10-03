@@ -292,7 +292,7 @@ def build_office_project(client: Any, params: OptimizationParams, log: Any = Non
                     (f"{sx} + 1.1 * src_r", f"{sy} + 1.1 * src_r", 1),
                 ),
             )
-            for sx, sy, _ in (source_variables(i) for i in range(len(office.sources)))
+            for i, (sx, sy, _) in enumerate(source_variables(i) for i in range(len(office.sources)))
         ]
         obstacles = (
             bodies[0]

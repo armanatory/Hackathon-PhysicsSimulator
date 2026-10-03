@@ -1,0 +1,102 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]:
+        - generic [ref=e9]: Allquiet
+        - generic [ref=e10]: simulated on Allsolve
+      - button "New job" [ref=e11] [cursor=pointer]
+  - main [ref=e12]:
+    - list "Steps" [ref=e13]:
+      - listitem [ref=e14]:
+        - button "1 Room" [ref=e15] [cursor=pointer]:
+          - generic [ref=e16]: "1"
+          - text: Room
+      - listitem [ref=e17]:
+        - button "2 Noise and quiet zones" [ref=e18] [cursor=pointer]:
+          - generic [ref=e19]: "2"
+          - text: Noise and quiet zones
+      - listitem [ref=e20]:
+        - button "3 Panels" [active] [ref=e21] [cursor=pointer]:
+          - generic [ref=e22]: "3"
+          - text: Panels
+      - listitem [ref=e23]:
+        - button "4 Result" [disabled] [ref=e24]:
+          - generic [ref=e25]: "4"
+          - text: Result
+    - generic [ref=e26]:
+      - heading "How many panels?" [level=1] [ref=e104]
+      - paragraph [ref=e105]: Choose the panels you have. The app simulates the room with them in different places and keeps the quietest layout.
+    - generic [ref=e29]:
+      - generic [ref=e31]:
+        - group "View" [ref=e32]:
+          - button "Plan" [pressed] [ref=e33] [cursor=pointer]
+          - button "3D" [ref=e34] [cursor=pointer]
+        - generic [ref=e35]:
+          - application "Floor plan editor. Select an item and use the arrow keys to move it." [ref=e39]:
+            - generic [ref=e42]:
+              - generic: 16.0 m
+              - generic "Add a corner here" [ref=e43]
+            - generic [ref=e44]:
+              - generic: 10.0 m
+              - generic "Add a corner here" [ref=e45]
+            - generic [ref=e46]:
+              - generic: 16.0 m
+              - generic "Add a corner here" [ref=e47]
+            - generic [ref=e48]:
+              - generic: 10.0 m
+              - generic "Add a corner here" [ref=e49]
+            - generic [ref=e50]:
+              - button "Quiet zone Quiet zone 1" [ref=e51]
+              - generic: Quiet zone 1
+              - generic "Drag to resize" [ref=e52]
+            - button "Desk 1" [ref=e53]
+            - button "Desk 2" [ref=e55]
+            - button "Desk 3" [ref=e57]
+            - button "Desk 4" [ref=e59]
+            - button "Desk 5" [ref=e61]
+            - button "Desk 6" [ref=e63]
+            - button "Desk 7" [ref=e65]
+            - button "Desk 8" [ref=e67]
+            - button "Desk 9" [ref=e69]
+            - button "Desk 10" [ref=e71]
+            - button "Desk 11" [ref=e73]
+            - button "Desk 12" [ref=e75]
+            - button "Desk 13" [ref=e77]
+            - button "Desk 14" [ref=e79]
+            - button "Desk 15" [ref=e81]
+            - button "Desk 16" [ref=e83]
+            - button "Noise source Conversation" [ref=e85]:
+              - generic: conversation · 60 dB
+            - button "Noise source Printer" [ref=e88]:
+              - generic: printer · 66 dB
+            - button "Room corner 1" [ref=e91]
+            - button "Room corner 2" [ref=e92]
+            - button "Room corner 3" [ref=e93]
+            - button "Room corner 4" [ref=e94]
+          - paragraph [ref=e95]:
+            - text: 16.0 × 10.0 m ·
+            - generic [ref=e96]:
+              - text: ceiling
+              - spinbutton "ceiling m" [ref=e97]: "2.7"
+              - text: m
+      - generic [ref=e106]:
+        - generic [ref=e107]:
+          - heading "How many panels" [level=2] [ref=e108]
+          - group "Number of panels" [ref=e109]:
+            - button "1" [ref=e110] [cursor=pointer]
+            - button "2" [ref=e111] [cursor=pointer]
+            - button "3" [pressed] [ref=e112] [cursor=pointer]
+            - button "4" [ref=e113] [cursor=pointer]
+        - generic [ref=e114]:
+          - heading "Search" [level=2] [ref=e115]
+          - group "How thorough the search is" [ref=e116]:
+            - button "Quick about half a minute" [pressed] [ref=e117] [cursor=pointer]:
+              - text: Quick
+              - generic [ref=e118]: about half a minute
+            - button "Detailed several minutes" [ref=e119] [cursor=pointer]:
+              - text: Detailed
+              - generic [ref=e120]: several minutes
+          - paragraph [ref=e121]: "One simulation job on a top-down model of the room: 11 layouts in about 29 s. Every panel counts as floor-to-ceiling, so panel height and surface are not part of it."
+        - button "Find the best positions" [ref=e123] [cursor=pointer]
+        - group [ref=e124]:
+          - generic "Simulation settings" [ref=e125] [cursor=pointer]
