@@ -6,25 +6,14 @@ Our entry for **Hack for Humanity: Finland** (Tampere, 3 Oct 2026) — the Quans
 
 **Idea: TBD** — everyone brainstorms in their own file ([Arman](docs/idea-Arman.md), [Santeri](docs/idea-Santeri.md), [Veli](docs/idea-Veli.md)), the chosen one goes in [docs/idea.md](docs/idea.md).
 
-## QuietOffice v1 (in progress)
-
-First build of [QuietOffice](docs/idea-Arman-QuietOffice.md): where should a few acoustic screens
-go in an open office? Structure mirrors the beer-cooling example app.
-
-- **Frontend** works on its own: `cd frontend`, `npm install`, `npm run dev`, open
-  http://localhost:5173. Without the backend it shows a quick in-browser estimate.
-- **Backend** runs the real search on Allsolve: see [backend/README.md](backend/README.md).
-  It has not been run against Allsolve yet; start with
-  [simulations/quiet_office_baseline](simulations/quiet_office_baseline/run_baseline.py).
-
 ## Repo layout
 
+Each idea is built in its own folder, with its own backend, frontend, simulations and docs, so
+work on different ideas does not collide. Shared material stays in `docs/`.
+
 ```
-├── backend/        # Python API (FastAPI) that calls Allsolve through the SDK
-│   ├── app/        #   API endpoints, models, Allsolve integration
-│   └── sim/        #   simulation scripts that run on Allsolve
-├── frontend/       # Web UI: user input -> run simulation -> show results
-├── simulations/    # Standalone SDK experiments / prototypes (no app needed)
+├── quiet-office/   # Arman: acoustic screen placement for open offices (see its README)
+├── <your-idea>/    # one self-contained folder per idea
 └── docs/
     ├── idea.md             # the chosen idea
     ├── idea-<name>.md      # personal brainstorm files (Arman, Santeri, Veli)
@@ -46,7 +35,7 @@ go in an open office? Structure mirrors the beer-cooling example app.
 ```bash
 python -m venv .venv
 .venv\Scripts\activate          # Windows  (macOS/Linux: source .venv/bin/activate)
-pip install -r backend/requirements.txt
+pip install -r <your-idea>/backend/requirements.txt
 cp .env.example .env            # then fill in your Allsolve access + secret key
 ```
 

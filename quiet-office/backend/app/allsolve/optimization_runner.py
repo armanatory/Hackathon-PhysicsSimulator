@@ -5,7 +5,7 @@ import logging
 import threading
 from typing import Callable, List, Optional, Sequence
 
-from ..config import REPO_ROOT, get_settings
+from ..config import PROJECT_ROOT, get_settings
 from ..models.office import LayoutResult, OptimizationParams
 from ..scoring import combine_bands, level_db, raw_score
 from .project_builder import (
@@ -75,7 +75,7 @@ class OptimizationRunner:
             api_key=settings.qs_access_key,
             api_secret=settings.qs_secret_key,
             host=settings.qs_host,
-            cache_base_dir=str(REPO_ROOT / "backend"),
+            cache_base_dir=str(PROJECT_ROOT / "backend"),
             dotenv_file=None,
         )
         logger.info(f"Allsolve client ready ({settings.qs_host})")

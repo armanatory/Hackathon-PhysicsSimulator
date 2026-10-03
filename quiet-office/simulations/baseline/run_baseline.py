@@ -4,16 +4,16 @@ This is the "start simple, verify, build up" step. It uses the same project buil
 backend, runs a two-point sweep at one frequency and prints the speech level at each desk.
 Run it before trusting the full optimization.
 
-Usage (from the repository root, with the virtual environment active):
+Usage (from the repository root):
 
-    python simulations/quiet_office_baseline/run_baseline.py
+    .venv/Scripts/python.exe quiet-office/simulations/baseline/run_baseline.py
 """
 
 import sys
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(REPO_ROOT / "backend"))
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(PROJECT_ROOT / "backend"))
 
 from app.allsolve.optimization_runner import OptimizationRunner  # noqa: E402
 from app.models import OptimizationParams  # noqa: E402

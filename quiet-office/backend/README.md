@@ -4,7 +4,7 @@ FastAPI backend that searches for the best placement of a few acoustic screens i
 open-plan office by running Allsolve acoustic simulations through the Python SDK.
 
 Structure follows the reference app in
-[beer_cooling_app/backend](../docs/quanscient-docs/beer_cooling_app/backend).
+[beer_cooling_app/backend](../../docs/quanscient-docs/beer_cooling_app/backend).
 
 ```
 backend/
@@ -34,7 +34,7 @@ python -m venv .venv
 ```
 
 ```bash
-pip install -r backend/requirements.txt
+pip install -r quiet-office/backend/requirements.txt
 ```
 
 Copy `.env.example` to `.env` in the repository root and fill in `QS_ACCESS_KEY` and
@@ -42,7 +42,7 @@ Copy `.env.example` to `.env` in the repository root and fill in `QS_ACCESS_KEY`
 
 ## Running the server
 
-From the `backend/` folder:
+From the `quiet-office/backend/` folder (or just double-click `quiet-office/run.bat`):
 
 ```bash
 uvicorn app.main:app --reload --port 8000
@@ -102,9 +102,9 @@ rebuilt per layout and one harmonic simulation solves all layouts and frequencie
 
 ## Status
 
-**Not yet run against Allsolve.** The code was written from the SDK source and skill docs
-on a machine without Python or credentials. Before the full search, run the small check in
-[`simulations/quiet_office_baseline`](../simulations/quiet_office_baseline/run_baseline.py)
+**Not yet confirmed against Allsolve.** The code was written from the SDK source and skill docs
+before Python and keys were set up. Before the full search, run the small check in
+[`simulations/baseline`](../simulations/baseline/run_baseline.py)
 and fix what the solver complains about. Things most likely to need adjusting:
 
 - the `obstacles` region (size filter) and whether unmeshed-physics surfaces are accepted

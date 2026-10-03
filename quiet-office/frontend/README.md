@@ -1,8 +1,8 @@
 # QuietOffice frontend
 
 Vue 3 + Vite + TypeScript + Pinia. Structure follows the reference app in
-[beer_cooling_app/frontend](../docs/quanscient-docs/beer_cooling_app/frontend); the look comes
-from the sketch in [docs/ui-exploring/03-quiet-office](../docs/ui-exploring/03-quiet-office).
+[beer_cooling_app/frontend](../../docs/quanscient-docs/beer_cooling_app/frontend); the look comes
+from the sketch in [docs/ui-exploring/03-quiet-office](../../docs/ui-exploring/03-quiet-office).
 
 ```
 frontend/src/

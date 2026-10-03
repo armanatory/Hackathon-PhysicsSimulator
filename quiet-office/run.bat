@@ -1,6 +1,7 @@
 @echo off
 rem QuietOffice launcher. Double-click to install what is missing and start the app.
 rem Frontend always starts. Backend starts too when Python 3.10+ is installed.
+rem The Python environment (.venv) and the keys (.env) live in the repository root.
 setlocal
 cd /d "%~dp0"
 title QuietOffice launcher
@@ -44,29 +45,29 @@ if not defined PY (
   goto :frontend
 )
 
-if not exist ".venv\Scripts\python.exe" (
+if not exist "..\.venv\Scripts\python.exe" (
   echo  Creating the Python environment...
-  %PY% -m venv .venv
+  %PY% -m venv ..\.venv
   if errorlevel 1 goto :fail
 )
 
-".venv\Scripts\python.exe" -c "import fastapi, uvicorn, pydantic_settings, allsolve" >nul 2>nul
+"..\.venv\Scripts\python.exe" -c "import fastapi, uvicorn, pydantic_settings, allsolve" >nul 2>nul
 if errorlevel 1 (
   echo  Installing backend packages, this takes a minute...
-  ".venv\Scripts\python.exe" -m pip install --disable-pip-version-check -r backend\requirements.txt
+  "..\.venv\Scripts\python.exe" -m pip install --disable-pip-version-check -r backend\requirements.txt
   if errorlevel 1 goto :fail
 )
 
-if not exist ".env" (
-  copy /y ".env.example" ".env" >nul
+if not exist "..\.env" (
+  copy /y "..\.env.example" "..\.env" >nul
   echo.
-  echo  Created .env from .env.example. Open it and fill in QS_ACCESS_KEY and
+  echo  Created .env in the repository root. Open it and fill in QS_ACCESS_KEY and
   echo  QS_SECRET_KEY, then restart the backend window. Until then "Run on Allsolve"
   echo  stays disabled and the page shows the quick estimate.
 )
 
 echo  Starting the backend on http://localhost:8000 ...
-start "QuietOffice backend" /d "%~dp0backend" cmd /k ..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
+start "QuietOffice backend" /d "%~dp0backend" cmd /k ..\..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000
 
 :frontend
 echo  Starting the frontend on http://localhost:5173 ...
