@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "quietoffice-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "quiet-office/frontend", "run", "dev"],
+      "port": 5173
+    }
+  ]
+}

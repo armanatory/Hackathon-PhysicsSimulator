@@ -1,5 +1,0 @@
-allsolve
-fastapi
-uvicorn[standard]
-pydantic
-python-dotenv

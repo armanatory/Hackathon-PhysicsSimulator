@@ -32,3 +32,6 @@ __MACOSX/
 # Logs / temp
 *.log
 *.tmp
+
+# Deploy config example is committed
+!.env.deploy.example

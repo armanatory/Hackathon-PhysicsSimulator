@@ -1,0 +1,32 @@
+# Allquiet as two containers. From this folder:
+#
+#   docker compose up -d --build
+#
+# then open http://localhost:8080 (change the port with QUIETOFFICE_PORT).
+# Allsolve keys are read from quiet-office/.env, or from the repository-root .env.
+
+name: quietoffice
+
+services:
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    env_file:
+      - path: ../.env
+        required: false
+      - path: .env
+        required: false
+    environment:
+      QS_HOST: ${QS_HOST:-https://allsolve.quanscient.com}
+    # Not published: only the frontend container can reach the API.
+    expose:
+      - "8000"
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "${QUIETOFFICE_PORT:-8080}:80"

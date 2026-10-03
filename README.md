@@ -8,12 +8,12 @@ Our entry for **Hack for Humanity: Finland** (Tampere, 3 Oct 2026) — the Quans
 
 ## Repo layout
 
+Each idea is built in its own folder, with its own backend, frontend, simulations and docs, so
+work on different ideas does not collide. Shared material stays in `docs/`.
+
 ```
-├── backend/        # Python API (FastAPI) that calls Allsolve through the SDK
-│   ├── app/        #   API endpoints, models, Allsolve integration
-│   └── sim/        #   simulation scripts that run on Allsolve
-├── frontend/       # Web UI: user input -> run simulation -> show results
-├── simulations/    # Standalone SDK experiments / prototypes (no app needed)
+├── quiet-office/   # Arman: acoustic screen placement for open offices (see its README)
+├── <your-idea>/    # one self-contained folder per idea
 └── docs/
     ├── idea.md             # the chosen idea
     ├── idea-<name>.md      # personal brainstorm files (Arman, Santeri, Veli)
@@ -35,7 +35,7 @@ Our entry for **Hack for Humanity: Finland** (Tampere, 3 Oct 2026) — the Quans
 ```bash
 python -m venv .venv
 .venv\Scripts\activate          # Windows  (macOS/Linux: source .venv/bin/activate)
-pip install -r backend/requirements.txt
+pip install -r <your-idea>/backend/requirements.txt
 cp .env.example .env            # then fill in your Allsolve access + secret key
 ```
 

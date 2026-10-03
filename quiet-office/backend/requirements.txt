@@ -1,0 +1,11 @@
+# API server
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+
+# Data validation and settings
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+python-dotenv>=1.0.0
+
+# Allsolve SDK (needs Python 3.10+)
+allsolve>=0.5.2

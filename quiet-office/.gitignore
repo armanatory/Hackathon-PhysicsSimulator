@@ -1,0 +1,4 @@
+# Build output and local caches for this project
+frontend/dist/
+*.tsbuildinfo
+.allsolve_cache/
