@@ -1,0 +1,1 @@
+"""QuietOffice backend application."""

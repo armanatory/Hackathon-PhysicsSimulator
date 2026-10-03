@@ -6,6 +6,17 @@ Our entry for **Hack for Humanity: Finland** (Tampere, 3 Oct 2026) — the Quans
 
 **Idea: TBD** — everyone brainstorms in their own file ([Arman](docs/idea-Arman.md), [Santeri](docs/idea-Santeri.md), [Veli](docs/idea-Veli.md)), the chosen one goes in [docs/idea.md](docs/idea.md).
 
+## QuietOffice v1 (in progress)
+
+First build of [QuietOffice](docs/idea-Arman-QuietOffice.md): where should a few acoustic screens
+go in an open office? Structure mirrors the beer-cooling example app.
+
+- **Frontend** works on its own: `cd frontend`, `npm install`, `npm run dev`, open
+  http://localhost:5173. Without the backend it shows a quick in-browser estimate.
+- **Backend** runs the real search on Allsolve: see [backend/README.md](backend/README.md).
+  It has not been run against Allsolve yet; start with
+  [simulations/quiet_office_baseline](simulations/quiet_office_baseline/run_baseline.py).
+
 ## Repo layout
 
 ```
