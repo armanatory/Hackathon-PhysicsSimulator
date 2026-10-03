@@ -1,0 +1,31 @@
+# QuietOffice - host-Caddy snippet. Installed to
+# /etc/caddy/Caddyfile.d/quietoffice.caddyfile by scripts/hetzner-deploy.sh
+# on every deploy. Host Caddy is provisioned by the Exovento platform scripts.
+#
+# Single host: the page and the API share one origin. Caddy sends /api/* and
+# /health to the backend, everything else to the frontend.
+#
+# Port allocation (range 6000-6003 belongs to QuietOffice):
+#   6000  backend (FastAPI + Allsolve SDK)
+#   6001  frontend (built Vue app behind nginx)
+
+{$QUIETOFFICE_DOMAIN:allsolve.hiarman.com} {
+    handle /api/* {
+        reverse_proxy 127.0.0.1:6000
+    }
+    handle /health {
+        reverse_proxy 127.0.0.1:6000
+    }
+    reverse_proxy 127.0.0.1:6001
+
+    encode gzip zstd
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "no-referrer"
+        -Server
+    }
+
+    log
+}

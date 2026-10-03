@@ -1,0 +1,30 @@
+# Production overlay for the shared Hetzner server (same host as Vocabulens,
+# Everonward and the others). Layered on top of docker-compose.yml:
+#
+#   docker compose --env-file ./.env \
+#     -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Takes the images from GHCR instead of building, and binds both containers to
+# 127.0.0.1 so only the host Caddy can reach them.
+#
+# Port range 6000-6003 belongs to QuietOffice (/etc/exovento/ports.tsv on the
+# server): backend = 6000, frontend = 6001.
+#
+# !reset / !override stop compose from keeping the local build and the
+# 8080 port next to the loopback binds.
+
+services:
+  backend:
+    image: ghcr.io/${IMAGE_OWNER}/quietoffice-backend:${TAG:-latest}
+    build: !reset null
+    # On the server the only env file is /srv/quietoffice/.env.
+    env_file: !override
+      - ./.env
+    ports:
+      - "127.0.0.1:${PORT_BACKEND:-6000}:8000"
+
+  frontend:
+    image: ghcr.io/${IMAGE_OWNER}/quietoffice-frontend:${TAG:-latest}
+    build: !reset null
+    ports: !override
+      - "127.0.0.1:${PORT_FRONTEND:-6001}:80"
