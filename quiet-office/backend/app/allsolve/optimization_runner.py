@@ -21,7 +21,7 @@ from .project_builder import (
     screen_variables,
     source_variables,
 )
-from .batch_script import BATCH_VARIABLE, PRESSURES_OUTPUT, SECONDS_OUTPUT, batch_script
+from .batch_script import BATCH_DONE_LINE, BATCH_VARIABLE,PRESSURES_OUTPUT, SECONDS_OUTPUT, batch_script
 from .machines import (
     CORES_PER_MACHINE,
     MAX_PARALLEL_STEPS,
@@ -551,7 +551,7 @@ class OptimizationRunner:
             return simulation
 
         # The simulation only needs the mesh's id, so it is set up while the mesh is running.
-        simulation = self._wait(mesh_instance, f"Meshing ({label})", "mesh", mesh.id, reservation, meanwhile=create_simulation)
+        simulation = self._wait(mesh_instance, f"Meshing ({label})", "mesh", mesh.id, reservation, meanwhile=create_simulation, steps=len(layouts))
         self.log.add(
             SENT,
             "simulation",
@@ -559,7 +559,7 @@ class OptimizationRunner:
             {"simulation_id": simulation.id, "solver": str(office_project.solver_mode or "direct"), "probes": len(office.receivers()) + n_sources},
         )
         with keep_reservation_alive(reservation):
-            self._wait(simulation, f"Simulation ({label})", "simulation", simulation.id, reservation)
+            self._wait(simulation, f"Simulation ({label})", "simulation", simulation.id, reservation, steps=n_points)
 
         # Sweep order is (layout, source, frequency), exactly as the columns were built.
         data = simulation.get_output_data(refresh=True)
@@ -692,7 +692,7 @@ class OptimizationRunner:
         def solve(index: int) -> tuple:
             """Run one band and read its pressures: ([layout][source][probe], seconds of each solve)."""
             band, simulation = bands[index], simulations[index]
-            self._wait(simulation, f"Simulation ({band:.0f} Hz)", "simulation", simulation.id, reservation)
+            self._wait(simulation, f"Simulation ({band:.0f} Hz)", "simulation", simulation.id, reservation, steps=steps[index])
             data = simulation.get_output_data(refresh=True)
             step = data.get_step_index(data.NO_STEP)
             pressures, seconds = [], []
@@ -754,13 +754,15 @@ class OptimizationRunner:
                 self._abort_running_jobs()
                 raise
 
-    def _wait(self, job, what: str, kind: str, job_id: str, reservation=None, meanwhile: Optional[Callable] = None):
+    def _wait(self, job, what: str, kind: str, job_id: str, reservation=None, meanwhile: Optional[Callable] = None, steps: int = 1):
         """Start a cloud job and block until it is done, honouring abort.
 
-        `meanwhile` is called once the job has started; its result is returned.
+        `meanwhile` is called once the job has started; its result is returned. `steps` is how
+        many sweep steps the job has: Allsolve runs each on its own machine, all at once.
         """
         prepared = None
-        record = {"kind": kind, "id": job_id, "what": what, "status": "running"}
+        # server_status, progress and steps_done are what Allsolve reports while the job runs.
+        record = {"kind": kind, "id": job_id, "what": what, "status": "running", "steps": steps, "server_status": None, "progress": None, "steps_done": None}
         with self._jobs_lock:
             self._running_jobs.add(job)
             self.jobs.append(record)
@@ -773,9 +775,11 @@ class OptimizationRunner:
                 prepared = meanwhile()
             # On reserved machines a job takes seconds, so look more often.
             while job.is_running(refresh_delay_s=1 if reservation is not None else 3):
-                self._solver_lines(job, what)
+                self._observe(job, record)
+                self._solver_lines(job, what, record)
                 self._check_abort()
-            self._solver_lines(job, what)
+            self._observe(job, record)
+            self._solver_lines(job, what, record)
             self._check_abort()
             status = job.get_status()
             record["status"] = str(status)
@@ -796,8 +800,38 @@ class OptimizationRunner:
             with self._jobs_lock:
                 self._running_jobs.discard(job)
 
-    def _solver_lines(self, job, what: str) -> None:
-        """Copy new lines of the cloud job's own log into the run log."""
+    def _observe(self, job, record: dict) -> None:
+        """Copy what Allsolve reports about a job into its record: status, progress, meshed sweep steps.
+
+        The SDK has no call for the progress of a job or for the status of one sweep step of a
+        simulation, so the progress is read from the job as the SDK last fetched it. A value
+        Allsolve does not give stays None.
+        """
+
+        def plain(value):
+            return getattr(value, "value", value)
+
+        try:
+            record["server_status"] = str(plain(job.get_status()))
+            raw = getattr(getattr(job, "_simulation", None), "simulation_job", None)
+            instance = getattr(job, "_raw_instance", None)
+            if raw is None:
+                raw = getattr(instance, "meshing_job", None)
+            progress = getattr(raw, "progress", None)
+            if progress is not None:
+                record["progress"] = float(progress)
+            files = getattr(instance, "files", None)
+            if files and record["steps"] > 1:
+                record["steps_done"] = sum(1 for f in files if plain(getattr(f, "job_status", None)) == allsolve.Job.SUCCESS)
+        except Exception:
+            pass  # a status display must never stop a run
+
+    def _solver_lines(self, job, what: str, record: Optional[dict] = None) -> None:
+        """Copy new lines of the cloud job's own log into the run log.
+
+        A machine of the fast search prints one line when it has solved its share (see
+        batch_script.py); those lines are counted in `record` as sweep steps that are done.
+        """
         try:
             buffer = io.StringIO()
             job.print_new_loglines(buffer)
@@ -806,6 +840,8 @@ class OptimizationRunner:
         for line in buffer.getvalue().splitlines():
             if line.strip():
                 self.log.add(SOLVER, what, line.rstrip()[:300])
+                if record is not None and BATCH_DONE_LINE in line:
+                    record["steps_done"] = (record["steps_done"] or 0) + 1
 
     def evidence(self, params: OptimizationParams, baseline: LayoutResult, best: LayoutResult) -> dict:
         """What ties the result to Allsolve: the project, every job, and raw solver pressures."""

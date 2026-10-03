@@ -274,6 +274,14 @@ class OptimizationStatus(BaseModel):
     best_score: Optional[float] = None
     project_url: Optional[str] = None
     log_size: int = Field(default=0, description="Entries in the run log so far; fetch them from /log")
+    jobs: List[dict] = Field(
+        default_factory=list,
+        description=(
+            "Every mesh and simulation job started on Allsolve. `steps` is how many sweep steps it runs at once, "
+            "each on its own machine; `server_status`, `progress` (0 to 1) and `steps_done` are what Allsolve "
+            "reports, and are null when it reports nothing."
+        ),
+    )
 
 
 class OptimizationResults(BaseModel):

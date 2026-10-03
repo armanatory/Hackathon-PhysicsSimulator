@@ -10,7 +10,9 @@ function bandLabel(hz: number): string {
   return hz >= 1000 ? `${hz / 1000} kHz` : `${hz} Hz`
 }
 
-const solves = computed(() => store.plannedLayouts * store.office.sources.length * store.frequencies.length)
+// Jobs Allsolve has not finished, and the machines they run on: one per sweep step.
+const liveJobs = computed(() => store.cloudJobs.filter((job) => job.status === 'running'))
+const liveMachines = computed(() => liveJobs.value.filter((job) => job.server_status === 'running').reduce((sum, job) => sum + job.steps, 0))
 
 const sizeHint = computed(() => {
   if (store.model === '2d') return 'Top-down slice. Fast, but every panel counts as floor-to-ceiling and the material is ignored.'
@@ -61,6 +63,23 @@ const sizeHint = computed(() => {
     <div v-if="store.isRunning" class="progress" role="status">
       <div class="track"><i :style="{ width: `${store.progress}%` }"></i></div>
       <p class="hint">{{ store.message }}</p>
+      <template v-if="liveJobs.length">
+        <h2 class="live">
+          On Allsolve now<template v-if="liveMachines > 1">: {{ liveMachines }} machines running at the same time</template>
+        </h2>
+        <ul class="jobs">
+          <li v-for="job in liveJobs" :key="job.id">
+            <span>
+              {{ job.what }}
+              <small>
+                {{ job.steps }} {{ job.steps === 1 ? 'machine' : 'machines' }}<template v-if="job.steps_done !== null">, {{ job.steps_done }} done</template>
+              </small>
+            </span>
+            <b>{{ job.server_status ?? 'sent' }}<template v-if="job.progress"> · {{ Math.round(job.progress * 100) }}%</template></b>
+          </li>
+        </ul>
+        <p class="hint">Status and counts are read from Allsolve each time this page asks for progress.</p>
+      </template>
     </div>
     <p v-if="store.error" class="error" role="alert">{{ store.error }}</p>
 
@@ -138,20 +157,6 @@ const sizeHint = computed(() => {
         </button>
       </template>
       <p v-else class="hint" style="margin-top: 0">Start the backend to see the Allsolve machines.</p>
-    </div>
-
-    <div v-else class="field">
-      <h2>Parallel jobs</h2>
-      <div class="seg" role="group" aria-label="Allsolve jobs run at the same time">
-        <button v-for="n in [1, 2, 4, 8]" :key="n" type="button" :aria-pressed="store.parallelJobs === n" :disabled="store.isRunning" @click="store.parallelJobs = n">
-          {{ n }}
-        </button>
-      </div>
-      <p class="hint">
-        Allsolve already runs every solve of a round at the same time, each on its own machine. Splitting a round into more jobs was
-        slower when measured, so leave this at 1: {{ solves }} solves in total ({{ store.plannedLayouts }} layouts × {{ store.office.sources.length }}
-        {{ store.office.sources.length === 1 ? 'source' : 'sources' }} × {{ store.frequencies.length }} {{ store.frequencies.length === 1 ? 'band' : 'bands' }}).
-      </p>
     </div>
 
     </details>

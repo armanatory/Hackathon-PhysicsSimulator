@@ -226,6 +226,7 @@ async def get_optimization_status(optimization_id: str) -> OptimizationStatus:
         best_score=min(full) if full else None,
         project_url=runner.project_url if runner else None,
         log_size=len(runner.log) if runner else 0,
+        jobs=[dict(job) for job in list(runner.jobs)] if runner else [],
     )
 
 

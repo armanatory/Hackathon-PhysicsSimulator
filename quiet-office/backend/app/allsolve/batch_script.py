@@ -16,6 +16,7 @@ from ..models.office import AIR_DENSITY, OptimizationParams
 from .project_builder import SCREEN_DENSITY_RATIO
 
 BATCH_VARIABLE = "batch"
+BATCH_DONE_LINE = "QuietOffice batch"  # start of the line a machine prints when its share is solved
 PRESSURES_OUTPUT = "pressures"  # [layout][source][band][probe], flattened
 SECONDS_OUTPUT = "solve_seconds"  # one per solve, in the same order
 
@@ -78,5 +79,5 @@ for _layout in _LAYOUTS[_first:_first + _PER_MACHINE]:
             _seconds.append(_time.perf_counter() - _started)
 qs.setoutputvalue("{PRESSURES_OUTPUT}", _pressures)
 qs.setoutputvalue("{SECONDS_OUTPUT}", _seconds)
-print("QuietOffice batch", int(round(expr.{BATCH_VARIABLE})), "solved", len(_seconds), "systems in", round(sum(_seconds), 2), "s")
+print("{BATCH_DONE_LINE}", int(round(expr.{BATCH_VARIABLE})), "solved", len(_seconds), "systems in", round(sum(_seconds), 2), "s")
 '''

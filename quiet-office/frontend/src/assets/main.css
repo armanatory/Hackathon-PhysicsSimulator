@@ -80,6 +80,11 @@ h2 { margin: 0 0 12px; font: 600 15px/1.2 var(--body); letter-spacing: .01em; }
 .btn.next { margin-top: 18px; }
 .progress { margin-top: 14px; }
 .progress .track { height: 6px; border-radius: 3px; background: #e6eae2; overflow: hidden; }
+.progress .live { margin: 14px 0 6px; }
+.jobs { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.jobs li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.jobs small { display: block; color: var(--mute); font-size: 13px; }
+.jobs b { font: 600 13px var(--data); white-space: nowrap; }
 .progress .track i { display: block; height: 100%; background: var(--quiet); transition: width .4s; }
 
 /* ---- score ---- */

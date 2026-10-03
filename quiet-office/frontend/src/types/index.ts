@@ -70,7 +70,7 @@ export interface OptimizationParams {
   screen_absorbing: boolean
   /** What the backend solves on Allsolve: a full 3D room, or a 2D top-down slice. */
   model: SimulationModel
-  /** How many sweeps each round of layouts is split into. 1 is fastest; not used by the fast search. */
+  /** How many sweeps each round of layouts is split into. Always 1: splitting was slower when measured. */
   parallel_jobs: number
   source_height_m: number
   ear_height_m: number
@@ -128,6 +128,7 @@ export interface OptimizationStatus {
   best_score: number | null
   project_url: string | null
   log_size: number
+  jobs: CloudJob[]
 }
 
 export interface OptimizationResults {
@@ -164,6 +165,13 @@ export interface CloudJob {
   id: string
   what: string
   status: string
+  /** Sweep steps of the job. Allsolve runs each on its own machine, all at once. */
+  steps: number
+  /** What Allsolve reports while the job runs. Null when it reports nothing. */
+  server_status: string | null
+  /** 0 to 1 */
+  progress: number | null
+  steps_done: number | null
 }
 
 /** What ties a result to Allsolve. Pressures are [listening point][source][band], in pascal. */

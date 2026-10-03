@@ -4,7 +4,7 @@
 
 import { defineStore } from 'pinia'
 import { computed, ref, shallowRef, watch } from 'vue'
-import type { Capabilities, Evidence, LayoutResult, LogEntry, Machines, Office, OptimizationParams, Point, SimulationModel, Step, Strategy } from '@/types'
+import type { Capabilities, CloudJob, Evidence, LayoutResult, LogEntry, Machines, Office, OptimizationParams, Point, SimulationModel, Step, Strategy } from '@/types'
 import { EARSHOT_DB, PANEL_TYPES, blankOffice, defaultOffice } from '@/types'
 import { optimizationApi } from '@/api/optimization'
 import { bestOf, estimateLayout, estimateSearch, suggestSlots } from '@/physics/estimate'
@@ -72,7 +72,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
   const panelTypeId = ref('screen')
   const screenAbsorbing = ref(false)
   const model = ref<SimulationModel>('3d')
-  const parallelJobs = ref(1)
 
   const capabilities = ref<Capabilities | null>(null)
   const backendOnline = ref(false)
@@ -90,6 +89,8 @@ export const useOptimizationStore = defineStore('optimization', () => {
 
   // Proof of the Allsolve run: its log and the raw solver output
   const logEntries = ref<LogEntry[]>([])
+  // The mesh and simulation jobs of the run in progress, as Allsolve reports them
+  const cloudJobs = ref<CloudJob[]>([])
   const evidence = ref<Evidence | null>(null)
 
   // Cloud machines held ready for the fast search
@@ -128,7 +129,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     screen_height_m: Math.min(panelType.value.height_m, office.value.ceiling_height_m),
     screen_absorbing: screenAbsorbing.value,
     model: model.value,
-    parallel_jobs: parallelJobs.value,
+    parallel_jobs: 1,
     source_height_m: 1.5,
     ear_height_m: 1.2,
     frequencies_hz: frequencies.value,
@@ -294,6 +295,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     progress.value = 0
     message.value = 'Starting...'
     logEntries.value = []
+    cloudJobs.value = []
     evidence.value = null
     explanation.value = ''
     try {
@@ -324,6 +326,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
       message.value = s.message ?? ''
       layoutsTotal.value = s.layouts_total
       projectUrl.value = s.project_url
+      cloudJobs.value = s.jobs ?? []
       if (s.log_size > logEntries.value.length) {
         const log = await optimizationApi.getLog(id, logEntries.value.length)
         logEntries.value.push(...log.entries)
@@ -668,7 +671,6 @@ export const useOptimizationStore = defineStore('optimization', () => {
     panelType,
     screenAbsorbing,
     model,
-    parallelJobs,
     hasListeners,
     unknowns3d,
     capabilities,
@@ -682,6 +684,7 @@ export const useOptimizationStore = defineStore('optimization', () => {
     layouts,
     hasResult,
     logEntries,
+    cloudJobs,
     evidence,
     explanation,
     explanationModel,
