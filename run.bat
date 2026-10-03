@@ -32,6 +32,10 @@ if not defined PY (
   if not errorlevel 1 set "PY=py -3"
 )
 
+rem Anaconda is often installed without being on PATH.
+if not defined PY if exist "%USERPROFILE%\anaconda3\python.exe" set "PY="%USERPROFILE%\anaconda3\python.exe""
+if not defined PY if exist "%USERPROFILE%\miniconda3\python.exe" set "PY="%USERPROFILE%\miniconda3\python.exe""
+
 if not defined PY (
   echo.
   echo  Python 3.10 or newer was not found, so only the frontend will start.
