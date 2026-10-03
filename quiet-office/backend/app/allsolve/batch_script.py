@@ -30,8 +30,11 @@ def probe_points(params: OptimizationParams) -> List[List[float]]:
     return points
 
 
-def batch_script(params: OptimizationParams, layouts: Sequence[Sequence[int]], layouts_per_machine: int) -> str:
-    """Python for the cloud solver: solve this machine's share of `layouts` on the loaded mesh."""
+def batch_script(params: OptimizationParams, layouts: Sequence[Sequence[int]], layouts_per_machine: int, frequencies: Sequence[float]) -> str:
+    """Python for the cloud solver: solve this machine's share of `layouts` on the loaded mesh.
+
+    `frequencies` are the bands this simulation solves: those its mesh is fine enough for.
+    """
     office = params.office
     slots = {}
     for slot in office.slots:
@@ -48,7 +51,7 @@ def batch_script(params: OptimizationParams, layouts: Sequence[Sequence[int]], l
 
 _SLOTS = {slots!r}  # slot id -> (centre x, centre y, size x, size y)
 _LAYOUTS = {[list(layout) for layout in layouts]!r}
-_FREQUENCIES = {list(params.frequencies_hz)!r}
+_FREQUENCIES = {list(frequencies)!r}
 _POINTS = {points!r}
 _SOURCE_EDGES = [{edges}]
 _PER_MACHINE = {layouts_per_machine}

@@ -6,12 +6,13 @@ import logging
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import Callable, Dict, List, Optional, Sequence
+from typing import Any, Callable, Dict, List, Optional, Sequence
 
 from ..config import get_settings
-from ..models.office import LayoutResult, OptimizationParams
+from ..models.office import SPEED_OF_SOUND, LayoutResult, OptimizationParams
 from ..scoring import SPEECH_LEVEL_AT_1M_DB, combine_bands, combine_sources, level_db, raw_score
 from .project_builder import (
+    ELEMENTS_PER_WAVELENGTH,
     OfficeProject,
     add_probe_outputs,
     build_office_project,
@@ -26,6 +27,7 @@ from .machines import (
     MAX_PARALLEL_STEPS,
     plan_fast_search,
     pool,
+    share_machines,
     shared_client,
     solve_seconds,
     unknowns_2d,
@@ -56,15 +58,15 @@ class OptimizationAborted(Exception):
     """Raised inside a worker thread when the user aborts."""
 
 
-# One-mesh projects kept from earlier fast searches, with their finished mesh. A search on the
-# same room, sources and screen positions starts solving at once: only the listening points
-# and the layouts differ, and neither is in the mesh.
-_kept_projects: Dict[str, tuple] = {}  # office_key -> (OfficeProject, mesh)
+# One-mesh projects kept from earlier fast searches, with their finished meshes. A search on
+# the same room, sources and screen positions starts solving at once: only the listening
+# points and the layouts differ, and neither is in a mesh.
+_kept_projects: Dict[str, tuple] = {}  # office_key -> (OfficeProject, {band in Hz: mesh})
 _kept_lock = threading.Lock()
 
 
 def office_key(params: OptimizationParams) -> str:
-    """Everything the one-mesh project and its mesh are built from."""
+    """Everything the one-mesh project and its meshes are built from, bar the band of each mesh."""
     office = params.office
     return repr(
         (
@@ -73,7 +75,6 @@ def office_key(params: OptimizationParams) -> str:
             [(s.id, s.x, s.y, s.orientation) for s in office.slots],
             params.screen_length_m,
             params.screen_thickness_m,
-            max(params.frequencies_hz),
         )
     )
 
@@ -81,6 +82,14 @@ def office_key(params: OptimizationParams) -> str:
 def kept_project(params: OptimizationParams) -> Optional[tuple]:
     with _kept_lock:
         return _kept_projects.get(office_key(params))
+
+
+def band_seconds(params: OptimizationParams) -> List[float]:
+    """Expected solving time of one layout in each band, on that band's own mesh."""
+    office = params.office
+    min_x, min_y, max_x, max_y = office.bounds
+    area = (max_x - min_x) * (max_y - min_y)
+    return [len(office.sources) * solve_seconds(unknowns_2d(area, band)) for band in params.frequencies_hz]
 
 
 def planned_layout_count(params: OptimizationParams) -> int:
@@ -99,10 +108,11 @@ def fast_layouts(params: OptimizationParams, warm_machines: int) -> tuple:
     The untreated office comes first, then as many candidates as fit the time budget.
     """
     solves_per_layout = len(params.office.sources) * len(params.frequencies_hz)
-    min_x, min_y, max_x, max_y = params.office.bounds
-    solve_s = solve_seconds(unknowns_2d((max_x - min_x) * (max_y - min_y), max(params.frequencies_hz)))
-    reused = params.fixed_mesh and kept_project(params) is not None
-    limit, machines, seconds = plan_fast_search(params.time_budget_s, solves_per_layout, warm_machines, params.fixed_mesh, solve_s, reused)
+    kept = kept_project(params) if params.fixed_mesh else None
+    reused = kept is not None and all(band in kept[1] for band in params.frequencies_hz)
+    limit, machines, seconds = plan_fast_search(
+        params.time_budget_s, solves_per_layout, warm_machines, params.fixed_mesh, band_seconds(params) if params.fixed_mesh else None, reused
+    )
     slot_ids = {slot.id for slot in params.office.slots}
     candidates, seen = [], set()
     for layout in params.candidate_layouts:
@@ -159,7 +169,7 @@ class OptimizationRunner:
         self._machines_thread: Optional[threading.Thread] = None
         self._machines_error: Optional[Exception] = None
         self._machines = 1  # how many machines the fast search runs on
-        self._mesh = None  # the finished mesh of a kept one-mesh project
+        self._meshes: Dict[float, Any] = {}  # band in Hz -> its mesh in the one-mesh project
 
     # ------------------------------------------------------------------ setup
 
@@ -228,13 +238,13 @@ class OptimizationRunner:
         kept = kept_project(params) if fast is not None and params.fixed_mesh else None
         if kept is not None:
             try:
-                kept[1].refresh()  # the project may have been deleted in the Allsolve browser
+                next(iter(kept[1].values())).refresh()  # the project may have been deleted in the Allsolve browser
             except Exception:
                 with _kept_lock:
                     _kept_projects.pop(office_key(params), None)
                 kept = None
         if kept is not None:
-            self._office_project, self._mesh = kept
+            self._office_project, self._meshes = kept
         elif params.model == "3d":
             progress("Creating the 3D office project in Allsolve...", 3)
             self._office_project = build_office_project_3d(self._client, params, self.log)
@@ -247,7 +257,7 @@ class OptimizationRunner:
             self.log.add(
                 INFO,
                 "project",
-                f"Room, sources and screen positions are the same as in an earlier search, so its project and mesh are used again: {self.project_url}",
+                f"Room, sources and screen positions are the same as in an earlier search, so its project and meshes are used again: {self.project_url}",
                 {"url": self.project_url, "project_id": self.project_id},
             )
         else:
@@ -583,128 +593,166 @@ class OptimizationRunner:
         return result
 
     def _solve_batched(self, params: OptimizationParams, layouts: List[Layout], machines: Callable) -> List[Pressures]:
-        """Solve every layout on the one mesh, each machine taking an equal share of them.
+        """Solve every layout, each band on its own mesh, each machine taking a share of the layouts.
 
-        The sweep has one step per machine and only tells the machine which share is its own.
-        The solver script (batch_script.py) then solves that share one layout after another and
-        returns all its probe pressures as one list. `machines` is called for the reservation
-        when the simulation is ready to start.
+        A band's mesh is sized for its own wavelength, so the low bands solve much faster. Each
+        band is one simulation, and the machines are shared between them so that they finish
+        together. A sweep has one step per machine and only tells the machine which share of
+        the layouts is its own; the solver script (batch_script.py) solves that share one
+        layout after another and returns all its probe pressures as one list. `machines` is
+        called for the reservation when the simulations are ready to start.
         """
         self._check_abort()
         office_project = self._office_project
         project = office_project.project
         office = params.office
-        n_sources, n_freq = len(office.sources), len(params.frequencies_hz)
-        steps = max(1, min(self._machines, len(layouts)))
-        per_machine = -(-len(layouts) // steps)
-        steps = -(-len(layouts) // per_machine)
-        n_solves = len(layouts) * n_sources * n_freq
+        bands = params.frequencies_hz
+        n_sources = len(office.sources)
+        names = [receiver_output_name(i) for i in range(len(office.receivers()))]
+        names += [reference_output_name(s) for s in range(n_sources)]
+        shares = share_machines(self._machines, len(layouts), band_seconds(params))
+        per_machine = [-(-len(layouts) // share) for share in shares]
+        steps = [-(-len(layouts) // count) for count in per_machine]
+        n_solves = len(layouts) * n_sources * len(bands)
         tag = f"{time.time():.0f}"  # a kept project is searched more than once
-
-        sweep = project.create_variable_overrides(name=f"batches_{tag}", overrides=[(BATCH_VARIABLE, list(range(steps)))])
         self.log.add(
             SENT,
             "sweep",
-            f"Sent the fast search: {len(layouts)} layouts x {n_sources} sources x {n_freq} bands = {n_solves} solves, "
-            f"shared over {steps} machines, {per_machine} layouts each",
-            {"layouts": layouts, "frequencies_hz": params.frequencies_hz, "machines": steps, "layouts_per_machine": per_machine},
+            f"Sent the fast search: {len(layouts)} layouts x {n_sources} sources x {len(bands)} bands = {n_solves} solves. "
+            + "; ".join(f"{band:.0f} Hz on {steps[i]} machines, {per_machine[i]} layouts each" for i, band in enumerate(bands)),
+            {"layouts": layouts, "frequencies_hz": bands, "machines": steps, "layouts_per_machine": per_machine},
         )
 
-        def create_simulation():
-            simulation = project.create_simulation_harmonic(
-                name=f"Harmonic fast search {tag}",
-                description=f"{len(layouts)} layouts x {n_sources} sources x bands {params.frequencies_hz} Hz, {per_machine} layouts per machine",
-                max_run_time_minutes=office_project.max_run_time_minutes,
-                solver_mode=allsolve.SolverMode.DIRECT,
-                fundamental_frequency="freq",
-                mesh=self._mesh,
-                variable_overrides=sweep,
-                physics_set=office_project.physics_set,
+        def prepare(index: int):
+            """The mesh of one band, unless it is kept from an earlier search, and its simulation."""
+            band = bands[index]
+            sweep = project.create_variable_overrides(
+                name=f"batches_{band:.0f}Hz_{tag}", overrides=[(BATCH_VARIABLE, list(range(steps[index])))]
             )
-            # The generated single solve is switched off: the script solves this machine's layouts.
-            simulation.disabled_script_sections = [allsolve.DisableableSection.SOLVE]
-            simulation.save()
-            simulation.set_scripts(
-                [
-                    allsolve.Script(
-                        name="solve_layouts.py",
-                        section_name=allsolve.CustomSection.AFTER_FORMULATIONS_CREATED,
-                        content=batch_script(params, layouts, per_machine),
-                    )
-                ]
-            )
-            return simulation
 
-        if self._mesh is None:
-            self._mesh = project.create_mesh(
+            def create_simulation():
+                simulation = project.create_simulation_harmonic(
+                    name=f"Harmonic fast search {band:.0f} Hz {tag}",
+                    description=f"{len(layouts)} layouts x {n_sources} sources at {band:.0f} Hz, {per_machine[index]} layouts per machine",
+                    max_run_time_minutes=office_project.max_run_time_minutes,
+                    solver_mode=allsolve.SolverMode.DIRECT,
+                    fundamental_frequency="freq",
+                    mesh=self._meshes[band],
+                    variable_overrides=sweep,
+                    physics_set=office_project.physics_set,
+                )
+                # The generated single solve is switched off: the script solves this machine's layouts.
+                simulation.disabled_script_sections = [allsolve.DisableableSection.SOLVE]
+                simulation.save()
+                simulation.set_scripts(
+                    [
+                        allsolve.Script(
+                            name="solve_layouts.py",
+                            section_name=allsolve.CustomSection.AFTER_FORMULATIONS_CREATED,
+                            content=batch_script(params, layouts, per_machine[index], [band]),
+                        )
+                    ]
+                )
+                return simulation
+
+            if band in self._meshes:
+                return create_simulation()
+            mesh_size = SPEED_OF_SOUND / (band * ELEMENTS_PER_WAVELENGTH)
+            mesh = self._meshes[band] = project.create_mesh(
                 allsolve.MeshSettings(
-                    name="Mesh fast search",
-                    mesh_size_max=office_project.mesh_size_m,
-                    mesh_size_min=office_project.mesh_size_m / 4,
+                    name=f"Mesh {band:.0f} Hz",
+                    mesh_size_max=mesh_size,
+                    mesh_size_min=mesh_size / 4,
                     max_run_time_minutes=20,
                 )
             )
             self.log.add(
                 SENT,
                 "mesh",
-                f"Asked Allsolve for one mesh that serves all {len(layouts)} layouts",
-                {"mesh_id": self._mesh.id, "max_element_size_m": round(office_project.mesh_size_m, 4)},
+                f"Asked Allsolve for the {band:.0f} Hz mesh, which serves all {len(layouts)} layouts",
+                {"mesh_id": mesh.id, "max_element_size_m": round(mesh_size, 4)},
             )
             # The simulation only needs the mesh's id, so it is set up while the mesh is running.
-            simulation = self._wait(self._mesh, "Meshing (fast search)", "mesh", self._mesh.id, meanwhile=create_simulation)
-            if get_settings().keep_projects:
-                with _kept_lock:
-                    _kept_projects[office_key(params)] = (office_project, self._mesh)
-        else:
-            simulation = create_simulation()
+            return self._wait(mesh, f"Meshing ({band:.0f} Hz)", "mesh", mesh.id, meanwhile=create_simulation)
+
+        simulations = self._in_parallel(prepare, len(bands))
+        if get_settings().keep_projects:
+            with _kept_lock:
+                _kept_projects[office_key(params)] = (office_project, self._meshes)
 
         reservation = machines()
-        n_probes = len(office.receivers()) + n_sources
         self.log.add(
             SENT,
             "simulation",
-            f"Started harmonic acoustic simulation: {n_solves} solves on {steps} machines, {n_probes} pressure probes each",
-            {"simulation_id": simulation.id, "solver": "direct", "probes": n_probes},
+            f"Started {len(bands)} harmonic acoustic simulations, one per band: {n_solves} solves on {sum(steps)} machines, {len(names)} pressure probes each",
+            {"simulation_ids": [simulation.id for simulation in simulations], "solver": "direct", "probes": len(names)},
         )
-        with keep_reservation_alive(reservation):
-            self._wait(simulation, "Simulation (fast search)", "simulation", simulation.id, reservation)
+        per_layout = n_sources * len(names)
 
-        data = simulation.get_output_data(refresh=True)
-        step = data.get_step_index(data.NO_STEP)
-        names = [receiver_output_name(i) for i in range(len(office.receivers()))]
-        names += [reference_output_name(s) for s in range(n_sources)]
-        per_layout = n_sources * n_freq * len(names)
-        result: List[Pressures] = []
-        seconds: List[float] = []
-        for batch in range(steps):
-            values = data.get_values_at(batch, step, PRESSURES_OUTPUT)
-            expected = len(layouts[batch * per_machine : (batch + 1) * per_machine]) * per_layout
-            if values is None or len(values) != expected:
-                raise RuntimeError(f"Machine {batch} returned {0 if values is None else len(values)} pressures, expected {expected}")
-            seconds += data.get_values_at(batch, step, SECONDS_OUTPUT) or []
-            for start in range(0, expected, per_layout):
-                # Within a layout the order is (source, band, probe), as the script solved them.
-                result.append(
-                    {
-                        name: [
-                            [abs(float(values[start + (s * n_freq + f) * len(names) + i])) for f in range(n_freq)]
-                            for s in range(n_sources)
-                        ]
-                        for i, name in enumerate(names)
-                    }
-                )
+        def solve(index: int) -> tuple:
+            """Run one band and read its pressures: ([layout][source][probe], seconds of each solve)."""
+            band, simulation = bands[index], simulations[index]
+            self._wait(simulation, f"Simulation ({band:.0f} Hz)", "simulation", simulation.id, reservation)
+            data = simulation.get_output_data(refresh=True)
+            step = data.get_step_index(data.NO_STEP)
+            pressures, seconds = [], []
+            for batch in range(steps[index]):
+                values = data.get_values_at(batch, step, PRESSURES_OUTPUT)
+                expected = len(layouts[batch * per_machine[index] : (batch + 1) * per_machine[index]]) * per_layout
+                if values is None or len(values) != expected:
+                    raise RuntimeError(
+                        f"Machine {batch} of the {band:.0f} Hz simulation returned {0 if values is None else len(values)} pressures, expected {expected}"
+                    )
+                seconds += data.get_values_at(batch, step, SECONDS_OUTPUT) or []
+                for start in range(0, expected, per_layout):
+                    # Within a layout the order is (source, probe), as the script solved them.
+                    pressures.append([[abs(float(v)) for v in values[start + s * len(names) :][: len(names)]] for s in range(n_sources)])
+            return pressures, seconds
+
+        with keep_reservation_alive(reservation):
+            solved = self._in_parallel(solve, len(bands))
+
+        result: List[Pressures] = [
+            {
+                name: [[solved[f][0][layout][s][i] for f in range(len(bands))] for s in range(n_sources)]
+                for i, name in enumerate(names)
+            }
+            for layout in range(len(layouts))
+        ]
+        timing = ", ".join(
+            f"{band:.0f} Hz {sum(solved[i][1]) / max(1, len(solved[i][1])):.2f} s" for i, band in enumerate(bands)
+        )
         self.log.add(
             RECEIVED,
             "pressures",
-            f"Read {len(result) * per_layout} pressure values from Allsolve. One solve took {sum(seconds) / max(1, len(seconds)):.2f} s on average, "
-            f"{sum(seconds):.0f} s of computing in all",
+            f"Read {len(result) * per_layout * len(bands)} pressure values from Allsolve. One solve took: {timing}. "
+            f"{sum(sum(seconds) for _, seconds in solved):.0f} s of computing in all",
             {
-                "simulation_id": simulation.id,
+                "simulation_ids": [simulation.id for simulation in simulations],
                 "sample_layout": layouts[0],
                 "sample_pressures_pa": {name: [[float(f"{v:.4g}") for v in row] for row in result[0][name]] for name in names[:4]},
             },
         )
         return result
+
+    def _in_parallel(self, work: Callable[[int], Any], count: int) -> list:
+        """Run work(0) to work(count - 1) at the same time, each in a thread with its own SDK session."""
+        if count == 1:
+            return [work(0)]
+
+        def threaded(index: int):
+            with self._client.in_thread():
+                return work(index)
+
+        with ThreadPoolExecutor(max_workers=count, thread_name_prefix="allsolve") as executor:
+            futures = [executor.submit(threaded, i) for i in range(count)]
+            try:
+                return [future.result() for future in futures]
+            except BaseException:
+                # One job failed or the user aborted: stop the others before leaving.
+                self._abort.set()
+                self._abort_running_jobs()
+                raise
 
     def _wait(self, job, what: str, kind: str, job_id: str, reservation=None, meanwhile: Optional[Callable] = None):
         """Start a cloud job and block until it is done, honouring abort.

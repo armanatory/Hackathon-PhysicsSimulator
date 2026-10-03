@@ -108,7 +108,7 @@ const sizeHint = computed(() => {
     <div v-if="store.strategy === 'fast'" class="field">
       <h2>Allsolve machines</h2>
       <template v-if="store.machines">
-        <p class="hint" style="margin-top: 0">Each cloud machine solves several layouts one after another. Booting the machines is the slow part.</p>
+        <p class="hint" style="margin-top: 0">Each cloud machine solves several layouts one after another, and each band has its own mesh. Booting the machines is the slow part.</p>
         <p v-if="store.machines.state === 'ready'" class="hint">
           <b>{{ store.machines.machines }} machines are running.</b> A search now simulates {{ store.machines.plan_now.layouts }} layouts in
           about {{ store.machines.plan_now.seconds }} s. They cost credits while they run, and are given back after

@@ -63,8 +63,12 @@ through that in a GUI. What the SDK gives us, concretely:
 - **Many layouts per machine.** In the fast search a sweep step is not one solve. A custom
   solver script ([`batch_script.py`](../backend/app/allsolve/batch_script.py)) makes each of
   the 100 machines solve its share of the layouts one after another on the mesh it has
-  already loaded, and return all pressures as one list. Measured: 300 layouts (600 solves) in
-  29 s, and 500 in 23 s when the room was searched before and its mesh is used again.
+  already loaded, and return all pressures as one list.
+- **A mesh per band.** Each speech band is solved on a mesh sized for its own wavelength, as
+  its own simulation on the same reserved machines. The 250 Hz mesh solves three times faster
+  than the 500 Hz one, and the machines are shared so both bands finish together. Measured
+  with two bands: 360 layouts (720 solves) in 28 s, and 803 layouts in 24 s when the room was
+  searched before and its meshes are used again.
 - **Sweeps as one cloud job.** `create_variable_overrides` plus one mesh and one harmonic
   simulation run a whole round of layouts and frequencies. Allsolve remeshes only when the
   geometry changes, so the frequencies of a layout share its mesh.

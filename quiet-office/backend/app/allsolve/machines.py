@@ -31,6 +31,8 @@ Every band has its own mesh, sized for its own wavelength, and its own simulatio
 mesh of the demo office has 2.8 times fewer unknowns than the 500 Hz one and solves in 0.55 s
 against 1.65 s. Its 250 Hz quiet-zone level differed by at most 0.06 dB from the fine mesh.
 The machines are shared between the bands so that they finish together (share_machines).
+Measured on 100 warm machines, two bands, both simulations on one reservation: 360 layouts
+(720 solves) in 27.7 s, and 803 layouts (1606 solves) in 24.4 s when the meshes were kept.
 """
 
 import atexit
@@ -77,7 +79,7 @@ MEASURED_UNKNOWNS = 143_366
 MEASURED_SOLVE_S = 1.65
 SOLVE_GROWTH = 1.08  # solve time against unknowns, between the two meshes
 MESH_DENSITY = 1.09  # mesh corners against a perfect grid of triangles of the asked size
-CORNERS_PER_SLOT = 224  # extra corners around each screen position
+EXTRA_CORNERS = 2700  # where the mesh is finer than asked. 20 screen positions solved as fast as 12
 COLD_MACHINES = 15  # used when nothing fits the budget: few machines boot fastest
 
 _client_lock = threading.Lock()
@@ -107,14 +109,13 @@ def boot_seconds(machines: int) -> float:
     return BOOT_BASE_S + BOOT_PER_MACHINE_S * machines
 
 
-def unknowns_2d(area_m2: float, frequency_hz: float, slots: int = 12) -> int:
+def unknowns_2d(area_m2: float, frequency_hz: float) -> int:
     """Rough number of pressure unknowns in one 2D solve on a mesh sized for `frequency_hz`.
 
-    Second-order triangles, two harmonics: eight unknowns per mesh corner. The mesh is finer
-    around every screen position whatever the frequency, which adds corners per position.
+    Second-order triangles, two harmonics: eight unknowns per mesh corner.
     """
     mesh_size = SPEED_OF_SOUND / (frequency_hz * ELEMENTS_PER_WAVELENGTH)
-    corners = MESH_DENSITY * area_m2 / (0.866 * mesh_size**2) + CORNERS_PER_SLOT * slots
+    corners = MESH_DENSITY * area_m2 / (0.866 * mesh_size**2) + EXTRA_CORNERS
     return int(8 * corners)
 
 

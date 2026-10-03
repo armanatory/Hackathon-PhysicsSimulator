@@ -256,10 +256,9 @@ export const useOptimizationStore = defineStore('optimization', () => {
       const b = boundsOf(office.value.outline)
       machines.value = await optimizationApi.machines(
         office.value.sources.length,
-        frequencies.value.length,
+        frequencies.value,
         FAST_BUDGET_S,
         b.width * b.height,
-        Math.max(...frequencies.value),
         action,
       )
       if (machines.value.state === 'starting') setTimeout(() => void refreshMachines(), 2000)
